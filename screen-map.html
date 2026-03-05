@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1500">
+  <title>Escape Fantasy — Screen Map & Navigation Flows</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #E8E9EC;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      padding: 40px;
+      min-width: 1500px;
+    }
+
+    /* ── Page header ── */
+    .page-hdr {
+      max-width: 1420px; margin: 0 auto 32px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      border-bottom: 1px solid #C4C5C8; padding-bottom: 20px;
+    }
+    .page-hdr h1 { font-size: 11px; font-weight: 800; color: #FF6F42; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+    .page-hdr h2 { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+    .page-hdr p  { font-size: 13px; color: #888; margin-top: 4px; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+      font-size: 11px; font-weight: 700;
+    }
+    .legend-item { display: flex; align-items: center; gap: 7px; }
+    .legend-swatch {
+      width: 28px; height: 16px; border-radius: 4px; flex-shrink: 0;
+    }
+    .sw-done    { background: #FF6F42; }
+    .sw-sprint  { background: #FFF; border: 2.5px solid #FF6F42; }
+    .sw-planned { background: #1E3A5F; }
+    .sw-modal   { background: #1A1030; border: 2px dashed #9B59F5; }
+    .sw-auth    { background: #1A1A1A; }
+    .legend-txt { color: #444; }
+
+    /* ── Main diagram ── */
+    .diagram {
+      max-width: 1420px; margin: 0 auto;
+    }
+
+    /* ── Auth flow ── */
+    .auth-flow {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 10px;
+    }
+    .auth-box {
+      background: #1A1A1A;
+      color: #EEE;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 11px; font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+      min-width: 120px;
+      position: relative;
+    }
+    .auth-box .sub { font-size: 9px; color: #888; font-weight: 600; margin-top: 2px; }
+    .auth-box.launch { background: #2A2A2A; min-width: 80px; }
+    .flow-arrow {
+      color: #999; font-size: 18px; padding: 0 6px; flex-shrink: 0;
+    }
+    .flow-arrow-down {
+      color: #999; font-size: 18px; text-align: center; line-height: 1;
+      margin: 4px 0; display: block;
+    }
+    .auth-note {
+      font-size: 10px; color: #888; font-style: italic; margin-left: 12px;
+      align-self: center;
+    }
+
+    /* ── Nav bar ── */
+    .nav-bar-diagram {
+      background: #111;
+      border-radius: 12px;
+      display: flex;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .nav-tab {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: #555;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-tab:last-child { border-right: none; }
+    .nav-tab.nt-home    { color: #FF6F42; background: rgba(255,111,66,0.08); }
+    .nav-tab.nt-compete { color: #FF8C5A; background: rgba(255,111,66,0.05); }
+    .nav-tab.nt-leagues { background: rgba(255,255,255,0.02); }
+    .nav-tab.nt-news    { background: rgba(255,255,255,0.02); }
+    .nav-tab.nt-account { background: rgba(255,255,255,0.02); }
+    .nav-tab .nt-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+
+    /* ── Columns ── */
+    .cols {
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .col {
+      flex: 1;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    /* ── Screen boxes ── */
+    .screen {
+      border-radius: 8px;
+      padding: 9px 12px;
+      position: relative;
+      cursor: default;
+    }
+    .screen .s-name {
+      font-size: 11px; font-weight: 800; line-height: 1.3;
+    }
+    .screen .s-sub {
+      font-size: 9px; font-weight: 600; margin-top: 2px; opacity: 0.7;
+    }
+    .screen .s-badge {
+      position: absolute; top: 6px; right: 8px;
+      font-size: 8px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 2px 5px; border-radius: 3px;
+    }
+
+    /* Screen state styles */
+    .s-done {
+      background: #FF6F42; color: #FFF;
+    }
+    .s-done .s-badge { background: rgba(0,0,0,0.2); color: #FFF; }
+
+    .s-sprint {
+      background: #FFF; border: 2.5px solid #FF6F42; color: #FF6F42;
+    }
+    .s-sprint .s-name { color: #CC4A1A; }
+    .s-sprint .s-sub  { color: #FF8055; opacity: 1; }
+    .s-sprint .s-badge { background: #FF6F42; color: #FFF; }
+
+    .s-planned {
+      background: #1E3A5F; color: #8EB0D4;
+    }
+    .s-planned .s-name { color: #C0D8F0; }
+    .s-planned .s-badge { background: rgba(255,255,255,0.1); color: #8EB0D4; }
+
+    .s-modal {
+      background: #1A1030; color: #C8A0FF;
+      border: 2px dashed rgba(155,89,245,0.5);
+      margin-left: 14px;
+    }
+    .s-modal .s-name { color: #D8B8FF; }
+    .s-modal .s-badge { background: rgba(155,89,245,0.2); color: #C8A0FF; }
+
+    /* Sub-section label */
+    .sub-section-lbl {
+      font-size: 9px; font-weight: 800; color: #FF6F42;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 6px 0 2px 2px;
+      border-top: 1px solid rgba(255,111,66,0.2);
+      margin-top: 4px;
+    }
+    .sub-section-lbl:first-of-type { border-top: none; margin-top: 0; }
+
+    /* Column header */
+    .col-hdr {
+      font-size: 10px; font-weight: 800; color: #999;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 0 0 6px 2px;
+      border-bottom: 1px solid #CCC;
+      margin-bottom: 4px;
+    }
+
+    /* Small connector arrow within column */
+    .col-arrow {
+      text-align: center; color: #555; font-size: 12px;
+      line-height: 1; margin: -1px 0;
+    }
+
+
+    /* Linked screen boxes */
+    a.screen {
+      display: block;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a.screen:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    a.screen.s-done:hover { box-shadow: 0 4px 16px rgba(255,111,66,0.4); }
+    a.screen.s-sprint:hover { box-shadow: 0 4px 16px rgba(255,111,66,0.25); }
+    .screen-link-icon {
+      position: absolute;
+      bottom: 7px; right: 8px;
+      font-size: 9px;
+      opacity: 0.6;
+    }
+    a.screen .screen-link-icon { opacity: 0.8; }
+
+    /* ── Cross-flow reference section ── */
+    .flows-section {
+      max-width: 1420px; margin: 24px auto 0;
+      background: #FFF;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .flows-title {
+      font-size: 11px; font-weight: 800; color: #999;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid #EEE;
+    }
+    .flows-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 24px;
+    }
+    .flow-item {
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .flow-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #1E3A5F; color: #8EB0D4;
+      font-size: 9px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .flow-desc { font-size: 11px; color: #444; line-height: 1.55; }
+    .flow-desc strong { color: #111; font-weight: 800; }
+    .flow-path {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #F0F4F8; border-radius: 4px; padding: 1px 6px;
+      font-size: 10px; font-weight: 700; color: #1E3A5F;
+      margin-top: 3px; display: block;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      max-width: 1420px; margin: 16px auto 0;
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: #AAA;
+    }
+    .footer strong { color: #FF6F42; }
+  </style>
+</head>
+<body>
+
+  <!-- Page header -->
+  <div class="page-hdr">
+    <div>
+      <h1>Escape Fantasy · Navigation Architecture</h1>
+      <h2>Screen Map &amp; User Flows</h2>
+      <p>All screens in scope · Section 10 of PRD · Mobile-First Redesign v1.0</p>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch sw-done"></div><span class="legend-txt">Built ✓ &nbsp;(click to open wireframe)</span></div>
+      <div class="legend-item"><div class="legend-swatch sw-sprint"></div><span class="legend-txt">This sprint (wireframes in progress)</span></div>
+      <div class="legend-item"><div class="legend-swatch sw-planned"></div><span class="legend-txt">In scope — not yet started</span></div>
+      <div class="legend-item"><div class="legend-swatch sw-modal"></div><span class="legend-txt">Modal / overlay (no tab change)</span></div>
+      <div class="legend-item"><div class="legend-swatch sw-auth"></div><span class="legend-txt">Auth &amp; onboarding (one-time)</span></div>
+    </div>
+  </div>
+
+  <div class="diagram">
+
+    <!-- Auth flow -->
+    <div class="auth-flow">
+      <div class="auth-box launch">App<br>Launch</div>
+      <div class="flow-arrow">→</div>
+      <div class="auth-box">Login
+        <div class="sub">Ghost SSO · magic link</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="auth-box">Onboarding 1
+        <div class="sub">What is Escape Fantasy?</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="auth-box">Onboarding 2
+        <div class="sub">How it works</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="auth-box">Onboarding 3
+        <div class="sub">Join first competition</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="auth-box" style="background:#FF6F42;color:#FFF;font-size:12px;">
+        Home Screen
+        <div class="sub" style="color:rgba(255,255,255,0.7);">New entry point ↓</div>
+      </div>
+      <div class="auth-note">New users only · skip button available · never triggers again after first login</div>
+    </div>
+
+    <!-- Bottom nav diagram -->
+    <div class="nav-bar-diagram">
+      <div class="nav-tab nt-home"><span class="nt-icon">🏠</span>Home</div>
+      <div class="nav-tab nt-compete"><span class="nt-icon">🏆</span>Compete</div>
+      <div class="nav-tab nt-leagues"><span class="nt-icon">🛡</span>Leagues</div>
+      <div class="nav-tab nt-news"><span class="nt-icon">📰</span>News</div>
+      <div class="nav-tab nt-account"><span class="nt-icon">👤</span>Account</div>
+    </div>
+
+    <!-- 5 columns -->
+    <div class="cols">
+
+      <!-- HOME -->
+      <div class="col">
+        <div class="col-hdr">Home</div>
+
+        <a href="wireframe-01-home-v2.html" target="_blank" class="screen s-done">
+          <div class="s-name">Home Screen</div>
+          <div class="s-sub">Active comp cards · news feed</div>
+          <div class="s-badge">Done ✓</div>
+          <div class="screen-link-icon">↗</div>
+        </a>
+
+        <div class="screen s-planned">
+          <div class="s-name">Home — Empty State</div>
+          <div class="s-sub">No active competitions</div>
+        </div>
+      </div>
+
+      <!-- COMPETE -->
+      <div class="col">
+        <div class="col-hdr">Compete</div>
+
+        <a href="wireframe-02-competition-browser.html" target="_blank" class="screen s-done">
+          <div class="s-name">Competition Browser</div>
+          <div class="s-sub">All comps · join · switch</div>
+          <div class="s-badge">Done ✓</div>
+          <div class="screen-link-icon">↗</div>
+        </a>
+
+        <div class="col-arrow">↓</div>
+
+        <div class="sub-section-lbl">Stage Race Format</div>
+
+        <a href="wireframe-03-my-picks.html" target="_blank" class="screen s-done">
+          <div class="s-name">My Picks List</div>
+          <div class="s-sub">All stages · results · auto pick</div>
+          <div class="s-badge">Done ✓</div>
+          <div class="screen-link-icon">↗</div>
+        </a>
+
+        <div class="col-arrow">↓</div>
+
+        <a href="wireframe-04-rider-selection.html" target="_blank" class="screen s-done">
+          <div class="s-name">Rider Selection</div>
+          <div class="s-sub">Search · filter · AI suggest</div>
+          <div class="s-badge">Done ✓</div>
+          <div class="screen-link-icon">↗</div>
+        </a>
+
+        <div class="col-arrow">↓ (tap rider)</div>
+
+        <div class="screen s-sprint s-modal" title="Wireframe coming soon">
+          <div class="s-name">Rider Profile Card</div>
+          <div class="s-sub">Modal · stats · Pick CTA</div>
+          <div class="s-badge">Next ›</div>
+        </div>
+
+        <div class="screen s-modal">
+          <div class="s-name">AI Suggestion Overlay</div>
+          <div class="s-sub">Modal · suggested pick + reason</div>
+        </div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Per-Stage Results</div>
+          <div class="s-sub">Rider result · pts earned · winner</div>
+        </div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Overall Leaderboard</div>
+          <div class="s-sub">Scrollable · user pinned · filters</div>
+        </div>
+
+        <div class="sub-section-lbl">Team Format</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Team Selection</div>
+          <div class="s-sub">Budget · 4 classes · wild card</div>
+        </div>
+
+        <div class="col-arrow">↓ (after lock)</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Team Overview</div>
+          <div class="s-sub">Squad · pts per rider · transfers</div>
+        </div>
+      </div>
+
+      <!-- LEAGUES -->
+      <div class="col">
+        <div class="col-hdr">Leagues</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">League List</div>
+          <div class="s-sub">All user leagues · rank · director</div>
+        </div>
+
+        <div class="col-arrow">↓</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">League Detail — Standings</div>
+          <div class="s-sub">Members · ranked · scrollable</div>
+        </div>
+
+        <div class="col-arrow">↔ tab switch</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">League Detail — Chat</div>
+          <div class="s-sub">Thread · reactions · pick-shares</div>
+        </div>
+
+        <div class="screen s-planned" style="margin-top:10px;">
+          <div class="s-name">Create League</div>
+          <div class="s-sub">Name · rules · invite</div>
+        </div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Join by Code</div>
+          <div class="s-sub">Enter invite code</div>
+        </div>
+      </div>
+
+      <!-- NEWS -->
+      <div class="col">
+        <div class="col-hdr">News</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">News Feed</div>
+          <div class="s-sub">Previews · reports · news · filters</div>
+        </div>
+
+        <div class="col-arrow">↓ (tap article)</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Article Reader</div>
+          <div class="s-sub">In-app · "Pick your rider" CTA</div>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="col">
+        <div class="col-hdr">Account</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Account &amp; Settings</div>
+          <div class="s-sub">Profile · theme · spoilers · rules</div>
+        </div>
+
+        <div class="col-arrow">↓</div>
+
+        <div class="screen s-planned">
+          <div class="s-name">Notification Preferences</div>
+          <div class="s-sub">Granular controls per type</div>
+        </div>
+      </div>
+
+    </div><!-- /cols -->
+
+  </div><!-- /diagram -->
+
+  <!-- Cross-tab navigation flows -->
+  <div class="flows-section">
+    <div class="flows-title">Key Cross-Screen Navigation Flows</div>
+    <div class="flows-grid">
+
+      <div class="flow-item">
+        <div class="flow-num">1</div>
+        <div class="flow-desc">
+          <strong>Quick pick from Home</strong><br>
+          Tapping "Pick Stage N →" on a Home competition card bypasses My Picks and goes directly to Rider Selection for that stage.
+          <span class="flow-path">Home → Rider Selection</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">2</div>
+        <div class="flow-desc">
+          <strong>Competition switcher</strong><br>
+          Persistent banner on all Compete sub-screens. Tapping opens the Competition Browser without resetting the Compete tab history.
+          <span class="flow-path">Any Compete screen → Competition Browser</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">3</div>
+        <div class="flow-desc">
+          <strong>Article reader → pick flow</strong><br>
+          Stage preview articles show a "Pick your rider" CTA pinned at the bottom. Tapping goes to Rider Selection for the relevant stage.
+          <span class="flow-path">Article Reader → Rider Selection</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">4</div>
+        <div class="flow-desc">
+          <strong>Rider injury alert</strong><br>
+          Push notification or warning badge on My Picks taps directly to Rider Selection for the affected stage.
+          <span class="flow-path">Notification / My Picks → Rider Selection</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">5</div>
+        <div class="flow-desc">
+          <strong>Rider profile → pick confirm</strong><br>
+          Rider Profile Card (modal) always shows a "Pick this rider" CTA that confirms the pick and dismisses the modal back to Rider Selection.
+          <span class="flow-path">Rider Profile → (confirms) → My Picks</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">6</div>
+        <div class="flow-desc">
+          <strong>League chat → pick share</strong><br>
+          Tapping a pick-share card in League Chat shows that user's rider pick for that stage (read-only Rider Profile).
+          <span class="flow-path">League Chat → Rider Profile (read-only)</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">7</div>
+        <div class="flow-desc">
+          <strong>Score update notification</strong><br>
+          After stage results, tapping the push notification deep-links directly to Per-Stage Results for that stage.
+          <span class="flow-path">Notification → Per-Stage Results</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">8</div>
+        <div class="flow-desc">
+          <strong>Leaderboard → opponent picks</strong><br>
+          Tapping any user row on the leaderboard shows their picks for each stage (read-only My Picks view).
+          <span class="flow-path">Leaderboard → My Picks (read-only)</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">9</div>
+        <div class="flow-desc">
+          <strong>Team format join → team selection</strong><br>
+          Joining a Team Competition from the Competition Browser goes to Team Selection (not My Picks). The two formats branch here.
+          <span class="flow-path">Competition Browser → Team Selection</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>Escape Fantasy App Redesign · Screen Map v1.0 · March 2026</div>
+    <div><strong>5 screens in current sprint</strong> · 20 screens total in scope · Wireframes: HTML → direct developer handoff</div>
+  </div>
+
+</body>
+</html>

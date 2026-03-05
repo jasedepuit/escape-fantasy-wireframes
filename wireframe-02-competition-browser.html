@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Escape Fantasy — Wireframe 02: Competition Browser</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-screen: #0A0A0A;
+    --bg-card: #181818;
+    --bg-card-upcoming: #141414;
+    --bg-header: #0A0A0A;
+    --bg-switcher: #1A1A1A;
+    --bg-statsbar: #141414;
+    --bg-nav: #111;
+    --bg-scroll: #0A0A0A;
+    --bg-scroll-ctx: #111;
+    --text-primary: #FFFFFF;
+    --text-secondary: #888888;
+    --text-muted: #666666;
+    --text-dimmed: #555555;
+    --text-very-muted: #444444;
+    --border-subtle: rgba(255,255,255,0.05);
+    --border-medium: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.07);
+    --border-header: rgba(255,255,255,0.04);
+    --page-bg: #E2E3E6;
+  }
+
+  body.light-mode {
+    --bg-screen: #F2F2F7;
+    --bg-card: #FFFFFF;
+    --bg-card-upcoming: #F8F8FC;
+    --bg-header: #FFFFFF;
+    --bg-switcher: #F0F0F4;
+    --bg-statsbar: #F0F0F4;
+    --bg-nav: #FFFFFF;
+    --bg-scroll: #F2F2F7;
+    --bg-scroll-ctx: #E8E8EE;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --text-muted: #777777;
+    --text-dimmed: #888888;
+    --text-very-muted: #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.07);
+    --border-medium: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.09);
+    --border-header: rgba(0,0,0,0.07);
+    --page-bg: #D8D9DC;
+  }
+
+  .mode-toggle-wrap {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+  .mode-toggle {
+    background: #333;
+    color: var(--text-primary);
+    border: none;
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  
+  body.light-mode .mode-toggle {
+    background: #222;
+    color: var(--text-primary);
+  }
+
+  body.light-mode .status-icons svg {
+    filter: invert(1) brightness(0.2);
+  }
+
+  body.light-mode .status-time {
+    color: #111;
+  }
+
+  body.light-mode .app-header-back,
+  body.light-mode .app-header-title {
+    color: #111;
+  }
+
+  body.light-mode .app-header-bell path {
+    stroke: #111;
+  }
+
+
+
+
+    body {
+      background: var(--page-bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+      padding: 48px 40px;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      max-width: 1140px;
+      margin: 0 auto 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid #C4C5C8;
+      padding-bottom: 20px;
+    }
+    .breadcrumb { font-size: 11px; font-weight: 700; color: #FF6F42; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .page-title { font-size: 26px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+    .page-meta { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .revision-chip {
+      background: #FF6F42; color: var(--text-primary); font-size: 10px; font-weight: 800;
+      padding: 3px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;
+      margin-left: 10px; vertical-align: middle;
+    }
+    .page-header-right { font-size: 12px; color: #999; text-align: right; line-height: 1.7; }
+
+    /* ── Layout ── */
+    .wireframe-layout {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      gap: 52px;
+      align-items: flex-start;
+    }
+    .phone-wrap { flex-shrink: 0; }
+
+    /* ── Phone frame ── */
+    .phone-frame {
+      width: 375px;
+      background: var(--bg-screen);
+      border-radius: 50px;
+      box-shadow:
+        0 0 0 2px #1A1A1A,
+        0 0 0 10px #111,
+        0 0 0 11px #2A2A2A,
+        0 30px 100px rgba(0,0,0,0.55);
+      overflow: hidden;
+    }
+
+    .dynamic-island {
+      background: var(--bg-screen);
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .island-pill {
+      width: 120px; height: 32px;
+      background: #000; border-radius: 20px;
+    }
+
+    .status-bar {
+      background: var(--bg-screen);
+      padding: 0 26px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
+    .status-icons { display: flex; gap: 5px; align-items: center; }
+
+    .screen {
+      background: var(--bg-screen);
+      height: 740px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .screen-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* App header */
+    .app-header {
+      padding: 12px 20px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-screen);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--border-header);
+    }
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .back-chevron {
+      font-size: 22px;
+      color: var(--text-primary);
+      line-height: 1;
+      cursor: pointer;
+    }
+    .app-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .notif-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      font-size: 18px;
+      color: var(--text-primary);
+    }
+    .notif-badge {
+      position: absolute; top: 8px; right: 8px;
+      width: 7px; height: 7px;
+      background: #FF6F42; border-radius: 50%;
+      border: 1.5px solid #0A0A0A;
+    }
+
+    /* Competition Switcher Banner */
+    .comp-switcher-banner {
+      background: var(--bg-switcher);
+      border-bottom: 1px solid var(--border-medium);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 44px;
+      gap: 12px;
+    }
+    .comp-switcher-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+    .comp-switcher-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .comp-switcher-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+    }
+    .comp-switcher-cta {
+      font-size: 12px;
+      color: #FF6F42;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* Section label */
+    .section-lbl {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-dimmed);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 14px 20px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Competition Cards */
+    .comp-card {
+      margin: 0 20px 10px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .card-header {
+      height: 72px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+    }
+    .card-header-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+    }
+    .card-header-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+    }
+    .card-header-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #5DD162;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: #5DD162;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Card body */
+    .card-body { padding: 12px 14px; }
+
+    .card-badges-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 9px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;
+    }
+    .b-stage {
+      background: rgba(255,111,66,0.12);
+      color: #FF8055;
+      border: 1px solid rgba(255,111,66,0.2);
+    }
+    .b-team {
+      background: rgba(180,130,255,0.2);
+      color: #C8A0FF;
+      border: 1px solid rgba(180,130,255,0.25);
+    }
+    .b-joined { background: rgba(255,111,66,0.12); color: #FF8055; border: 1px solid rgba(255,111,66,0.2); font-weight: 700; padding: 3px 7px; border-radius: 4px; font-size: 9px; text-transform: none; letter-spacing: 0.02em; }
+    .b-active {
+      background: rgba(74,213,80,0.15);
+      color: #5DD162;
+      border: 1px solid rgba(74,213,80,0.2);
+    }
+    .b-upcoming {
+      background: rgba(255,255,255,0.07);
+      color: #777;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .b-finished {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-dimmed);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card-meta {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 10px;
+    }
+
+    .card-rule {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      margin: 0 0 10px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 0;
+      margin-bottom: 10px;
+    }
+    .stat-col {
+      flex: 1;
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      line-height: 1;
+    }
+    .stat-value-orange {
+      color: #FF6F42;
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Info row (for unjoined active comps) */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .info-left {
+      font-size: 12px;
+      color: #999;
+    }
+    .info-right {
+      font-size: 11px;
+      font-weight: 700;
+      color: #FF6F42;
+      white-space: nowrap;
+    }
+
+    /* CTA row */
+    .card-cta-row {
+      margin-top: 10px;
+    }
+    .btn-filled {
+      width: 100%;
+      background: #FF6F42;
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 9px;
+      border-radius: 9px;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .btn-ghost {
+      border: 1.5px solid #FF6F42;
+      background: transparent;
+      color: #FF6F42;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 9px;
+      text-align: center;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+    .btn-ghost-grey {
+      border: 1.5px solid #333;
+      background: transparent;
+      color: var(--text-dimmed);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 9px;
+      text-align: center;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+
+    /* Upcoming card special styles */
+    .card-header-56 {
+      height: 56px;
+      background: #1A0A0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .card-header-56-purple {
+      background: #1A0A1A;
+    }
+
+    .upcoming-body {
+      background: var(--bg-statsbar);
+      padding: 12px 14px;
+    }
+
+    .upcoming-row {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .upcoming-row-small {
+      font-size: 11px;
+      color: var(--text-dimmed);
+    }
+
+    .upcoming-cta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      gap: 8px;
+    }
+    .upcoming-free {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .registered-text {
+      font-size: 12px;
+      color: #FF6F42;
+      font-weight: 700;
+    }
+
+    /* Finished card styles */
+    .finished-body {
+      background: var(--bg-statsbar);
+      padding: 12px 14px;
+    }
+    .finished-header-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .finished-header-badge.muted {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-dimmed);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .finished-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      background: var(--bg-nav);
+      border-top: 1px solid var(--border-strong);
+      display: flex;
+      padding: 7px 0 22px;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 0;
+    }
+    .nav-icon { font-size: 18px; line-height: 1; }
+    .nav-lbl { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+    .nav-item.is-active .nav-lbl { color: #FF6F42; }
+    .nav-bar { width: 18px; height: 2px; border-radius: 1px; background: #FF6F42; margin-bottom: 1px; }
+
+    .phone-label {
+      text-align: center; padding: 14px;
+      font-size: 10px; color: #999; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    /* Callout numbers */
+    .cn {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #FF6F42; color: var(--text-primary);
+      font-size: 8px; font-weight: 900;
+      flex-shrink: 0; vertical-align: middle; margin-left: 3px; line-height: 1;
+    }
+
+    /* ── Annotations panel ── */
+    .ann-panel { flex: 1; min-width: 0; }
+    .ann-panel-header {
+      font-size: 11px; font-weight: 800; color: #999;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .ann-item {
+      margin-bottom: 18px;
+      display: flex;
+      gap: 10px;
+    }
+    .ann-item:last-of-type { margin-bottom: 0; }
+    .ann-num {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #FF6F42; color: var(--text-primary);
+      font-size: 10px; font-weight: 900;
+      line-height: 1;
+    }
+    .ann-content { flex: 1; }
+    .ann-title {
+      font-size: 13px; font-weight: 800; color: #111;
+      margin-bottom: 4px;
+    }
+    .ann-desc {
+      font-size: 12px; color: var(--text-dimmed);
+      line-height: 1.65;
+    }
+
+    .oq-box {
+      background: #FFF8F4; border: 1.5px solid rgba(255,111,66,0.25);
+      border-radius: 12px; padding: 16px 18px;
+      margin-top: 24px;
+    }
+    .oq-title {
+      font-size: 11px; font-weight: 800; color: #FF6F42;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .oq-item { font-size: 12px; color: var(--text-very-muted); line-height: 1.6; margin-bottom: 10px; }
+    .oq-item:last-child { margin-bottom: 0; }
+    .oq-num { font-weight: 800; color: #FF6F42; }
+  </style>
+</head>
+<body>
+  <div class="mode-toggle-wrap">
+    <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">☀ Light mode</button>
+  </div>
+
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">Escape Fantasy · Wireframe Series</div>
+      <div class="page-title">
+        Screen 2 of 5 — Competition Browser
+        <span class="revision-chip">v1</span>
+      </div>
+      <div class="page-meta">375px · Dark Mode · Accent #FF6F42 · Full-screen scrollable list, 3 sections</div>
+    </div>
+    <div class="page-header-right">
+      v1 · March 2026<br>
+      ↳ Compete tab → Browser
+    </div>
+  </div>
+
+  <div class="wireframe-layout">
+
+    <!-- ── PHONE ── -->
+    <div class="phone-wrap">
+      <div class="phone-frame">
+
+        <div class="dynamic-island">
+          <div class="island-pill"></div>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-time">9:41</div>
+          <div class="status-icons">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="white" opacity=".8"><rect x="0" y="3" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2" width="3" height="9" rx="1" opacity=".65"/><rect x="8" y="0" width="3" height="11" rx="1"/><rect x="12.5" y="1" width="3" height="9" rx="1" stroke="white" stroke-width="1.2" fill="none" opacity=".9"/></svg>
+            <svg width="15" height="11" viewBox="0 0 15 11" fill="white" opacity=".8"><path d="M7.5 2.5C9.8 2.5 11.9 3.4 13.4 4.9L14.8 3.4C12.9 1.5 10.3.3 7.5.3S2.1 1.5.2 3.4L1.6 4.9C3.1 3.4 5.2 2.5 7.5 2.5Z" opacity=".4"/><path d="M7.5 5.5C9 5.5 10.3 6.1 11.3 7.1L12.7 5.6C11.3 4.3 9.5 3.5 7.5 3.5S3.7 4.3 2.3 5.6L3.7 7.1C4.7 6.1 6 5.5 7.5 5.5Z" opacity=".7"/><circle cx="7.5" cy="9.5" r="1.5"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" opacity=".85"><rect x="0" y="1" width="22" height="10" rx="3" stroke="white" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="white"/><rect x="23" y="4" width="2" height="4" rx="1" fill="white" opacity=".5"/></svg>
+          </div>
+        </div>
+
+        <div class="screen">
+          <!-- App header with back and title -->
+          <div class="app-header">
+            <div class="app-header-left">
+              <div class="back-chevron">‹</div>
+              <div class="app-title">Competitions</div>
+            </div>
+            <div class="notif-btn">
+                <svg width="17" height="18" viewBox="0 0 17 18" fill="none">
+                  <path d="M8.5 1.5C8.5 1.5 3.5 4 3.5 9.5V14H13.5V9.5C13.5 4 8.5 1.5 8.5 1.5Z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M6.5 14C6.5 15.1 7.4 16 8.5 16S10.5 15.1 10.5 14" stroke="white" stroke-width="1.4"/>
+                  <path d="M8.5 1.5V0" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                <div class="notif-badge"></div>
+              </div>
+          </div>
+
+          <!-- Competition Switcher Banner ① -->
+          <div class="comp-switcher-banner">
+            <div class="comp-switcher-left">
+              <div class="comp-switcher-label">Currently Viewing</div>
+              <div class="comp-switcher-name">Tour de France 2026</div>
+            </div>
+            <div class="comp-switcher-cta">Change ›<span class="cn">①</span></div>
+          </div>
+
+          <!-- Main scrollable content -->
+          <div class="screen-scroll">
+
+            <!-- SECTION 1: ACTIVE -->
+            <div class="section-lbl">Active</div>
+
+            <!-- Card 1: TDF 2026 - Active & Joined -->
+            <div class="comp-card">
+              <div class="card-header" style="background: linear-gradient(to right, #1a2a4a, #4a7da8, #8fa8bf);">
+                <div class="card-header-overlay">
+                  <div class="card-header-name">Tour de France 2026</div>
+                  <div class="card-header-badge">
+                    <span class="status-dot"></span>ACTIVE
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="card-badges-row">
+                  <div class="badge b-stage">Stage Race</div>
+                  <div class="b-joined">✓ Joined</div>
+                </div>
+                <div class="card-meta">Stage 15 of 21 · Mountain Stage</div>
+                <div class="card-rule"></div>
+                <div class="stats-row">
+                  <div class="stat-col">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">23rd</div>
+                    <div class="stat-sub">of 4,821 players <span class="cn">②</span></div>
+                  </div>
+                  <div class="stat-col">
+                    <div class="stat-label">Points</div>
+                    <div class="stat-value">1,240 pts</div>
+                    <div class="stat-sub">total</div>
+                  </div>
+                  <div class="stat-col">
+                    <div class="stat-label">Behind</div>
+                    <div class="stat-value stat-value-orange">185 pts</div>
+                    <div class="stat-sub">behind leader</div>
+                  </div>
+                </div>
+                <div class="card-rule"></div>
+                <div class="card-cta-row">
+                  <button class="btn-filled">View Picks →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Grand Tour Season - Active & Joined Team -->
+            <div class="comp-card">
+              <div class="card-header" style="background: linear-gradient(to right, #1a1a3a, #4a3a8a, #7a5ab8);">
+                <div class="card-header-overlay">
+                  <div class="card-header-name">2026 Grand Tour Season</div>
+                  <div class="card-header-badge">
+                    <span class="status-dot"></span>ACTIVE
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="card-badges-row">
+                  <div class="badge b-team">Team Competition</div>
+                  <div class="b-joined">✓ Joined</div>
+                </div>
+                <div class="card-meta">Giro d'Italia · Stage 12 of 21</div>
+                <div class="card-rule"></div>
+                <div class="stats-row">
+                  <div class="stat-col">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">12th</div>
+                    <div class="stat-sub">of 892 players</div>
+                  </div>
+                  <div class="stat-col">
+                    <div class="stat-label">Points</div>
+                    <div class="stat-value">3,420 pts</div>
+                    <div class="stat-sub">total</div>
+                  </div>
+                  <div class="stat-col">
+                    <div class="stat-label">Team</div>
+                    <div class="stat-value">8 riders</div>
+                    <div class="stat-sub">in squad <span class="cn">③</span></div>
+                  </div>
+                </div>
+                <div class="card-rule"></div>
+                <div class="card-cta-row">
+                  <button class="btn-filled">View Team →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Paris-Roubaix - Active & NOT Joined -->
+            <div class="comp-card">
+              <div class="card-header" style="background: linear-gradient(to right, #2a1a0a, #6a3a1a, #9a5a2a);">
+                <div class="card-header-overlay">
+                  <div class="card-header-name">Paris-Roubaix Challenge 2026</div>
+                  <div class="card-header-badge">
+                    <span class="status-dot"></span>ACTIVE
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="card-badges-row">
+                  <div class="badge b-stage">Stage Race</div>
+                </div>
+                <div class="card-meta">Race in progress · Day 3 of 5</div>
+                <div class="card-rule"></div>
+                <div class="info-row">
+                  <div class="info-left">623 players competing</div>
+                  <div class="info-right">Entry closes in 2h 14m <span class="cn">④</span></div>
+                </div>
+                <div class="card-rule"></div>
+                <div class="card-cta-row">
+                  <button class="btn-filled">Join Competition →<span class="cn">⑤</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: UPCOMING -->
+            <div class="section-lbl">Upcoming</div>
+
+            <!-- Card 4: La Vuelta - Upcoming & NOT Joined -->
+            <div class="comp-card">
+              <div class="card-header-56" style="background: linear-gradient(to right, #1a0a0a, #4a1a1a, #7a2a2a);">
+                UPCOMING
+              </div>
+              <div class="upcoming-body">
+                <div class="card-badges-row">
+                  <div class="badge b-stage">Stage Race</div>
+                  <div class="badge b-upcoming">UPCOMING</div>
+                </div>
+                <div class="upcoming-row">Starts Aug 15, 2026 · 1,243 pre-registered</div>
+                <div class="upcoming-row upcoming-row-small">Entry open · Closes Aug 14</div>
+                <div class="card-rule"></div>
+                <div class="upcoming-cta-row">
+                  <div class="upcoming-free">Free entry <span class="cn">⑥</span></div>
+                  <button class="btn-ghost">Join →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 5: Giro Teams - Upcoming & Joined -->
+            <div class="comp-card">
+              <div class="card-header-56 card-header-56-purple" style="background: linear-gradient(to right, #1a0a1a, #4a1a4a, #7a2a7a);">
+                UPCOMING
+              </div>
+              <div class="upcoming-body">
+                <div class="card-badges-row">
+                  <div class="badge b-team">Team Competition</div>
+                  <div class="b-joined">✓ Joined</div>
+                </div>
+                <div class="upcoming-row">Starts May 9, 2026 · 438 pre-registered</div>
+                <div class="upcoming-row upcoming-row-small">Team selection opens May 1 · Entry closes May 8 <span class="cn">⑦</span></div>
+                <div class="card-rule"></div>
+                <div class="upcoming-cta-row">
+                  <div class="registered-text">You're registered. Select your team from May 1 →</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 3: FINISHED -->
+            <div class="section-lbl">Finished <span style="color: #666;">(3)</span></div>
+
+            <!-- Card 6: Paris-Nice - Finished -->
+            <div class="comp-card">
+              <div class="card-header-56" style="background: linear-gradient(to right, #0a0a0a, #1a1a1a, #0a0a0a); color: #666;">
+                Paris-Nice 2026
+              </div>
+              <div class="finished-body">
+                <div class="finished-header-badge muted">Stage Race</div>
+                <div class="finished-header-badge muted">FINISHED</div>
+                <div class="card-rule" style="margin-bottom: 10px;"></div>
+                <div class="finished-info">Final standings · Your rank: 156th of 2,103</div>
+                <div class="card-rule"></div>
+                <div class="card-cta-row">
+                  <button class="btn-ghost-grey">View Results →<span class="cn">⑧</span></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom nav -->
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">🏠</div>
+              <div class="nav-lbl">Home</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">🔎</div>
+              <div class="nav-lbl">Search</div>
+            </div>
+            <div class="nav-item is-active">
+              <div class="nav-bar"></div>
+              <div class="nav-icon">🏆</div>
+              <div class="nav-lbl">Compete</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">💬</div>
+              <div class="nav-lbl">Social</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">⚙️</div>
+              <div class="nav-lbl">Profile</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="phone-label">Competition Browser</div>
+
+    </div>
+
+    <!-- ── ANNOTATIONS PANEL ── -->
+    <div class="ann-panel">
+      <div class="ann-panel-header">Interaction Annotations</div>
+
+      <div class="ann-item">
+        <div class="ann-num">①</div>
+        <div class="ann-content">
+          <div class="ann-title">Competition switcher banner</div>
+          <div class="ann-desc">
+            The persistent context indicator. Tells the user which competition they're currently "inside" on the Compete tab. Tapping "Change ›" opens this Competition Browser screen. The selected competition becomes the active context for My Picks, Leaderboard, and Stage Detail sub-screens. On the Competition Browser itself, the banner shows the current selection so the user can see what they'd be changing.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">②</div>
+        <div class="ann-content">
+          <div class="ann-title">"of X players" — participant count always visible</div>
+          <div class="ann-desc">
+            Participant count is shown on every joined competition card, directly alongside the user's rank. Never hidden. Resolves the top user survey complaint. Tapping the rank/players stat drills into the full leaderboard for that competition.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">③</div>
+        <div class="ann-content">
+          <div class="ann-title">Team squad size indicator</div>
+          <div class="ann-desc">
+            Team Competition cards show "N riders / in squad" instead of a points-behind-leader stat. In the team format, squad depth is the relevant context for this view. The developer should note: squad size varies by competition (5-10 riders, admin-configured). Display as "N of 8 riders" if competition has a fixed squad size.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">④</div>
+        <div class="ann-content">
+          <div class="ann-title">Late-entry cut-off for active competitions</div>
+          <div class="ann-desc">
+            Users can join some active competitions after they've started (admin-configured). When entry is still open, show the remaining entry window prominently in orange. When entry is closed (not joined), the Join button is replaced by a disabled "Entry closed" state (grey, non-tappable). This state is NOT shown in this wireframe but the developer must implement it.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">⑤</div>
+        <div class="ann-content">
+          <div class="ann-title">Join CTA for active competitions</div>
+          <div class="ann-desc">
+            Tapping "Join Competition →" initiates the join flow. For Stage Race: user is immediately enrolled and taken to My Picks to make their first pick (if still within current stage cut-off) or see the schedule. For Team Competition: user is taken to the Team Selection screen to pick their squad before entry deadline. The join flow differs by format — the developer must branch on competition type.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">⑥</div>
+        <div class="ann-content">
+          <div class="ann-title">Upcoming competition join</div>
+          <div class="ann-desc">
+            Pre-registration for an upcoming competition. Tapping "Join →" confirms registration immediately (no squad selection yet for team format — that opens separately). Badge changes to "JOINED ✓" and button disappears. The card then matches Card 5 state.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">⑦</div>
+        <div class="ann-content">
+          <div class="ann-title">Team selection window — separate from entry deadline</div>
+          <div class="ann-desc">
+            For Team Competition format, there are TWO distinct deadlines: (a) entry registration deadline (you must join before this), and (b) team selection deadline (you must pick your squad before this). Both must be displayed. Entry can close before team selection opens (i.e., you register early but pick your team closer to race start). This is a critical developer note — two separate dates, two separate states.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">⑧</div>
+        <div class="ann-content">
+          <div class="ann-title">Finished competitions section</div>
+          <div class="ann-desc">
+            Collapsed by default — shows only a count ("FINISHED (3)"). Tapping the section label expands it. Finished cards are fully desaturated and non-interactive except for "View Results →". The developer should implement the section as an expandable accordion. Final rank is always shown so the user can recall past performance.
+          </div>
+        </div>
+      </div>
+
+      <div class="oq-box">
+        <div class="oq-title">
+          <span>❓</span> Open Questions (Section 9)
+        </div>
+        <div class="oq-item">
+          <strong class="oq-num">Q1 — Transfer mechanic for team format:</strong> Card 2 (2026 Grand Tour Season, active team comp) shows "8 riders / in squad" but does not show a transfer window alert on the competition browser card. If transfers are enabled, a small "Transfer window open" indicator should appear on the card. The exact mechanic (free transfers between races, or limited 1-2) determines whether this is a prominent CTA or a subtle badge. Needs decision before dev.
+        </div>
+        <div class="oq-item">
+          <strong class="oq-num">Q9 — League scoring override UX:</strong> Each competition card could show a small indicator if the user's league has overridden the scoring type (e.g. "Your league: Time-based scoring"). Where this surfaces — on the competition card vs. inside the competition detail — is unresolved.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.getElementById('modeBtn').textContent = isLight ? '🌙 Dark mode' : '☀ Light mode';
+    sessionStorage.setItem('mode', isLight ? 'light' : 'dark');
+  }
+  // Restore preference
+  if (sessionStorage.getItem('mode') === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById('modeBtn').textContent = '🌙 Dark mode';
+  }
+  </script>
+
+</body>
+</html>

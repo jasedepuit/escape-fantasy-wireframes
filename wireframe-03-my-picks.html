@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe 03 — My Picks (Stage Race Format) | Escape Fantasy</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-screen: #0A0A0A;
+      --bg-card: #181818;
+      --bg-header: #0A0A0A;
+      --bg-switcher: #1A1A1A;
+      --bg-statsbar: #141414;
+      --bg-nav: #111;
+      --text-primary: #FFFFFF;
+      --text-secondary: #888888;
+      --text-muted: #666666;
+      --border-subtle: rgba(255,255,255,0.05);
+      --border-medium: rgba(255,255,255,0.06);
+      --border-strong: rgba(255,255,255,0.07);
+      --border-header: rgba(255,255,255,0.04);
+      --page-bg: #E2E3E6;
+    }
+
+    body.light-mode {
+      --bg-screen: #F2F2F7;
+      --bg-card: #FFFFFF;
+      --bg-header: #FFFFFF;
+      --bg-switcher: #F0F0F4;
+      --bg-statsbar: #F0F0F4;
+      --bg-nav: #FFFFFF;
+      --text-primary: #111111;
+      --text-secondary: #555555;
+      --text-muted: #777777;
+      --border-subtle: rgba(0,0,0,0.07);
+      --border-medium: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.09);
+      --border-header: rgba(0,0,0,0.07);
+      --page-bg: #D8D9DC;
+    }
+
+    .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+    .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; }
+    body.light-mode .mode-toggle { background: #222; }
+
+    body.light-mode .status-icons svg { filter: invert(1) brightness(0.2); }
+    body.light-mode .status-time { color: #111; }
+    body.light-mode .app-header-back, body.light-mode .app-header-title { color: #111; }
+    body.light-mode .app-header-bell path { stroke: #111; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--page-bg);
+      padding: 40px 20px;
+    }
+
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .page-header { margin-bottom: 20px; }
+    .page-header-breadcrumb { font-size: 12px; color: #FF6F42; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.02em; }
+    .page-header-title { font-size: 26px; font-weight: 800; color: #111; margin-bottom: 6px; }
+    .page-header-meta { font-size: 13px; color: var(--text-secondary); }
+
+    /* PHONE */
+    .phone-frame {
+      width: 360px;
+      border-radius: 50px;
+      background: var(--bg-screen);
+      overflow: hidden;
+      box-shadow: 0 0 0 14px rgba(0,0,0,0.4), 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .phone-screen {
+      width: 100%;
+      height: 720px;
+      background: var(--bg-screen);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* STATUS BAR */
+    .status-bar {
+      background: var(--bg-header);
+      padding: 12px 26px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .status-time { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+
+    /* APP HEADER */
+    .app-header {
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-header);
+      padding: 10px 18px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .app-header-left { display: flex; align-items: center; gap: 6px; }
+    .app-header-back { font-size: 22px; color: var(--text-primary); font-weight: 300; }
+    .app-header-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .app-header-right { position: relative; display: flex; align-items: center; }
+    .notification-badge { position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; background: #FF6F42; border-radius: 50%; }
+
+    /* COMPETITION SWITCHER */
+    .comp-switcher {
+      background: var(--bg-switcher);
+      border-bottom: 1px solid var(--border-medium);
+      padding: 0 18px;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .comp-switcher-name { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .comp-switcher-change { font-size: 11px; font-weight: 700; color: #FF6F42; }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: var(--bg-statsbar);
+      border-bottom: 1px solid var(--border-header);
+      padding: 0 18px;
+      height: 34px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .stats-repick { font-size: 10px; color: #5DD162; font-weight: 600; }
+    .stats-autopick-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255,111,66,0.12);
+      border: 1px solid rgba(255,111,66,0.25);
+      color: #FF8055;
+      padding: 4px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* CUTOFF STRIP */
+    .cutoff-strip {
+      background: rgba(255,68,34,0.07);
+      border-bottom: 1px solid rgba(255,68,34,0.12);
+      padding: 0 18px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .pulsing-dot {
+      width: 5px; height: 5px;
+      background: #FF4422;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    .cutoff-text { font-size: 11px; font-weight: 700; color: #FF4422; }
+    .cutoff-label { font-size: 10px; color: var(--text-muted); }
+
+    /* STAGE LIST */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg-screen);
+    }
+    .scroll-area::-webkit-scrollbar { width: 4px; }
+    .scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* GENERIC STAGE ROW */
+    .stage-row {
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 40px;
+    }
+    .stage-row-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .stage-num { font-size: 10px; color: var(--text-muted); font-weight: 600; white-space: nowrap; flex-shrink: 0; width: 48px; }
+    .stage-rider { font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stage-nopick { font-size: 12px; color: var(--text-muted); font-style: italic; }
+    .stage-row-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .stage-pts-good { font-size: 11px; font-weight: 700; color: #5DD162; }
+    .stage-pts-ok { font-size: 11px; font-weight: 700; color: #F5A623; }
+    .stage-pts-low { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+    .stage-date { font-size: 10px; color: var(--text-muted); }
+    .pick-btn {
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,111,66,0.3);
+      background: transparent;
+      color: #FF6F42;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .injury-dot { width: 6px; height: 6px; background: #FF5555; border-radius: 50%; flex-shrink: 0; }
+    .default-mark { font-size: 9px; color: #F5A623; font-weight: 600; }
+
+    /* TODAY CARD */
+    .today-card {
+      margin: 6px 12px;
+      background: var(--bg-card);
+      border: 1.5px solid #FF6F42;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .today-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .today-label { font-size: 9px; font-weight: 800; color: #FF6F42; letter-spacing: 0.06em; text-transform: uppercase; }
+    .today-stage-name { font-size: 11px; color: var(--text-muted); }
+    .today-pick-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .today-pick-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid #FF6F42;
+      background: #2A2A2A;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #FF6F42;
+      flex-shrink: 0;
+    }
+    body.light-mode .avatar { background: #EEE; }
+    .today-rider { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .today-cutoff { font-size: 9px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+    .update-btn {
+      padding: 7px 12px;
+      border-radius: 7px;
+      background: #FF6F42;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .today-ai-row {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .today-ai-link { font-size: 10px; color: #FF8055; display: flex; align-items: center; gap: 3px; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      background: var(--bg-nav);
+      border-top: 1px solid var(--border-strong);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 7px 0 22px;
+      flex-shrink: 0;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; position: relative; }
+    .nav-icon { font-size: 18px; }
+    .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+    .nav-item.is-active::before { content: ''; display: block; width: 18px; height: 2px; background: #FF6F42; border-radius: 1px; margin-bottom: 1px; }
+    .nav-item.is-active .nav-label { color: #FF6F42; }
+
+    /* ANNOTATION PANEL */
+    .ann-panel { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .ann-panel-header { font-size: 13px; font-weight: 800; color: #111; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ann-item { margin-bottom: 18px; display: flex; gap: 12px; align-items: flex-start; }
+    .ann-item:last-child { margin-bottom: 0; }
+    .callout-number { width: 22px; height: 22px; border-radius: 50%; background: #FF6F42; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+    .ann-title { font-size: 13px; font-weight: 800; color: #111; margin-bottom: 3px; }
+    .ann-desc { font-size: 12px; color: #555; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="mode-toggle-wrap">
+    <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">☀ Light mode</button>
+  </div>
+
+  <div class="page-container">
+    <div>
+      <div class="page-header">
+        <div class="page-header-breadcrumb">SCREEN 3 OF 5</div>
+        <div class="page-header-title">My Picks</div>
+        <div class="page-header-meta">Stage Race Format – Tour de France 2026</div>
+      </div>
+
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- STATUS BAR -->
+          <div class="status-bar">
+            <div class="status-time">9:41</div>
+            <div class="status-icons">
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="white" opacity=".8"><rect x="0" y="3" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2" width="3" height="9" rx="1" opacity=".65"/><rect x="8" y="0" width="3" height="11" rx="1"/><rect x="12.5" y="1" width="3" height="9" rx="1" stroke="white" stroke-width="1.2" fill="none" opacity=".9"/></svg>
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="white" opacity=".8"><path d="M7.5 2.5C9.8 2.5 11.9 3.4 13.4 4.9L14.8 3.4C12.9 1.5 10.3.3 7.5.3S2.1 1.5.2 3.4L1.6 4.9C3.1 3.4 5.2 2.5 7.5 2.5Z" opacity=".4"/><path d="M7.5 5.5C9 5.5 10.3 6.1 11.3 7.1L12.7 5.6C11.3 4.3 9.5 3.5 7.5 3.5S3.7 4.3 2.3 5.6L3.7 7.1C4.7 6.1 6 5.5 7.5 5.5Z" opacity=".7"/><circle cx="7.5" cy="9.5" r="1.5"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" opacity=".85"><rect x="0" y="1" width="22" height="10" rx="3" stroke="white" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="white"/><rect x="23" y="4" width="2" height="4" rx="1" fill="white" opacity=".5"/></svg>
+            </div>
+          </div>
+
+          <!-- APP HEADER -->
+          <div class="app-header">
+            <div class="app-header-left">
+              <span class="app-header-back">‹</span>
+              <span class="app-header-title">My Picks</span>
+            </div>
+            <div class="app-header-right">
+              <svg class="app-header-bell" width="17" height="18" viewBox="0 0 17 18" fill="none" stroke="white" stroke-width="1.4">
+                <path d="M8.5 1.5C8.5 1.5 3.5 4 3.5 9.5V14H13.5V9.5C13.5 4 8.5 1.5 8.5 1.5Z" stroke-linejoin="round"/>
+                <path d="M6.5 14C6.5 15.1 7.4 16 8.5 16S10.5 15.1 10.5 14"/>
+                <path d="M8.5 1.5V0" stroke-linecap="round"/>
+              </svg>
+              <div class="notification-badge"></div>
+            </div>
+          </div>
+
+          <!-- COMPETITION SWITCHER -->
+          <div class="comp-switcher">
+            <span class="comp-switcher-name">Tour de France 2026</span>
+            <span class="comp-switcher-change">Change ›</span>
+          </div>
+
+          <!-- STATS BAR: Re-pick + Auto Pick -->
+          <div class="stats-bar">
+            <span class="stats-repick">↺ Re-pick available</span>
+            <button class="stats-autopick-btn">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 0C6 0 6.6 3.8 8.5 5.5C10.4 7.2 12 6 12 6C12 6 10.4 6.8 8.5 8.5C6.6 10.2 6 12 6 12C6 12 5.4 10.2 3.5 8.5C1.6 6.8 0 6 0 6C0 6 1.6 5.2 3.5 3.5C5.4 1.8 6 0 6 0Z"/></svg>
+              Auto Pick
+            </button>
+          </div>
+
+          <!-- CUT-OFF STRIP (today only) -->
+          <div class="cutoff-strip">
+            <div class="pulsing-dot"></div>
+            <span class="cutoff-text">2h 14m</span>
+            <span class="cutoff-label">until Stage 15 cut-off</span>
+          </div>
+
+          <!-- STAGE LIST -->
+          <div class="scroll-area">
+
+            <!-- Completed stages (compact, scroll up for earlier) -->
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 3</span>
+                <span class="stage-rider" style="color:var(--text-muted);">van den Berg, Julius <span class="default-mark">auto</span></span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-pts-low">+15 pts</span>
+              </div>
+            </div>
+
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 13</span>
+                <span class="stage-rider">Evenepoel, Remco</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-pts-good">+90 pts</span>
+              </div>
+            </div>
+
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 14</span>
+                <span class="stage-rider">Pogačar, Tadej</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-pts-good">+100 pts</span>
+              </div>
+            </div>
+
+            <!-- TODAY CARD — Stage 15 -->
+            <div class="today-card">
+              <div class="today-card-top">
+                <span class="today-label">● Today · Stage 15</span>
+                <span class="today-stage-name">Mountain · 198km</span>
+              </div>
+              <div class="today-pick-row">
+                <div class="today-pick-left">
+                  <div class="avatar">EB</div>
+                  <div>
+                    <div class="today-rider">Bernal, Egan</div>
+                    <div class="today-cutoff">
+                      <div class="pulsing-dot" style="width:4px;height:4px;"></div>
+                      Cut-off in 2h 14m
+                    </div>
+                  </div>
+                </div>
+                <button class="update-btn">Update pick →</button>
+              </div>
+              <div class="today-ai-row">
+                <div class="today-ai-link">
+                  <svg width="9" height="9" viewBox="0 0 12 12" fill="currentColor"><path d="M6 0C6 0 6.6 3.8 8.5 5.5C10.4 7.2 12 6 12 6C12 6 10.4 6.8 8.5 8.5C6.6 10.2 6 12 6 12C6 12 5.4 10.2 3.5 8.5C1.6 6.8 0 6 0 6C0 6 1.6 5.2 3.5 3.5C5.4 1.8 6 0 6 0Z"/></svg>
+                  Get AI suggestion for this stage
+                </div>
+              </div>
+            </div>
+
+            <!-- Future stages — no pick -->
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 16</span>
+                <span class="stage-nopick">No pick yet</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 19</span>
+                <button class="pick-btn">Pick →</button>
+              </div>
+            </div>
+
+            <!-- Future stage — picked, injury alert -->
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 17</span>
+                <span class="stage-rider">Vingegaard, Jonas</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 20</span>
+                <div class="injury-dot" title="Injury alert"></div>
+                <button class="pick-btn" style="border-color:rgba(255,85,85,0.4);color:#FF5555;">Change →</button>
+              </div>
+            </div>
+
+            <!-- Future stages — no pick -->
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 18</span>
+                <span class="stage-nopick">No pick yet</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 21</span>
+                <button class="pick-btn">Pick →</button>
+              </div>
+            </div>
+
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 19</span>
+                <span class="stage-nopick">No pick yet</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 22</span>
+                <button class="pick-btn">Pick →</button>
+              </div>
+            </div>
+
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 20</span>
+                <span class="stage-nopick">No pick yet</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 23</span>
+                <button class="pick-btn">Pick →</button>
+              </div>
+            </div>
+
+            <div class="stage-row">
+              <div class="stage-row-left">
+                <span class="stage-num">Stage 21 · Final</span>
+                <span class="stage-nopick">No pick yet</span>
+              </div>
+              <div class="stage-row-right">
+                <span class="stage-date">Jul 24</span>
+                <button class="pick-btn">Pick →</button>
+              </div>
+            </div>
+
+          </div><!-- end scroll-area -->
+
+          <!-- BOTTOM NAV -->
+          <div class="bottom-nav">
+            <div class="nav-item">
+              <div class="nav-icon">🏠</div>
+              <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item is-active">
+              <div class="nav-icon">🏆</div>
+              <div class="nav-label">Compete</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">🛡</div>
+              <div class="nav-label">Leagues</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">📰</div>
+              <div class="nav-label">News</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">👤</div>
+              <div class="nav-label">Account</div>
+            </div>
+          </div>
+
+        </div><!-- end phone-screen -->
+      </div><!-- end phone-frame -->
+    </div>
+
+    <!-- ANNOTATION PANEL -->
+    <div class="ann-panel">
+      <div class="ann-panel-header">Annotations</div>
+
+      <div class="ann-item">
+        <div class="callout-number">①</div>
+        <div>
+          <div class="ann-title">Competition Switcher</div>
+          <div class="ann-desc">Shows the current competition context on every Compete sub-screen. Tapping "Change ›" returns to the Competition Browser without resetting state.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">②</div>
+        <div>
+          <div class="ann-title">Stats Bar — Re-pick &amp; Auto Pick</div>
+          <div class="ann-desc">Two race-level controls. Left: Re-pick indicator in green when available (turns grey once used — allows changing one past pick if the rider hasn't scored yet). Right: Auto Pick — fills all unpicked stages using the AI engine. Positioned here, not on the Today card, to make clear this is a whole-race action.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">③</div>
+        <div>
+          <div class="ann-title">Cut-off Strip</div>
+          <div class="ann-desc">Only shown on race days when a pick window is open. Pulsing dot + countdown draws attention to the deadline. Disappears once the stage starts. If no stage is live today, this strip is hidden entirely.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">④</div>
+        <div>
+          <div class="ann-title">Today's Stage Card</div>
+          <div class="ann-desc">The only element that breaks out of the list pattern. Orange border signals this is the current action item. Shows current pick with avatar initials, cut-off time, and a clear Update pick CTA. Tapping "Update pick →" navigates to <strong>Rider Selection (Screen 4)</strong> pre-filtered to today's stage. "Get AI suggestion" is a per-stage recommendation, distinct from the race-level Auto Pick.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">⑤</div>
+        <div>
+          <div class="ann-title">Completed Stage Rows</div>
+          <div class="ann-desc">Single line: stage number · rider name · points. Colour indicates performance: green = top 5 finish, amber = top 10, grey = outside top 10. "auto" tag on Stage 3 shows the system made that pick (user missed the cut-off) — no penalty counter, just a label for transparency.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">⑥</div>
+        <div>
+          <div class="ann-title">Future Stage — No Pick → Rider Selection</div>
+          <div class="ann-desc">Italic "No pick yet" with a small "Pick →" button. Date shown when more than 24h away. Tapping anywhere on the row navigates to the <strong>Rider Selection screen (Screen 4)</strong> filtered to that stage — not a popup or inline expand. This applies to all future stage rows regardless of state (no pick, pre-picked, or injury alert).</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="callout-number">⑦</div>
+        <div>
+          <div class="ann-title">Injury Alert — Stage 17</div>
+          <div class="ann-desc">A small red dot next to the date signals a rider concern. The Pick button turns red and changes to "Change →" to make the action clear. No modal or overlay — keeps the list clean. A push notification was also sent.</div>
+        </div>
+      </div>
+
+    </div><!-- end ann-panel -->
+  </div><!-- end page-container -->
+
+  <script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.getElementById('modeBtn').textContent = isLight ? '🌙 Dark mode' : '☀ Light mode';
+    sessionStorage.setItem('mode', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('mode') === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById('modeBtn').textContent = '🌙 Dark mode';
+  }
+  </script>
+</body>
+</html>
