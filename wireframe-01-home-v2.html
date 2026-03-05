@@ -562,9 +562,17 @@
     }
     .resolved-item { font-size: 11px; color: var(--text-dimmed); margin-bottom: 5px; line-height: 1.5; }
     .resolved-item:last-child { margin-bottom: 0; }
+
+    .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+    .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+    body.light-mode .back-to-map { background: #222; }
   </style>
 </head>
 <body>
+  <div class="back-to-map-wrap">
+    <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+  </div>
+
   <div class="mode-toggle-wrap">
     <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">☀ Light mode</button>
   </div>
