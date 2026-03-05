@@ -285,8 +285,9 @@
       padding: 7px 0 22px;
       flex-shrink: 0;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; position: relative; }
-    .nav-icon { font-size: 18px; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; position: relative; color: #505050; }
+    .nav-item.is-active { color: #FF6F42; }
+    .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
     .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
     .nav-item.is-active::before { content: ''; display: block; width: 18px; height: 2px; background: #FF6F42; border-radius: 1px; margin-bottom: 1px; }
     .nav-item.is-active .nav-label { color: #FF6F42; }
@@ -509,23 +510,23 @@
           <!-- BOTTOM NAV -->
           <div class="bottom-nav">
             <div class="nav-item">
-              <div class="nav-icon">🏠</div>
+              <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
               <div class="nav-label">Home</div>
             </div>
             <div class="nav-item is-active">
-              <div class="nav-icon">🏆</div>
+              <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
               <div class="nav-label">Compete</div>
             </div>
             <div class="nav-item">
-              <div class="nav-icon">🛡</div>
+              <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
               <div class="nav-label">Leagues</div>
             </div>
             <div class="nav-item">
-              <div class="nav-icon">📰</div>
+              <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
               <div class="nav-label">News</div>
             </div>
             <div class="nav-item">
-              <div class="nav-icon">👤</div>
+              <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
               <div class="nav-label">Account</div>
             </div>
           </div>
