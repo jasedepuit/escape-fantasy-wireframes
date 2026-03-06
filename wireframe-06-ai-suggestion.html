@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 6 – AI Suggestion Overlay · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-card-alt:   #2C2C2C;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-card-alt:   #F0F0F0;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+  }
+
+  /* ── PAGE LAYOUT ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+  body.light-mode .status-icons svg { filter: invert(1) brightness(0.2); }
+  body.light-mode .status-time { color: #111; }
+
+  /* ── BACKGROUND SCREEN (Rider Selection, dimmed) ── */
+  .bg-screen {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .bg-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1;
+    pointer-events: none;
+  }
+  body.light-mode .bg-screen::after { background: rgba(0,0,0,0.3); }
+
+  .bg-header {
+    background: var(--bg-screen);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .bg-header-back { font-size: 13px; color: var(--accent); font-weight: 600; }
+  .bg-header-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+  /* AI suggestion banner in bg (what was tapped) */
+  .bg-ai-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--accent-dim);
+    border-bottom: 1px solid rgba(255,111,66,0.2);
+    flex-shrink: 0;
+  }
+  .bg-ai-icon { font-size: 16px; }
+  .bg-ai-text { font-size: 12px; font-weight: 600; color: var(--accent); }
+
+  .bg-rider-list { flex: 1; overflow: hidden; }
+  .bg-rider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .bg-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card-alt); flex-shrink: 0; }
+  .bg-rider-info { flex: 1; }
+  .bg-rider-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .bg-rider-team { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .bg-rider-pts { font-size: 11px; color: var(--text-muted); }
+
+  /* ── MODAL ── */
+  .modal {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-card);
+    border-radius: 20px 20px 0 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    max-height: 82%;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  }
+
+  .drag-handle { display: flex; justify-content: center; padding: 10px 0 6px; flex-shrink: 0; }
+  .drag-handle-bar { width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; }
+
+  /* Modal header */
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 16px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .modal-header-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .modal-header-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; }
+  .modal-header-text { flex: 1; }
+  .modal-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+  .modal-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .modal-scroll { flex: 1; overflow-y: auto; }
+
+  /* ── SUGGESTED RIDER CARD ── */
+  .suggested-rider {
+    margin: 14px 16px;
+    background: var(--bg-card-alt);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1.5px solid var(--accent);
+  }
+  .suggested-photo {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--bg-screen);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-strong);
+  }
+  .suggested-photo svg { width: 28px; height: 28px; stroke: var(--text-faint); fill: none; }
+  .suggested-meta { flex: 1; }
+  .suggested-name { font-size: 16px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+  .suggested-team-row { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+  .suggested-flag { font-size: 13px; }
+  .suggested-team { font-size: 11px; color: var(--text-muted); }
+  .suggested-badge {
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 7px; border-radius: 4px;
+    margin-top: 5px;
+    display: inline-block;
+  }
+  .suggested-rank {
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .rank-value { font-size: 22px; font-weight: 800; color: var(--accent); }
+  .rank-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+  /* ── REASONS ── */
+  .reasons-header {
+    padding: 4px 16px 8px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted);
+  }
+
+  .reason-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .reason-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--bg-card-alt);
+  }
+  .reason-icon svg { width: 15px; height: 15px; stroke: var(--text-muted); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .reason-text { flex: 1; }
+  .reason-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+  .reason-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .reason-highlight { color: var(--accent); font-weight: 700; }
+
+  /* ── ALTERNATIVES NUDGE ── */
+  .alt-nudge {
+    margin: 12px 16px 4px;
+    padding: 10px 12px;
+    background: var(--bg-card-alt);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .alt-avatars { display: flex; }
+  .alt-avatar {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--bg-screen);
+    border: 2px solid var(--bg-card-alt);
+    margin-right: -6px;
+    flex-shrink: 0;
+  }
+  .alt-avatar:last-child { margin-right: 0; }
+  .alt-text { flex: 1; font-size: 11px; color: var(--text-muted); }
+  .alt-text strong { color: var(--text-primary); }
+  .alt-chevron { font-size: 12px; color: var(--text-faint); }
+
+  /* ── CTAS ── */
+  .modal-ctas {
+    padding: 12px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  /* ── ANNOTATIONS ── */
+  .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map" target="_self">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- Background: Rider Selection screen (dimmed) -->
+    <div class="bg-screen">
+
+      <div class="bg-header">
+        <span class="bg-header-back">‹ Stage 4</span>
+        <span class="bg-header-title">Select Riders</span>
+      </div>
+
+      <!-- The tapped banner (entry point) -->
+      <div class="bg-ai-banner">
+        <span class="bg-ai-icon">✦</span>
+        <span class="bg-ai-text">Get AI Suggestion</span>
+      </div>
+
+      <div class="bg-rider-list">
+        <div class="bg-rider-row">
+          <div class="bg-avatar"></div>
+          <div class="bg-rider-info">
+            <div class="bg-rider-name">Tadej Pogačar</div>
+            <div class="bg-rider-team">UAE Team Emirates</div>
+          </div>
+          <span class="bg-rider-pts">2,850 UCI pts</span>
+        </div>
+        <div class="bg-rider-row">
+          <div class="bg-avatar"></div>
+          <div class="bg-rider-info">
+            <div class="bg-rider-name">Jonas Vingegaard</div>
+            <div class="bg-rider-team">Visma–Lease a Bike</div>
+          </div>
+          <span class="bg-rider-pts">2,640 UCI pts</span>
+        </div>
+        <div class="bg-rider-row">
+          <div class="bg-avatar"></div>
+          <div class="bg-rider-info">
+            <div class="bg-rider-name">Remco Evenepoel</div>
+            <div class="bg-rider-team">Soudal Quick-Step</div>
+          </div>
+          <span class="bg-rider-pts">2,210 UCI pts</span>
+        </div>
+      </div>
+
+      <!-- ── AI SUGGESTION MODAL ── -->
+      <div class="modal">
+        <div class="drag-handle"><div class="drag-handle-bar"></div></div>
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="modal-header-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9 9H2l5.5 4-2 7L12 16l6.5 4-2-7L22 9h-7z"/></svg>
+          </div>
+          <div class="modal-header-text">
+            <div class="modal-title">AI Suggestion · Stage 4</div>
+            <div class="modal-subtitle">Mountain finish · Col de la Croix de Fer</div>
+          </div>
+        </div>
+
+        <div class="modal-scroll">
+
+          <!-- Suggested Rider -->
+          <div class="suggested-rider">
+            <div class="suggested-photo">
+              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <div class="suggested-meta">
+              <div class="suggested-name">Tadej Pogačar</div>
+              <div class="suggested-team-row">
+                <span class="suggested-flag">🇸🇮</span>
+                <span class="suggested-team">UAE Team Emirates</span>
+              </div>
+              <span class="suggested-badge">GC / Climber</span>
+            </div>
+            <div class="suggested-rank">
+              <div class="rank-value">#1</div>
+              <div class="rank-label">Your pick</div>
+            </div>
+          </div>
+
+          <!-- Reasons -->
+          <div class="reasons-header">Why this pick</div>
+
+          <!-- Reason 1: Stage fit -->
+          <div class="reason-row">
+            <div class="reason-icon">
+              <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="reason-text">
+              <div class="reason-title">Stage type fit</div>
+              <div class="reason-detail">Summit finish at 1,990m. Pogačar's <span class="reason-highlight">climbing profile ranks 1st</span> of your available riders for this stage type.</div>
+            </div>
+          </div>
+
+          <!-- Reason 2: Current form -->
+          <div class="reason-row">
+            <div class="reason-icon">
+              <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <div class="reason-text">
+              <div class="reason-title">Current form</div>
+              <div class="reason-detail"><span class="reason-highlight">3 wins in his last 5 races</span>, including a mountain stage at Tirreno–Adriatico last week.</div>
+            </div>
+          </div>
+
+          <!-- Reason 3: Head-to-head -->
+          <div class="reason-row">
+            <div class="reason-icon">
+              <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="4"/><circle cx="15" cy="12" r="4"/></svg>
+            </div>
+            <div class="reason-text">
+              <div class="reason-title">vs. your alternatives</div>
+              <div class="reason-detail">Vingegaard and Evenepoel are still available, but both have <span class="reason-highlight">lower climbing scores</span> for this specific finish.</div>
+            </div>
+          </div>
+
+          <!-- Reason 4: Historical -->
+          <div class="reason-row">
+            <div class="reason-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="reason-text">
+              <div class="reason-title">Historical performance</div>
+              <div class="reason-detail">Won at this finish in <span class="reason-highlight">2023 and 2024</span>. One of only two riders to have won here more than once.</div>
+            </div>
+          </div>
+
+          <!-- Other options nudge -->
+          <div class="alt-nudge">
+            <div class="alt-avatars">
+              <div class="alt-avatar"></div>
+              <div class="alt-avatar"></div>
+              <div class="alt-avatar"></div>
+            </div>
+            <div class="alt-text"><strong>2 other suggestions</strong> — Vingegaard, Evenepoel</div>
+            <span class="alt-chevron">›</span>
+          </div>
+
+        </div><!-- /modal-scroll -->
+
+        <!-- CTAs -->
+        <div class="modal-ctas">
+          <button class="btn-primary">Pick Pogačar for Stage 4</button>
+          <button class="btn-secondary">Browse riders manually</button>
+        </div>
+
+      </div><!-- /modal -->
+    </div><!-- /bg-screen -->
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 6 of 6</div>
+  <div class="screen-name">AI Suggestion Overlay</div>
+  <div class="screen-desc">A bottom sheet modal triggered by tapping "Get AI Suggestion" in the Rider Selection screen. Surfaces a recommended rider for the specific stage, with transparent reasoning so the user can decide whether to trust the suggestion or browse manually.</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Entry Point</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>"Get AI Suggestion" banner</strong> — visible in the Rider Selection screen above the rider list. Tapping it triggers this modal. Distinct from Auto Pick (My Picks screen), which silently fills all remaining stages without showing this overlay.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Suggested Rider</div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>Stage context</strong> — modal header shows the stage number and key characteristic (e.g. "Mountain finish · Col de la Croix de Fer") so the user understands the basis for the suggestion.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>Recommended rider card</strong> — highlighted with an orange border to distinguish it from a regular rider row. Shows photo, name, team, speciality, and their rank among the user's available riders for this stage.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Reasoning</div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>Stage type fit</strong> — how well the rider's profile matches the stage characteristics. Key metric shown in orange.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Current form</strong> — recent race results summarised in plain language. Helps the user sanity-check the suggestion against what they may already know.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>vs. alternatives</strong> — brief head-to-head note comparing the suggestion against the user's other available riders. Reduces decision anxiety without requiring the user to manually compare.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">7</span>
+      <div class="callout-text"><strong>Historical performance</strong> — past results at this specific finish or race. Particularly useful for classics and well-established stage finishes.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">8</span>
+      <div class="callout-text"><strong>Other suggestions</strong> — tapping this row expands to show the #2 and #3 ranked alternatives with their reasoning, in case the user wants to compare before deciding.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Actions</div>
+    <div class="callout">
+      <span class="cn">9</span>
+      <div class="callout-text"><strong>Pick CTA</strong> — confirms the suggested rider for this stage and dismisses the modal. Same contextual label pattern as the Rider Profile: "Pick [Name] for Stage [N]".</div>
+    </div>
+    <div class="callout">
+      <span class="cn">10</span>
+      <div class="callout-text"><strong>Browse manually</strong> — dismisses the modal and returns the user to the full rider list, with no pick made. Preserves user control.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">This overlay is stage-specific. Auto Pick (triggered from My Picks) is a separate, silent bulk action that fills all remaining unpicked stages and does not show this screen.</div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+</script>
+</body>
+</html>
