@@ -21,10 +21,6 @@
     --accent-dim:    rgba(255,111,66,0.12);
     --border-subtle: rgba(255,255,255,0.06);
     --border-strong: rgba(255,255,255,0.12);
-    --unread-bg:     #FF6F42;
-    --rank-gold:     #F5C842;
-    --rank-silver:   #A8B8C8;
-    --rank-bronze:   #CD7F44;
   }
   body.light-mode {
     --bg-page:       #E8E8E8;
@@ -80,11 +76,56 @@
     flex-shrink: 0;
   }
   .header-title { flex: 1; font-size: 20px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
-  .header-action { flex-shrink: 0; }
   .header-action svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  /* ── MY/ALL TABS ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+    background: var(--bg-screen);
+  }
+  .tab {
+    flex: 1;
+    padding: 11px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tab.active { color: var(--accent); }
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 20%; right: 20%;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+  .tab .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px; height: 16px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 0 4px;
+    margin-left: 5px;
+    background: var(--accent);
+    color: #fff;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
 
   /* ── SCROLL CONTENT ── */
   .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 12px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
 
   /* ── ACTION BUTTONS ROW ── */
   .action-row {
@@ -106,17 +147,10 @@
     border: none;
   }
   .action-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
-  .btn-outline {
-    background: transparent;
-    border: 1.5px solid var(--border-strong);
-    color: var(--text-muted);
-  }
-  .btn-outline svg { stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary svg { stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border-strong); color: var(--text-muted); }
+  .btn-outline svg { stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ── SECTION LABEL ── */
   .section-lbl {
@@ -128,7 +162,7 @@
     padding: 4px 16px 8px;
   }
 
-  /* ── LEAGUE CARD ── */
+  /* ── LEAGUE CARD (My Leagues) ── */
   .league-card {
     background: var(--bg-card);
     margin: 0 16px 10px;
@@ -139,8 +173,6 @@
     position: relative;
   }
   .league-card:active { opacity: 0.85; }
-
-  /* Coloured top stripe keyed to league colour */
   .league-card::before {
     content: '';
     display: block;
@@ -151,11 +183,8 @@
   .league-card.stripe-green::before  { background: #4CAF50; }
   .league-card.stripe-purple::before { background: #9B59F5; }
 
-  .league-card-inner {
-    padding: 12px 14px;
-  }
+  .league-card-inner { padding: 12px 14px; }
 
-  /* Top row: avatar + names + arrow */
   .league-top {
     display: flex;
     align-items: center;
@@ -184,23 +213,43 @@
     text-overflow: ellipsis;
     letter-spacing: -0.01em;
   }
-  .league-comp {
-    font-size: 11px;
+  .league-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    font-size: 10px;
+    font-weight: 600;
     color: var(--text-muted);
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meta-chip svg { width: 10px; height: 10px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .meta-dot { color: var(--text-faint); font-size: 10px; }
+
+  .director-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(255,111,66,0.2);
+    color: var(--accent);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-top: 4px;
   }
 
-  .league-chevron {
-    flex-shrink: 0;
-    color: var(--text-faint);
-    font-size: 18px;
-    line-height: 1;
-  }
+  .league-chevron { flex-shrink: 0; color: var(--text-faint); font-size: 18px; line-height: 1; }
 
-  /* Stats row */
+  /* Stats row — competition-agnostic */
   .league-stats {
     display: flex;
     gap: 0;
@@ -229,33 +278,25 @@
     font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 5px;
   }
-  .rank-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px; height: 16px;
-    border-radius: 50%;
+  .ls-value.accent { color: var(--accent); }
+  .ls-sub {
     font-size: 9px;
-    font-weight: 900;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 1px;
+    line-height: 1.2;
   }
-  .rank-gold   { background: rgba(245,200,66,0.2); color: var(--rank-gold); }
-  .rank-silver { background: rgba(168,184,200,0.2); color: var(--rank-silver); }
-  .rank-bronze { background: rgba(205,127,68,0.2); color: var(--rank-bronze); }
 
   /* Unread chat badge */
   .unread-dot {
     position: absolute;
-    top: 12px; right: 38px;
+    top: 14px; right: 38px;
     background: var(--accent);
     color: #fff;
     font-size: 9px;
     font-weight: 900;
-    min-width: 16px;
-    height: 16px;
+    min-width: 16px; height: 16px;
     border-radius: 8px;
     padding: 0 4px;
     display: flex;
@@ -263,47 +304,138 @@
     justify-content: center;
   }
 
-  /* ── DIRECTOR TAG ── */
-  .director-tag {
-    display: inline-flex;
+  /* ── ALL LEAGUES — search bar ── */
+  .search-bar-wrap {
+    padding: 12px 16px 6px;
+  }
+  .search-bar {
+    display: flex;
     align-items: center;
-    gap: 4px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(255,111,66,0.2);
-    color: var(--accent);
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 4px;
-    margin-top: 4px;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 9px 12px;
   }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    margin: 8px 16px 0;
-    padding: 20px 16px;
-    border-radius: 14px;
-    border: 1.5px dashed var(--border-strong);
-    text-align: center;
-  }
-  .empty-icon { font-size: 28px; margin-bottom: 8px; }
-  .empty-title {
+  .search-bar svg { width: 15px; height: 15px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; flex-shrink: 0; }
+  .search-placeholder {
     font-size: 13px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-  }
-  .empty-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.5;
+    color: var(--text-faint);
+    flex: 1;
   }
 
-  /* ── DISCOVER SECTION ── */
-  .discover-section {
-    margin: 12px 16px 0;
+  /* ── FILTER CHIPS ── */
+  .filter-chips {
+    display: flex;
+    gap: 7px;
+    padding: 8px 16px 4px;
+    overflow-x: auto;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1.5px solid var(--border-strong);
+    color: var(--text-muted);
+    background: transparent;
+    cursor: pointer;
+  }
+  .chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── ALL LEAGUES CARD ── */
+  .all-league-card {
+    background: var(--bg-card);
+    margin: 0 16px 10px;
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    position: relative;
+  }
+  .all-league-card::before {
+    content: '';
+    display: block;
+    height: 3px;
+  }
+  .alc-stripe-orange::before { background: #FF6F42; }
+  .alc-stripe-teal::before   { background: #26A69A; }
+  .alc-stripe-indigo::before { background: #5C6BC0; }
+  .alc-stripe-red::before    { background: #EF5350; }
+  .alc-stripe-gold::before   { background: #FFA726; }
+
+  .all-league-inner {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .alc-avatar {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .alc-av-orange { background: rgba(255,111,66,0.15); }
+  .alc-av-teal   { background: rgba(38,166,154,0.15); }
+  .alc-av-indigo { background: rgba(92,107,192,0.15); }
+  .alc-av-red    { background: rgba(239,83,80,0.15); }
+  .alc-av-gold   { background: rgba(255,167,38,0.15); }
+
+  .alc-info { flex: 1; min-width: 0; }
+  .alc-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+  }
+  .alc-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .alc-meta-chip {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .alc-meta-chip svg { width: 10px; height: 10px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .alc-meta-dot { color: var(--text-faint); }
+
+  .join-btn {
+    flex-shrink: 0;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .join-btn.joined {
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    color: var(--text-muted);
+  }
+
+  /* ── INVITE ROW ── */
+  .invite-row {
+    margin: 8px 16px 0;
     padding: 12px 14px;
     background: var(--bg-card);
     border-radius: 14px;
@@ -313,7 +445,7 @@
     gap: 12px;
     cursor: pointer;
   }
-  .discover-icon {
+  .invite-icon {
     width: 36px; height: 36px;
     border-radius: 10px;
     background: var(--accent-dim);
@@ -321,21 +453,10 @@
     font-size: 18px;
     flex-shrink: 0;
   }
-  .discover-text { flex: 1; }
-  .discover-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-  .discover-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .discover-arrow {
-    font-size: 18px;
-    color: var(--text-faint);
-  }
+  .invite-text { flex: 1; }
+  .invite-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .invite-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .invite-arrow { font-size: 18px; color: var(--text-faint); }
 
   /* ── BOTTOM NAV ── */
   .bottom-nav {
@@ -352,9 +473,8 @@
   .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
   .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
   .nav-item.is-active .nav-label { color: #FF6F42; }
-
-  /* Unread dot on nav Leagues icon */
-  .nav-item .nav-dot {
+  .nav-icon-wrap { position: relative; display: inline-flex; }
+  .nav-dot {
     position: absolute;
     top: 0px; right: -2px;
     width: 7px; height: 7px;
@@ -362,7 +482,6 @@
     background: var(--accent);
     border: 1.5px solid var(--bg-nav);
   }
-  .nav-icon-wrap { position: relative; display: inline-flex; }
 
   /* ── ANNOTATIONS ── */
   .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
@@ -406,134 +525,308 @@
     <div class="app-header">
       <div class="header-title">Leagues</div>
       <div class="header-action">
-        <!-- Search icon -->
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
       </div>
     </div>
 
-    <!-- Scroll content -->
+    <!-- My Leagues / All Leagues tabs -->
+    <div class="tab-bar">
+      <div class="tab active" id="tab-mine" onclick="switchTab('mine')">
+        My Leagues <span class="tab-count">3</span>
+      </div>
+      <div class="tab" id="tab-all" onclick="switchTab('all')">All Leagues</div>
+    </div>
+
+    <!-- ══ SCROLL AREA ══ -->
     <div class="scroll-content">
 
-      <!-- Create / Join buttons -->
-      <div class="action-row">
-        <button class="action-btn btn-primary">
-          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Create League
-        </button>
-        <button class="action-btn btn-outline">
-          <svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/></svg>
-          Join by Code
-        </button>
-      </div>
+      <!-- ── MY LEAGUES PANEL ── -->
+      <div class="tab-panel active" id="panel-mine">
 
-      <!-- My Leagues section -->
-      <div class="section-lbl">My Leagues · 3</div>
+        <!-- Create / Join buttons -->
+        <div class="action-row">
+          <button class="action-btn btn-primary">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Create League
+          </button>
+          <button class="action-btn btn-outline">
+            <svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/></svg>
+            Join by Code
+          </button>
+        </div>
 
-      <!-- League 1: Escape Collective HQ — user is director, unread chat -->
-      <div class="league-card stripe-orange">
-        <div class="unread-dot">4</div>
-        <div class="league-card-inner">
-          <div class="league-top">
-            <div class="league-avatar avatar-orange">🛡️</div>
-            <div class="league-names">
-              <div class="league-name">Escape Collective HQ</div>
-              <div class="league-comp">Tour de France 2026</div>
-              <div class="director-tag">
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3 7h7l-6 4.5 2.3 7L12 16.5 5.7 20.5 8 13.5 2 9h7z"/></svg>
-                League Director
+        <!-- League 1: Escape Collective HQ — director, unread chat -->
+        <div class="league-card stripe-orange">
+          <div class="unread-dot">4</div>
+          <div class="league-card-inner">
+            <div class="league-top">
+              <div class="league-avatar avatar-orange">🛡️</div>
+              <div class="league-names">
+                <div class="league-name">Escape Collective HQ</div>
+                <div class="league-meta">
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    18 members
+                  </span>
+                  <span class="meta-dot">·</span>
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    2 active comps
+                  </span>
+                </div>
+                <div class="director-tag">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3 7h7l-6 4.5 2.3 7L12 16.5 5.7 20.5 8 13.5 2 9h7z"/></svg>
+                  League Director
+                </div>
+              </div>
+              <div class="league-chevron">›</div>
+            </div>
+            <div class="league-stats">
+              <div class="league-stat">
+                <span class="ls-label">Members</span>
+                <span class="ls-value">18</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Active Comps</span>
+                <span class="ls-value accent">2</span>
+                <span class="ls-sub">TdF · Vuelta</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Chat</span>
+                <span class="ls-value accent">4</span>
+                <span class="ls-sub">unread msgs</span>
               </div>
             </div>
-            <div class="league-chevron">›</div>
-          </div>
-          <div class="league-stats">
-            <div class="league-stat">
-              <span class="ls-label">Your Rank</span>
-              <span class="ls-value">
-                <span class="rank-badge rank-gold">★</span>1st
-              </span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Members</span>
-              <span class="ls-value">18</span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Your Pts</span>
-              <span class="ls-value">1,240</span>
-            </div>
           </div>
         </div>
-      </div>
 
-      <!-- League 2: Couch Domestiques — mid rank, no unread -->
-      <div class="league-card stripe-blue">
-        <div class="league-card-inner">
-          <div class="league-top">
-            <div class="league-avatar avatar-blue">🚴</div>
-            <div class="league-names">
-              <div class="league-name">Couch Domestiques</div>
-              <div class="league-comp">Tour de France 2026</div>
+        <!-- League 2: Couch Domestiques — no unread -->
+        <div class="league-card stripe-blue">
+          <div class="league-card-inner">
+            <div class="league-top">
+              <div class="league-avatar avatar-blue">🚴</div>
+              <div class="league-names">
+                <div class="league-name">Couch Domestiques</div>
+                <div class="league-meta">
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    7 members
+                  </span>
+                  <span class="meta-dot">·</span>
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    1 active comp
+                  </span>
+                </div>
+              </div>
+              <div class="league-chevron">›</div>
             </div>
-            <div class="league-chevron">›</div>
-          </div>
-          <div class="league-stats">
-            <div class="league-stat">
-              <span class="ls-label">Your Rank</span>
-              <span class="ls-value">
-                <span class="rank-badge rank-bronze">★</span>3rd
-              </span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Members</span>
-              <span class="ls-value">7</span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Your Pts</span>
-              <span class="ls-value">1,240</span>
+            <div class="league-stats">
+              <div class="league-stat">
+                <span class="ls-label">Members</span>
+                <span class="ls-value">7</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Active Comps</span>
+                <span class="ls-value">1</span>
+                <span class="ls-sub">Tour de France</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Chat</span>
+                <span class="ls-value" style="color:var(--text-faint);">—</span>
+                <span class="ls-sub">no new msgs</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- League 3: Gran Fondo Nerds — different competition, unread chat -->
-      <div class="league-card stripe-green">
-        <div class="unread-dot">12</div>
-        <div class="league-card-inner">
-          <div class="league-top">
-            <div class="league-avatar avatar-green">⛰️</div>
-            <div class="league-names">
-              <div class="league-name">Gran Fondo Nerds</div>
-              <div class="league-comp">Vuelta a España 2026</div>
+        <!-- League 3: Gran Fondo Nerds — unread chat -->
+        <div class="league-card stripe-green">
+          <div class="unread-dot">12</div>
+          <div class="league-card-inner">
+            <div class="league-top">
+              <div class="league-avatar avatar-green">⛰️</div>
+              <div class="league-names">
+                <div class="league-name">Gran Fondo Nerds</div>
+                <div class="league-meta">
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    24 members
+                  </span>
+                  <span class="meta-dot">·</span>
+                  <span class="meta-chip">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    3 active comps
+                  </span>
+                </div>
+              </div>
+              <div class="league-chevron">›</div>
             </div>
-            <div class="league-chevron">›</div>
-          </div>
-          <div class="league-stats">
-            <div class="league-stat">
-              <span class="ls-label">Your Rank</span>
-              <span class="ls-value">
-                <span class="rank-badge rank-silver">★</span>2nd
-              </span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Members</span>
-              <span class="ls-value">24</span>
-            </div>
-            <div class="league-stat">
-              <span class="ls-label">Your Pts</span>
-              <span class="ls-value">880</span>
+            <div class="league-stats">
+              <div class="league-stat">
+                <span class="ls-label">Members</span>
+                <span class="ls-value">24</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Active Comps</span>
+                <span class="ls-value accent">3</span>
+                <span class="ls-sub">TdF · Vuelta · Giro</span>
+              </div>
+              <div class="league-stat">
+                <span class="ls-label">Chat</span>
+                <span class="ls-value accent">12</span>
+                <span class="ls-sub">unread msgs</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Invite a friend row -->
-      <div class="discover-section">
-        <div class="discover-icon">👥</div>
-        <div class="discover-text">
-          <div class="discover-title">Invite a friend</div>
-          <div class="discover-sub">Share a link · they join any of your leagues</div>
+        <!-- Invite a friend -->
+        <div class="invite-row">
+          <div class="invite-icon">👥</div>
+          <div class="invite-text">
+            <div class="invite-title">Invite a friend</div>
+            <div class="invite-sub">Share a link · they choose which league to join</div>
+          </div>
+          <div class="invite-arrow">›</div>
         </div>
-        <div class="discover-arrow">›</div>
-      </div>
+
+      </div><!-- /panel-mine -->
+
+      <!-- ── ALL LEAGUES PANEL ── -->
+      <div class="tab-panel" id="panel-all">
+
+        <!-- Search -->
+        <div class="search-bar-wrap">
+          <div class="search-bar">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span class="search-placeholder">Search public leagues…</span>
+          </div>
+        </div>
+
+        <!-- Competition filter chips -->
+        <div class="filter-chips">
+          <div class="chip active">All</div>
+          <div class="chip">Tour de France</div>
+          <div class="chip">Vuelta 2026</div>
+          <div class="chip">Giro 2026</div>
+        </div>
+
+        <div class="section-lbl" style="padding-top:8px;">Public Leagues · 147</div>
+
+        <!-- All-leagues cards -->
+
+        <!-- 1: Velominati — already joined -->
+        <div class="all-league-card alc-stripe-orange">
+          <div class="all-league-inner">
+            <div class="alc-avatar alc-av-orange">🔱</div>
+            <div class="alc-info">
+              <div class="alc-name">Velominati</div>
+              <div class="alc-meta">
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  312 members
+                </span>
+                <span class="alc-meta-dot">·</span>
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  TdF · Vuelta
+                </span>
+              </div>
+            </div>
+            <button class="join-btn joined">Joined</button>
+          </div>
+        </div>
+
+        <!-- 2: Not joined -->
+        <div class="all-league-card alc-stripe-teal">
+          <div class="all-league-inner">
+            <div class="alc-avatar alc-av-teal">🌊</div>
+            <div class="alc-info">
+              <div class="alc-name">Strava Sufferlandrians</div>
+              <div class="alc-meta">
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  86 members
+                </span>
+                <span class="alc-meta-dot">·</span>
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  Tour de France
+                </span>
+              </div>
+            </div>
+            <button class="join-btn">Join</button>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="all-league-card alc-stripe-indigo">
+          <div class="all-league-inner">
+            <div class="alc-avatar alc-av-indigo">🏔️</div>
+            <div class="alc-info">
+              <div class="alc-name">Climbers Anonymous</div>
+              <div class="alc-meta">
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  54 members
+                </span>
+                <span class="alc-meta-dot">·</span>
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  TdF · Vuelta · Giro
+                </span>
+              </div>
+            </div>
+            <button class="join-btn">Join</button>
+          </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="all-league-card alc-stripe-red">
+          <div class="all-league-inner">
+            <div class="alc-avatar alc-av-red">🔥</div>
+            <div class="alc-info">
+              <div class="alc-name">Peloton Punters</div>
+              <div class="alc-meta">
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  201 members
+                </span>
+                <span class="alc-meta-dot">·</span>
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  Tour de France
+                </span>
+              </div>
+            </div>
+            <button class="join-btn">Join</button>
+          </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="all-league-card alc-stripe-gold">
+          <div class="all-league-inner">
+            <div class="alc-avatar alc-av-gold">⚡</div>
+            <div class="alc-info">
+              <div class="alc-name">Watt Warriors</div>
+              <div class="alc-meta">
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  38 members
+                </span>
+                <span class="alc-meta-dot">·</span>
+                <span class="alc-meta-chip">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  Vuelta · Giro
+                </span>
+              </div>
+            </div>
+            <button class="join-btn">Join</button>
+          </div>
+        </div>
+
+      </div><!-- /panel-all -->
 
     </div><!-- /scroll-content -->
 
@@ -573,61 +866,50 @@
 <div class="annotation-panel">
   <div class="screen-title">Screen 9</div>
   <div class="screen-name">League List</div>
-  <div class="screen-desc">The Leagues tab root. Shows all competitions leagues the user has joined or created, across all active competitions. Entry point to League Detail (Standings + Chat).</div>
+  <div class="screen-desc">The Leagues tab root. Two tabs: My Leagues (leagues the user has joined) and All Leagues (public leagues open to join). League cards show membership and activity stats — not competition-scoped rank or points, since a league can span multiple competitions simultaneously.</div>
 
   <div class="ann-group">
-    <div class="ann-label">Header Actions</div>
+    <div class="ann-label">My Leagues Tab</div>
     <div class="callout">
       <span class="cn">1</span>
-      <div class="callout-text"><strong>Search icon</strong> — search for a specific league by name. Useful when a user is in many leagues and wants to find one quickly.</div>
+      <div class="callout-text"><strong>Create / Join by Code buttons</strong> — Create starts the league creation flow (Screen 11: name, logo, colour, settings). Join by Code opens a simple entry screen (Screen 12) for a 6-character invite code.</div>
     </div>
     <div class="callout">
       <span class="cn">2</span>
-      <div class="callout-text"><strong>Create League</strong> — opens the Create League flow (Screen 11). Fills the league name, sets competition scope, and generates an invite code.</div>
+      <div class="callout-text"><strong>League card stats: Members · Active Comps · Chat</strong> — these are intentionally competition-agnostic. A league is a persistent group; rank and points only make sense inside a specific competition's context, accessed from League Detail. Active Comps names the current races in orange when count > 1.</div>
     </div>
     <div class="callout">
       <span class="cn">3</span>
-      <div class="callout-text"><strong>Join by Code</strong> — opens the Join by Code screen (Screen 12). User enters a 6-character code shared by a league director.</div>
+      <div class="callout-text"><strong>Unread chat badge</strong> — orange pill on the card and mirrored as a dot on the nav icon. Disappears after the user opens the Chat tab in League Detail.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>League Director tag</strong> — shown on leagues the user created or was granted director rights. Directors can rename the league, remove members, and generate new invite codes (from within League Settings).</div>
     </div>
   </div>
 
   <div class="ann-group">
-    <div class="ann-label">League Cards</div>
-    <div class="callout">
-      <span class="cn">4</span>
-      <div class="callout-text"><strong>Coloured stripe</strong> — each league gets a unique accent colour (set by the director or auto-assigned). The stripe and avatar background share the same hue for visual coherence.</div>
-    </div>
+    <div class="ann-label">All Leagues Tab</div>
     <div class="callout">
       <span class="cn">5</span>
-      <div class="callout-text"><strong>Competition context</strong> — leagues are scoped to a competition. The sub-label shows which race this league belongs to, so users can distinguish leagues across different events.</div>
+      <div class="callout-text"><strong>Public leagues only</strong> — leagues created with "Invite Only" turned off appear here. Invite-only leagues are hidden from this list; the only way to join them is via a shared code.</div>
     </div>
     <div class="callout">
       <span class="cn">6</span>
-      <div class="callout-text"><strong>Rank badge + stats row</strong> — shows Your Rank (with gold/silver/bronze colouring for top 3), Members count, and Your Pts within this league. Points match the competition score — leagues are just filtered views of the main leaderboard.</div>
+      <div class="callout-text"><strong>Competition filter chips</strong> — narrows the list to leagues active in a particular race. "All" shows every public league regardless of competition. Useful when a user wants to join a TdF-specific group.</div>
     </div>
     <div class="callout">
       <span class="cn">7</span>
-      <div class="callout-text"><strong>Unread chat badge</strong> — orange pill in the top-right of the card shows the number of unread messages in the league chat. Also reflected as a dot on the Leagues nav icon when any league has unread activity.</div>
-    </div>
-    <div class="callout">
-      <span class="cn">8</span>
-      <div class="callout-text"><strong>League Director tag</strong> — shown on leagues where the user is the director/admin. Directors can rename the league, remove members, and generate new invite codes.</div>
-    </div>
-  </div>
-
-  <div class="ann-group">
-    <div class="ann-label">Other Elements</div>
-    <div class="callout">
-      <span class="cn">9</span>
-      <div class="callout-text"><strong>Invite a friend row</strong> — persistent CTA at the bottom. Generates a generic invite link that the friend can use to join any of the user's leagues (they choose which on the next screen).</div>
+      <div class="callout-text"><strong>Join button</strong> — one tap to join (no confirmation needed for public leagues). Already-joined leagues show a greyed "Joined" state instead. After joining, the league immediately appears in the My Leagues tab.</div>
     </div>
   </div>
 
   <hr class="divider">
-  <div class="nav-note">Tapping a league card navigates to League Detail, which has two tabs: Standings (the filtered leaderboard) and Chat. These are planned as Screen 10. The Create League and Join by Code flows are Screens 11 and 12.</div>
+  <div class="nav-note">Tapping a league card on either tab navigates to League Detail (Screen 10), which has Standings and Chat sub-tabs. Rank/points within a specific competition are shown there, not here.</div>
 </div>
 
 <script>
+  /* ── THEME ── */
   function toggleMode() {
     const isLight = document.body.classList.toggle('light-mode');
     document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
@@ -637,6 +919,26 @@
     document.body.classList.add('light-mode');
     document.querySelector('.mode-toggle').textContent = '🌙 Dark';
   }
+
+  /* ── TAB SWITCHER ── */
+  function switchTab(which) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + which).classList.add('active');
+    document.getElementById('panel-' + which).classList.add('active');
+  }
+
+  /* ── ALL LEAGUES: join button toggle (wireframe interaction) ── */
+  document.querySelectorAll('.join-btn:not(.joined)').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.textContent = 'Joined';
+      this.classList.add('joined');
+      // bump My Leagues count
+      const countEl = document.querySelector('#tab-mine .tab-count');
+      countEl.textContent = parseInt(countEl.textContent) + 1;
+    });
+  });
 </script>
 </body>
 </html>
