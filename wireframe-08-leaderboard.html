@@ -19,6 +19,7 @@
     --text-faint:     #555;
     --accent:         #FF6F42;
     --accent-dim:     rgba(255,111,66,0.12);
+    --accent-flash:   rgba(255,111,66,0.38);
     --border-subtle:  rgba(255,255,255,0.06);
     --border-strong:  rgba(255,255,255,0.12);
     --up-color:       #4CAF50;
@@ -103,9 +104,7 @@
     position: relative;
     cursor: pointer;
   }
-  .tab.active {
-    color: var(--accent);
-  }
+  .tab.active { color: var(--accent); }
   .tab.active::after {
     content: '';
     position: absolute;
@@ -132,10 +131,7 @@
     color: var(--text-muted);
     margin-bottom: 8px;
   }
-  .my-stats-row {
-    display: flex;
-    gap: 0;
-  }
+  .my-stats-row { display: flex; gap: 0; }
   .my-stat {
     flex: 1;
     display: flex;
@@ -159,7 +155,29 @@
     color: var(--text-primary);
     letter-spacing: -0.02em;
   }
-  .my-stat-value.accent { color: var(--accent); }
+  .my-stat-value.accent {
+    color: var(--accent);
+    cursor: pointer;
+    position: relative;
+  }
+  /* Tap hint underline on rank value */
+  .my-stat-value.accent::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.4;
+    border-radius: 1px;
+    margin-top: 1px;
+  }
+  .my-stat-hint {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-top: -1px;
+  }
 
   /* ── COLUMN HEADERS ── */
   .col-headers {
@@ -193,8 +211,18 @@
   .player-row:active { background: var(--bg-card); }
 
   /* Logged-in user's row */
-  .player-row.is-me {
-    background: var(--accent-dim);
+  .player-row.is-me { background: var(--accent-dim); }
+
+  /* Pulse animation when jumping to own row */
+  @keyframes row-pulse {
+    0%   { background: var(--accent-dim); }
+    30%  { background: var(--accent-flash); }
+    60%  { background: var(--accent-dim); }
+    80%  { background: var(--accent-flash); }
+    100% { background: var(--accent-dim); }
+  }
+  .player-row.is-me.jump-pulse {
+    animation: row-pulse 0.8s ease;
   }
 
   .player-rank {
@@ -228,7 +256,7 @@
     border-radius: 4px;
     margin-left: 6px;
   }
-  .pos-change.up { background: var(--up-dim); color: var(--up-color); }
+  .pos-change.up   { background: var(--up-dim);   color: var(--up-color); }
   .pos-change.down { background: var(--down-dim); color: var(--down-color); }
   .pos-change svg { width: 8px; height: 8px; }
 
@@ -316,7 +344,8 @@
       <div class="my-stats-row">
         <div class="my-stat">
           <span class="my-stat-label">Rank</span>
-          <span class="my-stat-value accent">23rd</span>
+          <span class="my-stat-value accent" id="myRankJump" title="Tap to jump to your row">23rd</span>
+          <span class="my-stat-hint">tap to find me</span>
         </div>
         <div class="my-stat">
           <span class="my-stat-label">Points</span>
@@ -336,119 +365,8 @@
       <span class="col-lbl right">Points</span>
     </div>
 
-    <!-- Player List -->
-    <div class="player-list">
-
-      <div class="player-row">
-        <span class="player-rank top3">1</span>
-        <div class="player-identity">
-          <span class="player-flag">🇫🇷</span>
-          <span class="player-name">Mathieu</span>
-        </div>
-        <span class="player-pts">1,425</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank top3">2</span>
-        <div class="player-identity">
-          <span class="player-flag">🇩🇪</span>
-          <span class="player-name">KleinAdler</span>
-          <span class="pos-change up">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>3
-          </span>
-        </div>
-        <span class="player-pts">1,390</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank top3">3</span>
-        <div class="player-identity">
-          <span class="player-flag">🇬🇧</span>
-          <span class="player-name">VeloVince</span>
-          <span class="pos-change down">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>1
-          </span>
-        </div>
-        <span class="player-pts">1,380</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">4</span>
-        <div class="player-identity">
-          <span class="player-flag">🇧🇪</span>
-          <span class="player-name">Flamme Rouge</span>
-          <span class="pos-change up">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>2
-          </span>
-        </div>
-        <span class="player-pts">1,350</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">5</span>
-        <div class="player-identity">
-          <span class="player-flag">🇳🇱</span>
-          <span class="player-name">WielerWatcher</span>
-        </div>
-        <span class="player-pts">1,310</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">6</span>
-        <div class="player-identity">
-          <span class="player-flag">🇮🇹</span>
-          <span class="player-name">Peloton Pete</span>
-          <span class="pos-change down">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>2
-          </span>
-        </div>
-        <span class="player-pts">1,290</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">7</span>
-        <div class="player-identity">
-          <span class="player-flag">🇦🇺</span>
-          <span class="player-name">SaddleUp</span>
-        </div>
-        <span class="player-pts">1,275</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">8</span>
-        <div class="player-identity">
-          <span class="player-flag">🇨🇭</span>
-          <span class="player-name">AlpineRider</span>
-          <span class="pos-change up">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>4
-          </span>
-        </div>
-        <span class="player-pts">1,260</span>
-      </div>
-
-      <div class="player-row">
-        <span class="player-rank">9</span>
-        <div class="player-identity">
-          <span class="player-flag">🇪🇸</span>
-          <span class="player-name">GranFondo99</span>
-        </div>
-        <span class="player-pts">1,250</span>
-      </div>
-
-      <!-- Logged-in user row -->
-      <div class="player-row is-me">
-        <span class="player-rank">23</span>
-        <div class="player-identity">
-          <span class="player-flag">🇦🇺</span>
-          <span class="player-name">Jason De Puit</span>
-          <span class="pos-change up">
-            <svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>2
-          </span>
-        </div>
-        <span class="player-pts">1,240</span>
-      </div>
-
-    </div><!-- /player-list -->
+    <!-- Player List (populated by JS) -->
+    <div class="player-list" id="playerList"></div>
 
     <!-- Bottom Nav (Compete active) -->
     <div class="bottom-nav">
@@ -481,7 +399,7 @@
 <div class="annotation-panel">
   <div class="screen-title">Screen 8</div>
   <div class="screen-name">Leaderboard</div>
-  <div class="screen-desc">Accessed from the "Leaderboard ›" button on active competition tiles in the Home screen and Competition Browser. Shows all players ranked by points for the selected competition, with the logged-in user's row always highlighted.</div>
+  <div class="screen-desc">Accessed from the "Leaderboard ›" button on active competition tiles in the Home screen and Competition Browser. Shows the top 100 players ranked by points, with the logged-in user's row always highlighted.</div>
 
   <div class="ann-group">
     <div class="ann-label">Header & Tabs</div>
@@ -495,7 +413,7 @@
     </div>
     <div class="callout">
       <span class="cn">3</span>
-      <div class="callout-text"><strong>Leaderboard | Leagues tabs</strong> — Leaderboard shows the global competition ranking. Leagues tab filters the same list to only show members of a specific league. If the user isn't in any leagues for this competition, the Leagues tab shows an empty state with an invite prompt.</div>
+      <div class="callout-text"><strong>Leaderboard | Leagues tabs</strong> — Leaderboard shows the global competition ranking. Leagues tab filters to only show members of a specific league. If the user isn't in any leagues, the Leagues tab shows an empty state with an invite prompt.</div>
     </div>
   </div>
 
@@ -503,26 +421,30 @@
     <div class="ann-label">My Stats</div>
     <div class="callout">
       <span class="cn">4</span>
-      <div class="callout-text"><strong>Pinned summary card</strong> — always visible above the list regardless of scroll position. Shows the user's current rank (in orange), total points, and points behind the leader. Gives instant context without needing to scroll to find your own row.</div>
+      <div class="callout-text"><strong>Pinned summary card</strong> — always visible above the list regardless of scroll position. Shows the user's current rank (in orange), total points, and points behind the leader.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Tap My Rank → jump to row</strong> — tapping the orange rank number scrolls the list directly to the user's own row and triggers a brief orange pulse highlight to confirm the location. A "tap to find me" hint label signals this affordance.</div>
     </div>
   </div>
 
   <div class="ann-group">
     <div class="ann-label">Player Rows</div>
     <div class="callout">
-      <span class="cn">5</span>
+      <span class="cn">6</span>
       <div class="callout-text"><strong>Top 3 rank highlight</strong> — positions 1–3 show the rank number in orange to visually distinguish the podium from the rest of the field.</div>
     </div>
     <div class="callout">
-      <span class="cn">6</span>
-      <div class="callout-text"><strong>Position change badge</strong> — green upward arrow with number of places gained, red downward arrow with places dropped. Only shown when there has been a change since the previous stage result. No badge = no change.</div>
-    </div>
-    <div class="callout">
       <span class="cn">7</span>
-      <div class="callout-text"><strong>Logged-in user row</strong> — highlighted with an orange tint and bold name/points so the user can quickly locate themselves in the list when scrolling. Matches the rank shown in the My Stats card above.</div>
+      <div class="callout-text"><strong>Position change badge</strong> — green upward arrow with places gained, red downward arrow with places dropped. Only shown when there has been a change since the previous stage result. No badge = no change.</div>
     </div>
     <div class="callout">
       <span class="cn">8</span>
+      <div class="callout-text"><strong>Logged-in user row</strong> — highlighted with an orange tint and bold name/points so the user can quickly locate themselves while scrolling.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">9</span>
       <div class="callout-text"><strong>Tap any row</strong> — navigates to the Per-Stage Results screen (Screen 7) for that player, showing their pick history across all stages.</div>
     </div>
   </div>
@@ -532,6 +454,7 @@
 </div>
 
 <script>
+  /* ── THEME TOGGLE ── */
   function toggleMode() {
     const isLight = document.body.classList.toggle('light-mode');
     document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
@@ -541,6 +464,162 @@
     document.body.classList.add('light-mode');
     document.querySelector('.mode-toggle').textContent = '🌙 Dark';
   }
+
+  /* ── PLAYER DATA ──
+     Format: [rank, flag, name, changeDelta, points, isMe]
+     changeDelta > 0 = moved up, < 0 = moved down, 0 = no change
+  */
+  const PLAYERS = [
+    [1,  '🇫🇷', 'Mathieu',         0,  1425],
+    [2,  '🇩🇪', 'KleinAdler',      3,  1390],
+    [3,  '🇬🇧', 'VeloVince',      -1,  1375],
+    [4,  '🇧🇪', 'Flamme Rouge',    2,  1356],
+    [5,  '🇳🇱', 'WielerWatcher',   0,  1340],
+    [6,  '🇮🇹', 'Peloton Pete',   -2,  1325],
+    [7,  '🇦🇺', 'SaddleUp',        0,  1310],
+    [8,  '🇨🇭', 'AlpineRider',     4,  1298],
+    [9,  '🇪🇸', 'GranFondo99',     0,  1285],
+    [10, '🇺🇸', 'TourHunter',      1,  1274],
+    [11, '🇫🇷', 'MaillotJaune',   -3,  1268],
+    [12, '🇩🇰', 'CycloNord',       0,  1262],
+    [13, '🇳🇱', 'RijwielRob',      2,  1257],
+    [14, '🇧🇪', 'Domestique77',   -1,  1253],
+    [15, '🇮🇹', 'PedaleForte',     0,  1250],
+    [16, '🇬🇧', 'KettleClimb',     5,  1248],
+    [17, '🇳🇿', 'VelosophyNZ',     0,  1246],
+    [18, '🇨🇭', 'Cimalp18',       -2,  1244],
+    [19, '🇸🇮', 'PirinaRider',     0,  1243],
+    [20, '🇫🇷', 'EchelonBreak',    1,  1242],
+    [21, '🇨🇴', 'AltitudePro',     0,  1241],
+    [22, '🇩🇪', 'SprintMeister',  -1,  1241],
+    [23, '🇦🇺', 'Jason De Puit',   2,  1240, true],  /* ← logged-in user */
+    [24, '🇵🇹', 'VoltaCyclist',    0,  1238],
+    [25, '🇳🇴', 'FjordRider',      3,  1235],
+    [26, '🇵🇱', 'VeloPolska',     -1,  1232],
+    [27, '🇧🇷', 'CadenceBR',       0,  1228],
+    [28, '🇨🇦', 'MapleSprint',     2,  1224],
+    [29, '🇮🇪', 'GreenJersey',     0,  1220],
+    [30, '🇿🇦', 'BreakawaySA',    -3,  1216],
+    [31, '🇦🇹', 'AlpenVelo',       0,  1212],
+    [32, '🇫🇷', 'RoueLibre',       4,  1208],
+    [33, '🇲🇽', 'VueltraMX',      -1,  1204],
+    [34, '🇯🇵', 'TokyoTT',         0,  1201],
+    [35, '🇨🇿', 'BohemiaRdr',      2,  1198],
+    [36, '🇸🇪', 'NordicSpin',     -2,  1195],
+    [37, '🇧🇪', 'BxlBike',         0,  1192],
+    [38, '🇮🇪', 'DublinSprint',    1,  1188],
+    [39, '🇪🇸', 'IberiaRide',      0,  1185],
+    [40, '🇺🇸', 'YankeeVelo',     -2,  1182],
+    [41, '🇨🇴', 'AndesClimb',      0,  1178],
+    [42, '🇳🇴', 'OsloChase',       3,  1175],
+    [43, '🇩🇰', 'CopenRider',      0,  1172],
+    [44, '🇫🇷', 'ChampElysee',    -1,  1168],
+    [45, '🇮🇹', 'GiroBuff',        0,  1165],
+    [46, '🇬🇧', 'ThamesSprint',    2,  1162],
+    [47, '🇨🇭', 'SwissKlimm',      0,  1158],
+    [48, '🇳🇱', 'LowlandRider',   -3,  1155],
+    [49, '🇦🇺', 'OzPeloton',       1,  1152],
+    [50, '🇵🇹', 'PortoVelo',       0,  1148],
+    [51, '🇸🇮', 'LjubljanaTT',    -1,  1145],
+    [52, '🇩🇪', 'AlpenFahrt',      0,  1142],
+    [53, '🇧🇷', 'SaoPauloPace',    2,  1138],
+    [54, '🇨🇦', 'OttawaVelo',      0,  1135],
+    [55, '🇯🇵', 'SakuraSprint',   -2,  1132],
+    [56, '🇲🇽', 'AztecRider',      0,  1128],
+    [57, '🇵🇱', 'KrakotWatts',     1,  1125],
+    [58, '🇺🇸', 'StateSideRdr',    0,  1122],
+    [59, '🇳🇿', 'KiwiKlimm',      -1,  1118],
+    [60, '🇦🇹', 'WienSprint',      0,  1115],
+    [61, '🇸🇪', 'StockholmRide',   3,  1112],
+    [62, '🇧🇪', 'FlandersFan',     0,  1108],
+    [63, '🇪🇸', 'MesetaSprint',   -2,  1105],
+    [64, '🇳🇴', 'NordicKing',      0,  1102],
+    [65, '🇿🇦', 'CapeTownRide',    1,  1098],
+    [66, '🇨🇿', 'PragueVelo',      0,  1095],
+    [67, '🇫🇷', 'TDF_Fan',        -1,  1092],
+    [68, '🇮🇹', 'PadrePeloton',    0,  1088],
+    [69, '🇬🇧', 'UKRider',         2,  1085],
+    [70, '🇨🇴', 'BogotaBike',      0,  1082],
+    [71, '🇩🇰', 'DanskVelo',      -3,  1078],
+    [72, '🇨🇭', 'AlpenGipfel',     0,  1075],
+    [73, '🇦🇺', 'MatesCycling',    1,  1072],
+    [74, '🇺🇸', 'USACyclist',      0,  1068],
+    [75, '🇯🇵', 'FujiClimb',      -1,  1065],
+    [76, '🇧🇷', 'CariocaSprint',   0,  1062],
+    [77, '🇵🇱', 'WarsawRide',      2,  1058],
+    [78, '🇳🇱', 'DutchChain',      0,  1055],
+    [79, '🇸🇪', 'MidsommarRdr',   -2,  1052],
+    [80, '🇵🇹', 'LisboaSprint',    0,  1048],
+    [81, '🇧🇪', 'LiegeSprint',     1,  1045],
+    [82, '🇪🇸', 'Vuelta99',        0,  1042],
+    [83, '🇳🇴', 'BergenKlimm',    -1,  1038],
+    [84, '🇨🇦', 'TorontoRide',     0,  1035],
+    [85, '🇩🇪', 'BerlinChase',     3,  1032],
+    [86, '🇸🇮', 'KrvavecRdr',      0,  1028],
+    [87, '🇨🇿', 'CzechSprint',    -2,  1025],
+    [88, '🇮🇪', 'IrishPace',       0,  1022],
+    [89, '🇮🇹', 'StradiVario',     1,  1018],
+    [90, '🇫🇷', 'VeloRouge',       0,  1015],
+    [91, '🇲🇽', 'Mexico_TT',      -1,  1012],
+    [92, '🇬🇧', 'VeloWard',        0,  1008],
+    [93, '🇨🇴', 'ClimbFactor',     2,  1005],
+    [94, '🇦🇹', 'InnsbruckRdr',    0,  1002],
+    [95, '🇿🇦', 'JozyVelo',       -2,   998],
+    [96, '🇳🇿', 'AucklandRide',    0,   995],
+    [97, '🇺🇸', 'CritMassUSA',     1,   992],
+    [98, '🇧🇷', 'AndarBR',         0,   988],
+    [99, '🇳🇱', 'VeloAmster',     -1,   985],
+    [100,'🇵🇱', 'WielkiVelo',      0,   982],
+  ];
+
+  /* ── RENDER ROWS ── */
+  const upSVG   = '<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>';
+  const downSVG = '<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>';
+
+  const list = document.getElementById('playerList');
+  PLAYERS.forEach(p => {
+    const [rank, flag, name, delta, pts, isMe] = p;
+    const isTop3 = rank <= 3;
+
+    let changeBadge = '';
+    if (delta > 0) {
+      changeBadge = `<span class="pos-change up">${upSVG}${delta}</span>`;
+    } else if (delta < 0) {
+      changeBadge = `<span class="pos-change down">${downSVG}${Math.abs(delta)}</span>`;
+    }
+
+    const ptsFormatted = pts.toLocaleString();
+
+    const row = document.createElement('div');
+    row.className = 'player-row' + (isMe ? ' is-me' : '');
+    if (isMe) row.id = 'myRow';
+
+    row.innerHTML = `
+      <span class="player-rank${isTop3 ? ' top3' : ''}">${rank}</span>
+      <div class="player-identity">
+        <span class="player-flag">${flag}</span>
+        <span class="player-name">${name}</span>
+        ${changeBadge}
+      </div>
+      <span class="player-pts">${ptsFormatted}</span>
+    `;
+    list.appendChild(row);
+  });
+
+  /* ── JUMP TO MY ROW ── */
+  document.getElementById('myRankJump').addEventListener('click', function () {
+    const myRow = document.getElementById('myRow');
+    if (!myRow) return;
+
+    // Scroll within the player-list container
+    myRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Pulse animation
+    myRow.classList.remove('jump-pulse');
+    void myRow.offsetWidth; // force reflow so re-adding the class works
+    myRow.classList.add('jump-pulse');
+    setTimeout(() => myRow.classList.remove('jump-pulse'), 900);
+  });
 </script>
 </body>
 </html>
