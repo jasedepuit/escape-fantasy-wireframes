@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 7 – Per Stage Results · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:        #111;
+    --bg-screen:      #1A1A1A;
+    --bg-card:        #242424;
+    --bg-card-alt:    #2C2C2C;
+    --bg-nav:         #141414;
+    --text-primary:   #F0F0F0;
+    --text-muted:     #888;
+    --text-faint:     #555;
+    --accent:         #FF6F42;
+    --accent-dim:     rgba(255,111,66,0.12);
+    --border-subtle:  rgba(255,255,255,0.06);
+    --border-strong:  rgba(255,255,255,0.12);
+    --row-winner-bg:  rgba(255,255,255,0.03);
+  }
+  body.light-mode {
+    --bg-page:        #E8E8E8;
+    --bg-screen:      #F5F5F5;
+    --bg-card:        #FFFFFF;
+    --bg-card-alt:    #F0F0F0;
+    --bg-nav:         #FAFAFA;
+    --text-primary:   #111111;
+    --text-muted:     #666666;
+    --text-faint:     #AAAAAA;
+    --border-subtle:  rgba(0,0,0,0.06);
+    --border-strong:  rgba(0,0,0,0.14);
+    --row-winner-bg:  rgba(0,0,0,0.02);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+  body.light-mode .status-icons svg { filter: invert(1) brightness(0.2); }
+  body.light-mode .status-time { color: #111; }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .header-back {
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+  }
+  .header-centre { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .header-name { font-size: 16px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; }
+  .header-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .header-flag { font-size: 24px; flex-shrink: 0; width: 28px; text-align: right; }
+
+  /* ── COLUMN HEADERS ── */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    padding: 6px 16px;
+    background: var(--bg-card-alt);
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+  }
+  .col-lbl {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .col-lbl.right { text-align: right; }
+
+  /* ── SCROLL AREA ── */
+  .stage-list { flex: 1; overflow-y: auto; }
+
+  /* ── STAGE GROUP ── */
+  .stage-group {
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  /* Completed stage — pick row */
+  .pick-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    padding: 9px 16px 4px;
+  }
+  .stage-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pick-rider {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .rider-flag-sm { font-size: 14px; line-height: 1; }
+  .rider-name-sm {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .pick-asterisk {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .pick-pts {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* Winner row */
+  .winner-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    padding: 3px 16px 9px;
+    background: var(--row-winner-bg);
+  }
+  .winner-icon {
+    font-size: 13px;
+    padding-left: 2px;
+  }
+  .winner-rider {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .winner-name-sm {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .winner-detail {
+    font-size: 11px;
+    color: var(--text-faint);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* Same pick = winner highlight */
+  .pick-row.is-winner .rider-name-sm { color: var(--accent); }
+  .pick-row.is-winner .pick-pts { color: var(--accent); }
+
+  /* No pick row */
+  .no-pick-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    padding: 12px 16px;
+  }
+  .no-pick-label {
+    font-size: 13px;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
+  /* ── TOTAL ROW ── */
+  .total-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-strong);
+    background: var(--bg-card-alt);
+    flex-shrink: 0;
+  }
+  .total-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .total-pts {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    background: var(--bg-nav);
+    border-top: 1px solid var(--border-strong);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 7px 0 22px;
+    flex-shrink: 0;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; position: relative; color: #505050; }
+  .nav-item.is-active { color: #FF6F42; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active .nav-label { color: #FF6F42; }
+
+  /* ── ANNOTATIONS ── */
+  .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map" target="_self">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div class="header-back">‹</div>
+      <div class="header-centre">
+        <div class="header-name">Jason De Puit</div>
+        <div class="header-sub">Tour de France 2025 · Stage Race</div>
+      </div>
+      <div class="header-flag">🇦🇺</div>
+    </div>
+
+    <!-- Column Headers -->
+    <div class="col-headers">
+      <span class="col-lbl">Stg</span>
+      <span class="col-lbl">Pick</span>
+      <span class="col-lbl right">Result</span>
+    </div>
+
+    <!-- Stage List -->
+    <div class="stage-list">
+
+      <!-- Stage 1 — pick ≠ winner -->
+      <div class="stage-group">
+        <div class="pick-row">
+          <span class="stage-num">1</span>
+          <div class="pick-rider">
+            <span class="rider-flag-sm">🇳🇿</span>
+            <span class="rider-name-sm">Laurence Pithie</span><span class="pick-asterisk">*</span>
+          </div>
+          <span class="pick-pts">20</span>
+        </div>
+        <div class="winner-row">
+          <span class="winner-icon">🥇</span>
+          <div class="winner-rider">
+            <span class="winner-name-sm">Luke Lamperti</span>
+          </div>
+          <span class="winner-detail"></span>
+        </div>
+      </div>
+
+      <!-- Stage 2 — pick ≠ winner -->
+      <div class="stage-group">
+        <div class="pick-row">
+          <span class="stage-num">2</span>
+          <div class="pick-rider">
+            <span class="rider-flag-sm">🇫🇷</span>
+            <span class="rider-name-sm">Bryan Coquard</span><span class="pick-asterisk">*</span>
+          </div>
+          <span class="pick-pts">40</span>
+        </div>
+        <div class="winner-row">
+          <span class="winner-icon">🥇</span>
+          <div class="winner-rider">
+            <span class="winner-name-sm">Jasper Philipsen</span>
+          </div>
+          <span class="winner-detail"></span>
+        </div>
+      </div>
+
+      <!-- Stage 3 — pick ≠ winner, time gap shown -->
+      <div class="stage-group">
+        <div class="pick-row">
+          <span class="stage-num">3</span>
+          <div class="pick-rider">
+            <span class="rider-flag-sm">🇨🇭</span>
+            <span class="rider-name-sm">Stefan Bissegger</span><span class="pick-asterisk">*</span>
+          </div>
+          <span class="pick-pts">85</span>
+        </div>
+        <div class="winner-row">
+          <span class="winner-icon">🥇</span>
+          <div class="winner-rider">
+            <span class="winner-name-sm">Carlos Rodriguez</span>
+          </div>
+          <span class="winner-detail">+12s</span>
+        </div>
+      </div>
+
+      <!-- Stage 4 — pick = winner (highlight) -->
+      <div class="stage-group">
+        <div class="pick-row is-winner">
+          <span class="stage-num">4</span>
+          <div class="pick-rider">
+            <span class="rider-flag-sm">🇸🇮</span>
+            <span class="rider-name-sm">Tadej Pogačar</span><span class="pick-asterisk">*</span>
+          </div>
+          <span class="pick-pts">120</span>
+        </div>
+        <div class="winner-row">
+          <span class="winner-icon">🥇</span>
+          <div class="winner-rider">
+            <span class="winner-name-sm">Tadej Pogačar</span>
+          </div>
+          <span class="winner-detail"></span>
+        </div>
+      </div>
+
+      <!-- Stages 5–8 — no pick yet -->
+      <div class="stage-group">
+        <div class="no-pick-row">
+          <span class="stage-num">5</span>
+          <span class="no-pick-label">No pick</span>
+        </div>
+      </div>
+      <div class="stage-group">
+        <div class="no-pick-row">
+          <span class="stage-num">6</span>
+          <span class="no-pick-label">No pick</span>
+        </div>
+      </div>
+      <div class="stage-group">
+        <div class="no-pick-row">
+          <span class="stage-num">7</span>
+          <span class="no-pick-label">No pick</span>
+        </div>
+      </div>
+      <div class="stage-group">
+        <div class="no-pick-row">
+          <span class="stage-num">8</span>
+          <span class="no-pick-label">No pick</span>
+        </div>
+      </div>
+
+    </div><!-- /stage-list -->
+
+    <!-- Total -->
+    <div class="total-row">
+      <span class="total-label">Total</span>
+      <span class="total-pts">265</span>
+    </div>
+
+    <!-- Bottom Nav (Compete active — accessed from Leaderboard) -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+        <div class="nav-label">Home</div>
+      </div>
+      <div class="nav-item is-active">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+        <div class="nav-label">Compete</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+        <div class="nav-label">Leagues</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+        <div class="nav-label">News</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+        <div class="nav-label">Account</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 7</div>
+  <div class="screen-name">Per Stage Results</div>
+  <div class="screen-desc">Accessed by tapping any player's name on the Leaderboard. Shows their pick for every stage alongside the actual stage winner, so the viewer can understand how their score was built up across the race.</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Header</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>Player name + nationality flag</strong> — identifies whose picks are being viewed. Works for viewing your own results and scouting other players in your league.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>Competition context</strong> — sub-label shows the race name and format so the user always knows which competition they're viewing results for.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Stage Rows</div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>Pick row (*)</strong> — the player's selected rider with their nationality flag. Points scored shown right-aligned in orange. The asterisk visually separates the pick from the winner row below.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>Winner row (🥇)</strong> — the actual stage winner shown directly below the pick for easy comparison. Where available, a time gap is shown (e.g. "+12s") for context on how the stage was won.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Pick = winner highlight</strong> — when a player's pick won the stage, their pick row is highlighted in orange (see Stage 4). The winner row still appears below so the pattern stays consistent.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>No pick</strong> — future or skipped stages show a single muted row. No winner is shown for future stages as the race hasn't happened yet.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Footer</div>
+    <div class="callout">
+      <span class="cn">7</span>
+      <div class="callout-text"><strong>Total</strong> — sum of all points scored to date. Matches the player's score on the Leaderboard, giving the user confirmation they're seeing the right data.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">Entry point: Leaderboard only. The My Picks screen (Screen 3) already shows the current user's per-stage points, so this screen is not linked from there. When viewing your own results, the back button returns to the Leaderboard rather than My Picks.</div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+</script>
+</body>
+</html>
