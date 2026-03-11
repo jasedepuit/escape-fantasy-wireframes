@@ -106,20 +106,14 @@
     border-radius: 1px;
   }
   .tab .tab-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 16px; height: 16px;
-    border-radius: 8px;
-    font-size: 9px;
-    font-weight: 900;
-    padding: 0 4px;
-    margin-left: 5px;
-    background: var(--accent);
-    color: #fff;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-left: 3px;
+  }
+  .tab.active .tab-count {
+    color: var(--accent);
+    opacity: 0.7;
   }
 
   /* ── SCROLL CONTENT ── */
@@ -288,20 +282,46 @@
     line-height: 1.2;
   }
 
-  /* Unread chat badge */
-  .unread-dot {
-    position: absolute;
-    top: 14px; right: 38px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 900;
-    min-width: 16px; height: 16px;
-    border-radius: 8px;
-    padding: 0 4px;
+  /* Orange dot on Chat label when unread messages exist */
+  .ls-label-wrap {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 4px;
+  }
+  .unread-indicator {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Per-league invite action row */
+  .league-invite-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-top: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  .league-invite-row svg {
+    width: 13px; height: 13px;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .league-invite-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    flex: 1;
+  }
+  .league-invite-arrow {
+    font-size: 14px;
+    color: var(--text-faint);
   }
 
   /* ── ALL LEAGUES — search bar ── */
@@ -433,30 +453,6 @@
     color: var(--text-muted);
   }
 
-  /* ── INVITE ROW ── */
-  .invite-row {
-    margin: 8px 16px 0;
-    padding: 12px 14px;
-    background: var(--bg-card);
-    border-radius: 14px;
-    border: 1px solid var(--border-subtle);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-  }
-  .invite-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: var(--accent-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .invite-text { flex: 1; }
-  .invite-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-  .invite-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .invite-arrow { font-size: 18px; color: var(--text-faint); }
 
   /* ── BOTTOM NAV ── */
   .bottom-nav {
@@ -532,7 +528,7 @@
     <!-- My Leagues / All Leagues tabs -->
     <div class="tab-bar">
       <div class="tab active" id="tab-mine" onclick="switchTab('mine')">
-        My Leagues <span class="tab-count">3</span>
+        My Leagues <span class="tab-count">(3)</span>
       </div>
       <div class="tab" id="tab-all" onclick="switchTab('all')">All Leagues</div>
     </div>
@@ -557,7 +553,6 @@
 
         <!-- League 1: Escape Collective HQ — director, unread chat -->
         <div class="league-card stripe-orange">
-          <div class="unread-dot">4</div>
           <div class="league-card-inner">
             <div class="league-top">
               <div class="league-avatar avatar-orange">🛡️</div>
@@ -592,11 +587,19 @@
                 <span class="ls-sub">TdF · Vuelta</span>
               </div>
               <div class="league-stat">
-                <span class="ls-label">Chat</span>
+                <span class="ls-label-wrap">
+                  <span class="ls-label">Chat</span>
+                  <span class="unread-indicator"></span>
+                </span>
                 <span class="ls-value accent">4</span>
                 <span class="ls-sub">unread msgs</span>
               </div>
             </div>
+          </div>
+          <div class="league-invite-row">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6m3-3h-6"/></svg>
+            <span class="league-invite-label">Invite to this league</span>
+            <span class="league-invite-arrow">›</span>
           </div>
         </div>
 
@@ -638,11 +641,15 @@
               </div>
             </div>
           </div>
+          <div class="league-invite-row">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6m3-3h-6"/></svg>
+            <span class="league-invite-label">Invite to this league</span>
+            <span class="league-invite-arrow">›</span>
+          </div>
         </div>
 
         <!-- League 3: Gran Fondo Nerds — unread chat -->
         <div class="league-card stripe-green">
-          <div class="unread-dot">12</div>
           <div class="league-card-inner">
             <div class="league-top">
               <div class="league-avatar avatar-green">⛰️</div>
@@ -673,22 +680,20 @@
                 <span class="ls-sub">TdF · Vuelta · Giro</span>
               </div>
               <div class="league-stat">
-                <span class="ls-label">Chat</span>
+                <span class="ls-label-wrap">
+                  <span class="ls-label">Chat</span>
+                  <span class="unread-indicator"></span>
+                </span>
                 <span class="ls-value accent">12</span>
                 <span class="ls-sub">unread msgs</span>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Invite a friend -->
-        <div class="invite-row">
-          <div class="invite-icon">👥</div>
-          <div class="invite-text">
-            <div class="invite-title">Invite a friend</div>
-            <div class="invite-sub">Share a link · they choose which league to join</div>
+          <div class="league-invite-row">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6m3-3h-6"/></svg>
+            <span class="league-invite-label">Invite to this league</span>
+            <span class="league-invite-arrow">›</span>
           </div>
-          <div class="invite-arrow">›</div>
         </div>
 
       </div><!-- /panel-mine -->
@@ -934,9 +939,10 @@
       e.stopPropagation();
       this.textContent = 'Joined';
       this.classList.add('joined');
-      // bump My Leagues count
+      // bump My Leagues count — extract number from "(3)" format
       const countEl = document.querySelector('#tab-mine .tab-count');
-      countEl.textContent = parseInt(countEl.textContent) + 1;
+      const n = parseInt(countEl.textContent.replace(/\D/g,'')) || 0;
+      countEl.textContent = '(' + (n + 1) + ')';
     });
   });
 </script>
