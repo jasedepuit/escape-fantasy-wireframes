@@ -184,6 +184,15 @@
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
     overflow: hidden;
+    position: relative;
+    max-height: 162px; /* ~3 items visible */
+    overflow-y: auto;
+  }
+  .comp-group::-webkit-scrollbar { display: none; }
+  .comp-list-fade {
+    pointer-events: none;
+    position: absolute; bottom: 0; left: 0; right: 0; height: 36px;
+    background: linear-gradient(to bottom, transparent, var(--bg-card));
   }
   .comp-row {
     display: flex; align-items: center; gap: 12px;
@@ -348,7 +357,7 @@
 
         <!-- ── COMPETITIONS ── -->
         <div class="section-header">Competitions</div>
-        <div class="comp-group">
+        <div class="comp-group" id="compGroupWrap">
           <div class="comp-row checked" onclick="toggleComp(this)">
             <div class="comp-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
             <div class="comp-info">
@@ -370,6 +379,21 @@
               <div class="comp-meta">10 Oct · One-Day Classic · Upcoming</div>
             </div>
           </div>
+          <div class="comp-row" onclick="toggleComp(this)">
+            <div class="comp-checkbox"></div>
+            <div class="comp-info">
+              <div class="comp-name">Paris–Roubaix 2026</div>
+              <div class="comp-meta">12 Apr · One-Day Classic · Upcoming</div>
+            </div>
+          </div>
+          <div class="comp-row" onclick="toggleComp(this)">
+            <div class="comp-checkbox"></div>
+            <div class="comp-info">
+              <div class="comp-name">Giro d'Italia 2026</div>
+              <div class="comp-meta">9 May – 31 May · Stage Race · Upcoming</div>
+            </div>
+          </div>
+          <div class="comp-list-fade" id="compFade12"></div>
         </div>
 
         <!-- ── ACCESS ── -->
@@ -586,6 +610,16 @@
       ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
       : '';
   }
+
+  // Competitions scroll fade
+  const compWrap12 = document.getElementById('compGroupWrap');
+  const compFade12 = document.getElementById('compFade12');
+  function updateCompFade12() {
+    const atBottom = compWrap12.scrollTop + compWrap12.clientHeight >= compWrap12.scrollHeight - 4;
+    compFade12.style.opacity = atBottom ? '0' : '1';
+  }
+  compWrap12.addEventListener('scroll', updateCompFade12);
+  updateCompFade12();
 
   function handleSave() {
     const btn = document.getElementById('saveBtn');
