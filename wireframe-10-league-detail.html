@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 10 – League Detail · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-card-alt:   #2C2C2C;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --up-color:      #4CAF50;
+    --up-dim:        rgba(76,175,80,0.15);
+    --down-color:    #E53935;
+    --down-dim:      rgba(229,57,53,0.15);
+    --bubble-other:  #2C2C2C;
+    --bubble-me:     rgba(255,111,66,0.18);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-card-alt:   #F0F0F0;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+    --bubble-other:  #EBEBEB;
+    --bubble-me:     rgba(255,111,66,0.12);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+  body.light-mode .status-time { color: #111; }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  .header-back { font-size: 22px; color: var(--accent); flex-shrink: 0; line-height: 1; }
+  .header-center { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .header-title { font-size: 15px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; }
+  .header-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+  .member-count-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-faint); }
+  .header-gear { flex-shrink: 0; }
+  .header-gear svg { width: 20px; height: 20px; stroke: var(--text-muted); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+    background: var(--bg-screen);
+  }
+  .tab {
+    flex: 1; padding: 11px 0;
+    text-align: center;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-muted);
+    position: relative; cursor: pointer;
+  }
+  .tab.active { color: var(--accent); }
+  .tab.active::after {
+    content: ''; position: absolute;
+    bottom: -1px; left: 20%; right: 20%;
+    height: 2px; background: var(--accent); border-radius: 1px;
+  }
+  /* Unread dot on Chat tab */
+  .tab-chat-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-left: 5px;
+    vertical-align: middle;
+    position: relative; top: -1px;
+  }
+
+  /* ── SCROLL AREA ── */
+  .scroll-content { flex: 1; overflow-y: auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ═══════════════════════════════════════
+     STANDINGS TAB
+  ═══════════════════════════════════════ */
+
+  /* Competition selector pill */
+  .comp-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  .comp-selector-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .comp-selector svg {
+    width: 14px; height: 14px;
+    stroke: var(--text-muted);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .comp-selector-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* My stat strip */
+  .my-stat-strip {
+    display: flex;
+    gap: 0;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 10px 16px;
+  }
+  .strip-stat {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 2px;
+    border-right: 1px solid var(--border-subtle);
+    padding-right: 10px; margin-right: 10px;
+  }
+  .strip-stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .strip-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); }
+  .strip-val { font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+  .strip-val.accent { color: var(--accent); }
+
+  /* Column headers */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-screen);
+  }
+  .col-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); }
+  .col-lbl.right { text-align: right; }
+
+  /* Player rows */
+  .player-row {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  .player-row.is-me { background: var(--accent-dim); }
+  .player-rank { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+  .player-rank.top3 { color: var(--accent); }
+  .player-identity { display: flex; align-items: center; gap: 8px; }
+  .player-flag { font-size: 14px; line-height: 1; }
+  .player-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .player-row.is-me .player-name { font-weight: 800; }
+  .pos-change {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 5px; border-radius: 4px; margin-left: 6px;
+  }
+  .pos-change.up   { background: var(--up-dim);   color: var(--up-color); }
+  .pos-change.down { background: var(--down-dim); color: var(--down-color); }
+  .pos-change svg { width: 8px; height: 8px; }
+  .player-pts { font-size: 14px; font-weight: 800; color: var(--text-primary); min-width: 40px; text-align: right; }
+  .player-row.is-me .player-pts { color: var(--accent); }
+
+  /* ═══════════════════════════════════════
+     CHAT TAB
+  ═══════════════════════════════════════ */
+
+  .chat-list { padding: 12px 0 8px; }
+
+  /* Date divider */
+  .chat-date {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 4px 0 12px;
+  }
+
+  /* Message group */
+  .msg-group { margin-bottom: 14px; }
+
+  /* Sender name above a group */
+  .msg-sender {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 0 16px;
+    margin-bottom: 4px;
+  }
+  .msg-sender.me { text-align: right; color: var(--accent); }
+
+  /* Bubble */
+  .bubble-row { display: flex; padding: 0 16px 3px; }
+  .bubble-row.me { justify-content: flex-end; }
+  .bubble {
+    max-width: 72%;
+    padding: 8px 11px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-primary);
+    background: var(--bubble-other);
+  }
+  .bubble-row.me .bubble {
+    background: var(--bubble-me);
+    border: 1px solid rgba(255,111,66,0.25);
+  }
+  .bubble-row.first-other .bubble { border-top-left-radius: 4px; }
+  .bubble-row.last-other  .bubble { border-bottom-left-radius: 4px; }
+  .bubble-row.first-me    .bubble { border-top-right-radius: 4px; }
+  .bubble-row.last-me     .bubble { border-bottom-right-radius: 4px; }
+
+  /* Pick-share card (shared inside chat) */
+  .pick-share {
+    max-width: 72%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .pick-share-header {
+    background: var(--accent-dim);
+    border-bottom: 1px solid rgba(255,111,66,0.15);
+    padding: 6px 10px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent);
+  }
+  .pick-share-body {
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pick-share-flag { font-size: 16px; line-height: 1; }
+  .pick-share-info { flex: 1; }
+  .pick-share-name { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+  .pick-share-stage { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .pick-share-pts {
+    font-size: 13px; font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  /* Reaction strip */
+  .reaction-strip { display: flex; gap: 5px; padding: 2px 16px 6px; }
+  .reaction-strip.me { justify-content: flex-end; }
+  .reaction {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 3px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .reaction.mine {
+    background: var(--accent-dim);
+    border-color: rgba(255,111,66,0.3);
+  }
+  .reaction-count { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+
+  /* Chat input bar */
+  .chat-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px 10px;
+    border-top: 1px solid var(--border-strong);
+    background: var(--bg-screen);
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+  .chat-send {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .chat-send svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .chat-share-pick {
+    flex-shrink: 0; cursor: pointer;
+  }
+  .chat-share-pick svg { width: 20px; height: 20px; stroke: var(--text-muted); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    background: var(--bg-nav);
+    border-top: 1px solid var(--border-strong);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 7px 0 22px; flex-shrink: 0;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; color: #505050; }
+  .nav-item.is-active { color: #FF6F42; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active .nav-label { color: #FF6F42; }
+
+  /* ── ANNOTATIONS ── */
+  .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map" target="_self">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div class="header-back">‹</div>
+      <div class="header-center">
+        <div class="header-title">Escape Collective HQ</div>
+        <div class="header-sub">
+          <span>18 members</span>
+          <span class="member-count-dot"></span>
+          <span>League Director</span>
+        </div>
+      </div>
+      <div class="header-gear">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+    </div>
+
+    <!-- Standings | Chat tabs -->
+    <div class="tab-bar">
+      <div class="tab active" id="tab-standings" onclick="switchTab('standings')">Standings</div>
+      <div class="tab" id="tab-chat" onclick="switchTab('chat')">
+        Chat <span class="tab-chat-dot" id="chatDot"></span>
+      </div>
+    </div>
+
+    <!-- ══ SCROLL / CONTENT ══ -->
+    <div class="scroll-content" id="scrollArea">
+
+      <!-- ── STANDINGS PANEL ── -->
+      <div class="tab-panel active" id="panel-standings">
+
+        <!-- Competition selector -->
+        <div class="comp-selector" onclick="">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span class="comp-selector-label">Tour de France 2026</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="comp-selector-hint">tap to switch</span>
+        </div>
+
+        <!-- My position strip -->
+        <div class="my-stat-strip">
+          <div class="strip-stat">
+            <span class="strip-lbl">League Rank</span>
+            <span class="strip-val accent">1st</span>
+          </div>
+          <div class="strip-stat">
+            <span class="strip-lbl">Points</span>
+            <span class="strip-val">1,240</span>
+          </div>
+          <div class="strip-stat">
+            <span class="strip-lbl">Pts Ahead</span>
+            <span class="strip-val">47</span>
+          </div>
+        </div>
+
+        <!-- Column headers -->
+        <div class="col-headers">
+          <span class="col-lbl">Rank</span>
+          <span class="col-lbl">Name</span>
+          <span class="col-lbl right">Pts</span>
+        </div>
+
+        <!-- League member rows (18 members) -->
+        <div id="standingsList"></div>
+
+      </div><!-- /panel-standings -->
+
+      <!-- ── CHAT PANEL ── -->
+      <div class="tab-panel" id="panel-chat">
+        <div class="chat-list">
+
+          <div class="chat-date">Today</div>
+
+          <!-- Group 1: KleinAdler -->
+          <div class="msg-group">
+            <div class="msg-sender">KleinAdler 🇩🇪</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Anyone else going Pogačar for Stage 12? Seems obvious but I keep second-guessing myself 😅</div>
+            </div>
+          </div>
+
+          <!-- Group 2: VeloVince -->
+          <div class="msg-group">
+            <div class="msg-sender">VeloVince 🇬🇧</div>
+            <div class="bubble-row first-other">
+              <div class="bubble">I'm going with Vingegaard actually. Pogačar always looks favourite and then something happens on the final climb</div>
+            </div>
+            <!-- Pick share card from VeloVince -->
+            <div class="bubble-row last-other" style="padding-top:4px;">
+              <div class="pick-share">
+                <div class="pick-share-header">Stage 12 Pick · Shared</div>
+                <div class="pick-share-body">
+                  <span class="pick-share-flag">🇩🇰</span>
+                  <div class="pick-share-info">
+                    <div class="pick-share-name">Jonas Vingegaard</div>
+                    <div class="pick-share-stage">Stage 12 · Alpe d'Huez finish</div>
+                  </div>
+                  <span class="pick-share-pts">214 UCI pts</span>
+                </div>
+              </div>
+            </div>
+            <div class="reaction-strip">
+              <div class="reaction">🤔 <span class="reaction-count">3</span></div>
+              <div class="reaction mine">🔥 <span class="reaction-count">2</span></div>
+            </div>
+          </div>
+
+          <!-- Group 3: GranFondo99 -->
+          <div class="msg-group">
+            <div class="msg-sender">GranFondo99 🇪🇸</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Bold pick! I'm going Pogačar, too obvious to ignore on this stage</div>
+            </div>
+          </div>
+
+          <!-- Group 4: Me -->
+          <div class="msg-group">
+            <div class="msg-sender me">Jason De Puit 🇦🇺</div>
+            <div class="bubble-row me first-me">
+              <div class="bubble">Agree with Vince, Pogi's team has been burning matches all week</div>
+            </div>
+            <!-- My pick share -->
+            <div class="bubble-row me last-me" style="padding-top:4px; justify-content:flex-end;">
+              <div class="pick-share">
+                <div class="pick-share-header">Stage 12 Pick · Shared</div>
+                <div class="pick-share-body">
+                  <span class="pick-share-flag">🇩🇰</span>
+                  <div class="pick-share-info">
+                    <div class="pick-share-name">Jonas Vingegaard</div>
+                    <div class="pick-share-stage">Stage 12 · Alpe d'Huez finish</div>
+                  </div>
+                  <span class="pick-share-pts">214 UCI pts</span>
+                </div>
+              </div>
+            </div>
+            <div class="reaction-strip me">
+              <div class="reaction">👀 <span class="reaction-count">4</span></div>
+            </div>
+          </div>
+
+          <!-- Group 5: Flamme Rouge -->
+          <div class="msg-group">
+            <div class="msg-sender">Flamme Rouge 🇧🇪</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Good point about the team. Let's see 🍿</div>
+            </div>
+          </div>
+
+          <!-- New messages divider -->
+          <div class="chat-date" style="color:var(--accent);">— 4 new messages —</div>
+
+          <!-- Group 6: KleinAdler -->
+          <div class="msg-group">
+            <div class="msg-sender">KleinAdler 🇩🇪</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Stage 12 done. Vingegaard wins!! 🎉 Vince and Jason cooking</div>
+            </div>
+          </div>
+
+          <!-- Group 7: WielerWatcher -->
+          <div class="msg-group">
+            <div class="msg-sender">WielerWatcher 🇳🇱</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Gutted. I had Pogi 😭</div>
+            </div>
+            <div class="reaction-strip">
+              <div class="reaction">😬 <span class="reaction-count">5</span></div>
+            </div>
+          </div>
+
+          <!-- Group 8: VeloVince -->
+          <div class="msg-group">
+            <div class="msg-sender">VeloVince 🇬🇧</div>
+            <div class="bubble-row first-other last-other">
+              <div class="bubble">Gets in 😎</div>
+            </div>
+          </div>
+
+          <!-- Group 9: Me — last unread -->
+          <div class="msg-group">
+            <div class="msg-sender me">Jason De Puit 🇦🇺</div>
+            <div class="bubble-row me first-me last-me">
+              <div class="bubble">Let's go!! Stage 13 picks open yet?</div>
+            </div>
+          </div>
+
+        </div><!-- /chat-list -->
+      </div><!-- /panel-chat -->
+
+    </div><!-- /scroll-content -->
+
+    <!-- Chat input bar (only visible in Chat tab) -->
+    <div class="chat-input-bar" id="chatInputBar" style="display:none;">
+      <div class="chat-share-pick" title="Share your pick">
+        <svg viewBox="0 0 24 24"><path d="M7 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </div>
+      <div class="chat-input">Message Escape Collective HQ…</div>
+      <div class="chat-send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </div>
+    </div>
+
+    <!-- Bottom Nav (Leagues active) -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+        <div class="nav-label">Home</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+        <div class="nav-label">Compete</div>
+      </div>
+      <div class="nav-item is-active">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+        <div class="nav-label">Leagues</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+        <div class="nav-label">News</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+        <div class="nav-label">Account</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 10</div>
+  <div class="screen-name">League Detail</div>
+  <div class="screen-desc">Accessed by tapping any league card on Screen 9. Contains two tabs — Standings (competition-filtered leaderboard scoped to league members) and Chat (message thread with pick-sharing).</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Header</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>League name + member count</strong> — sub-line also shows "League Director" if the user has that role. Back arrow returns to the League List.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>Settings gear</strong> — visible to all members but reveals different options by role. Directors can rename, change colour, manage members, and regenerate the invite code. Non-directors can only leave the league.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Standings Tab</div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>Competition selector</strong> — since a league can be active across multiple races, a tap here opens a sheet to switch between them (e.g. Tour de France / Vuelta). Only competitions where ≥2 league members have joined are shown.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>My position strip</strong> — pinned above the list. Shows the user's rank within the league, their points for the selected competition, and points ahead of the next player (or behind, if not in 1st).</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>League standings list</strong> — same row format as the main leaderboard (Screen 8) but filtered to league members only. Rank reflects position within the league, not the global competition. Tapping a row navigates to that player's Per-Stage Results (Screen 7).</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Chat Tab</div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>Message thread</strong> — simple group chat scoped to the league. Messages are grouped by sender with a sender label above each group. The user's own messages appear right-aligned with an orange tint bubble.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">7</span>
+      <div class="callout-text"><strong>Pick-share cards</strong> — tapping the share icon in the input bar lets a user share their pick for a stage as a card in the chat. Other members can tap the card to see the full Rider Profile. This is the primary social mechanic — comparing picks and debating choices.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">8</span>
+      <div class="callout-text"><strong>Emoji reactions</strong> — tap any message or pick-share to react. Reactions are aggregated and shown as a strip below the message. The user's own reaction is highlighted with an orange tint.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">9</span>
+      <div class="callout-text"><strong>Unread divider</strong> — on first open after new messages, a divider marks where unread messages begin. The orange dot on the Chat tab disappears once the user scrolls past the divider.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">The gear icon opens a settings sheet (not a separate screen). For directors this includes: rename league, change colour, remove member, copy invite code, delete league. For members: leave league only.</div>
+</div>
+
+<script>
+  /* ── THEME ── */
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+
+  /* ── STANDINGS DATA ──
+     18 members, Jason De Puit top (league rank 1), others scattered
+  */
+  const MEMBERS = [
+    [1,  '🇦🇺', 'Jason De Puit',   2,  1240, true],
+    [2,  '🇬🇧', 'VeloVince',      -1,  1193],
+    [3,  '🇩🇪', 'KleinAdler',      1,  1156],
+    [4,  '🇧🇪', 'Flamme Rouge',    0,  1098],
+    [5,  '🇳🇱', 'WielerWatcher',  -2,  1055],
+    [6,  '🇮🇹', 'Peloton Pete',    0,  1022],
+    [7,  '🇦🇺', 'SaddleUp',        3,   988],
+    [8,  '🇪🇸', 'GranFondo99',    -1,   972],
+    [9,  '🇨🇭', 'AlpineRider',     0,   945],
+    [10, '🇺🇸', 'TourHunter',      2,   918],
+    [11, '🇫🇷', 'MaillotJaune',   -1,   895],
+    [12, '🇩🇰', 'CycloNord',       0,   872],
+    [13, '🇳🇴', 'FjordRider',      1,   848],
+    [14, '🇵🇹', 'VoltaCyclist',   -2,   822],
+    [15, '🇨🇦', 'MapleSprint',     0,   798],
+    [16, '🇳🇿', 'VelosophyNZ',    -1,   774],
+    [17, '🇮🇪', 'GreenJersey',     0,   751],
+    [18, '🇸🇮', 'PirinaRider',    -2,   728],
+  ];
+
+  const upSVG   = '<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>';
+  const downSVG = '<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>';
+
+  const list = document.getElementById('standingsList');
+  MEMBERS.forEach(m => {
+    const [rank, flag, name, delta, pts, isMe] = m;
+    let badge = '';
+    if (delta > 0)      badge = `<span class="pos-change up">${upSVG}${delta}</span>`;
+    else if (delta < 0) badge = `<span class="pos-change down">${downSVG}${Math.abs(delta)}</span>`;
+
+    const row = document.createElement('div');
+    row.className = 'player-row' + (isMe ? ' is-me' : '');
+    row.innerHTML = `
+      <span class="player-rank${rank <= 3 ? ' top3' : ''}">${rank}</span>
+      <div class="player-identity">
+        <span class="player-flag">${flag}</span>
+        <span class="player-name">${name}</span>${badge}
+      </div>
+      <span class="player-pts">${pts.toLocaleString()}</span>`;
+    list.appendChild(row);
+  });
+
+  /* ── TAB SWITCHER ── */
+  function switchTab(which) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + which).classList.add('active');
+    document.getElementById('panel-' + which).classList.add('active');
+
+    const inputBar = document.getElementById('chatInputBar');
+    inputBar.style.display = which === 'chat' ? 'flex' : 'none';
+
+    // Clear unread dot when Chat tab opened
+    if (which === 'chat') {
+      document.getElementById('chatDot').style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>
