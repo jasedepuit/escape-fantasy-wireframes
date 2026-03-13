@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 14 – Enroll League Sheet · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-sheet:      #2A2A2A;
+    --bg-input:      #2A2A2A;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.14);
+    --border-input:  rgba(255,255,255,0.16);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-sheet:      #FFFFFF;
+    --bg-input:      #FFFFFF;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+    --border-input:  rgba(0,0,0,0.18);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+
+  /* ── BACKGROUND SCREEN (dimmed competition browser) ── */
+  .bg-screen-content {
+    flex: 1; padding: 12px 16px; opacity: 0.35; pointer-events: none;
+    overflow: hidden;
+  }
+  .bg-app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 0 12px; border-bottom: 1px solid var(--border-strong); margin-bottom: 14px;
+  }
+  .bg-title { font-size: 16px; font-weight: 800; color: var(--text-primary); }
+  .bg-comp-card {
+    background: var(--bg-card); border-radius: 12px;
+    border: 1px solid var(--border-subtle); padding: 12px 14px; margin-bottom: 10px;
+  }
+  .bg-card-header {
+    height: 52px; border-radius: 8px; margin-bottom: 10px;
+    background: linear-gradient(to right, #1a2a4a, #4a7da8);
+    display: flex; align-items: center; padding: 0 12px;
+  }
+  .bg-card-title { font-size: 13px; font-weight: 700; color: #fff; }
+  .bg-card-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .bg-btn { background: var(--accent); border-radius: 8px; padding: 8px 14px; font-size: 11px; font-weight: 800; color: #fff; display: inline-block; }
+
+  /* ── DIM OVERLAY ── */
+  .dim-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 10;
+  }
+
+  /* ── BOTTOM SHEET ── */
+  .bottom-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--bg-sheet);
+    border-radius: 20px 20px 0 0;
+    z-index: 20;
+    display: flex; flex-direction: column;
+    max-height: 78%;
+  }
+  body.light-mode .bottom-sheet { box-shadow: 0 -8px 40px rgba(0,0,0,0.12); }
+
+  /* Drag handle */
+  .sheet-handle {
+    display: flex; justify-content: center; padding: 12px 0 4px;
+    flex-shrink: 0;
+  }
+  .handle-pill { width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; }
+
+  /* Success header */
+  .sheet-success {
+    padding: 8px 20px 16px; flex-shrink: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .success-row { display: flex; align-items: center; gap: 12px; }
+  .success-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(39,174,96,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .success-text { flex: 1; }
+  .success-title { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px; }
+  .success-sub { font-size: 12px; color: var(--text-muted); }
+
+  /* Enroll section */
+  .sheet-enroll-header {
+    padding: 16px 20px 10px; flex-shrink: 0;
+  }
+  .enroll-title { font-size: 13px; font-weight: 800; color: var(--text-primary); margin-bottom: 3px; }
+  .enroll-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+  /* League list — scrollable */
+  .league-list { flex: 1; overflow-y: auto; }
+  .league-list::-webkit-scrollbar { display: none; }
+
+  .league-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .league-row:first-child { border-top: none; }
+  .league-row:active { background: var(--accent-dim); }
+
+  .league-logo {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #fff; flex-shrink: 0;
+  }
+  .league-info { flex: 1; }
+  .league-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .league-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Already enrolled state */
+  .league-row.already-enrolled { opacity: 0.45; cursor: default; }
+  .already-label {
+    font-size: 10px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Checkbox */
+  .league-checkbox {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border-input); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .league-row.checked .league-checkbox { background: var(--accent); border-color: var(--accent); }
+  .league-checkbox svg { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Sheet footer */
+  .sheet-footer { flex-shrink: 0; padding: 12px 16px 20px; border-top: 1px solid var(--border-subtle); }
+  .enroll-btn {
+    width: 100%; padding: 14px;
+    background: var(--accent); color: #fff;
+    font-size: 15px; font-weight: 800;
+    border: none; border-radius: 13px; cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 10px;
+  }
+  .enroll-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .skip-btn {
+    width: 100%; padding: 6px;
+    background: transparent; color: var(--text-muted);
+    font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer;
+    text-align: center;
+  }
+
+  /* ── ANNOTATION PANEL ── */
+  .annotation-panel { width: 300px; flex-shrink: 0; padding-top: 80px; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- Dimmed background: Competition Browser -->
+    <div class="bg-screen-content">
+      <div class="bg-app-header">
+        <div class="bg-title">Competitions</div>
+      </div>
+      <div class="bg-comp-card">
+        <div class="bg-card-header">
+          <div class="bg-card-title">Tour de France 2026</div>
+        </div>
+        <div class="bg-card-meta">Stage 15 of 21 · Mountain Stage</div>
+        <div class="bg-btn">View Picks →</div>
+      </div>
+      <div class="bg-comp-card">
+        <div class="bg-card-header" style="background: linear-gradient(to right, #1a0a0a, #6a3a1a);">
+          <div class="bg-card-title">Paris-Roubaix Challenge 2026</div>
+        </div>
+        <div class="bg-card-meta">Race in progress · Day 3 of 5</div>
+        <div class="bg-btn">Joined ✓</div>
+      </div>
+    </div>
+
+    <!-- Dim overlay -->
+    <div class="dim-overlay"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet">
+
+      <!-- Handle -->
+      <div class="sheet-handle"><div class="handle-pill"></div></div>
+
+      <!-- Success header -->
+      <div class="sheet-success">
+        <div class="success-row">
+          <div class="success-icon">🎉</div>
+          <div class="success-text">
+            <div class="success-title">Joined Paris-Roubaix Challenge!</div>
+            <div class="success-sub">You're now competing individually.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enroll header -->
+      <div class="sheet-enroll-header">
+        <div class="enroll-title">Enroll your leagues?</div>
+        <div class="enroll-sub">Select leagues to also enter into this competition. Your members will compete against each other on the league leaderboard.</div>
+      </div>
+
+      <!-- League list -->
+      <div class="league-list" id="leagueList">
+
+        <div class="league-row checked" onclick="toggleLeague(this)">
+          <div class="league-logo" style="background: #3A7FD5;">EC</div>
+          <div class="league-info">
+            <div class="league-name">Escape Collective HQ</div>
+            <div class="league-meta">12 members · Director</div>
+          </div>
+          <div class="league-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+
+        <div class="league-row checked" onclick="toggleLeague(this)">
+          <div class="league-logo" style="background: #9B59F5;">FR</div>
+          <div class="league-info">
+            <div class="league-name">Friday Ride Crew</div>
+            <div class="league-meta">6 members · Director</div>
+          </div>
+          <div class="league-checkbox">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+
+        <div class="league-row already-enrolled">
+          <div class="league-logo" style="background: #4CAF50;">OL</div>
+          <div class="league-info">
+            <div class="league-name">Office League</div>
+            <div class="league-meta">8 members · Director</div>
+          </div>
+          <div class="already-label">Enrolled</div>
+        </div>
+
+      </div><!-- /league-list -->
+
+      <!-- Footer -->
+      <div class="sheet-footer">
+        <button class="enroll-btn" id="enrollBtn" onclick="handleEnroll()">Enroll 2 Leagues</button>
+        <button class="skip-btn" onclick="handleSkip()">Skip for now</button>
+      </div>
+
+    </div><!-- /bottom-sheet -->
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 14 — Modal</div>
+  <div class="screen-name">Enroll League Sheet</div>
+  <div class="screen-desc">A bottom sheet that appears immediately after a director joins a competition individually. Lets them enroll their directed leagues in the same competition in one step, without navigating to each league's settings separately.</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Trigger — Primary</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>Post-join prompt</strong> — fires after tapping "Join Competition →" on Screen 02, but <strong>only if the user directs at least one league.</strong> Non-directors never see this sheet. The competition browser is dimmed behind a 55% black overlay.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Trigger — Secondary</div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>"Enroll a league →" CTA</strong> on competition cards in Screen 02, visible to directors on competitions they've already joined personally. Tapping opens this same sheet without the success header — just the league checklist. Serves as the fallback if the director dismissed the post-join prompt or joined via a different route.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">League List</div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>Only leagues where the user is Director</strong> are shown — members can't enroll leagues they don't control. All unenrolled leagues are pre-selected (checked) by default to reduce friction; the director taps to deselect any they don't want.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>Already enrolled</strong> leagues are shown greyed out with an "Enrolled" label rather than a checkbox. This confirms to the director that those leagues are already in and prevents double-enrollment confusion.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Button Behaviour</div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Enroll button label</strong> updates dynamically: "Enroll 2 Leagues", "Enroll 1 League", "Enroll 3 Leagues". If all leagues are deselected, button becomes disabled. On tap: enrolls selected leagues and dismisses sheet back to the competition browser.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>Skip for now</strong> — dismisses without enrolling. Directors can always enroll later via League Settings (Screen 12) → Competitions, or via the secondary CTA on Screen 02.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">This sheet also resolves the question of new competitions opening mid-season — the director sees the prompt when they personally join, rather than having to discover the League Settings path unprompted.</div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+
+  function toggleLeague(row) {
+    if (row.classList.contains('already-enrolled')) return;
+    row.classList.toggle('checked');
+    const box = row.querySelector('.league-checkbox');
+    box.innerHTML = row.classList.contains('checked')
+      ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+      : '';
+    updateEnrollBtn();
+  }
+
+  function updateEnrollBtn() {
+    const count = document.querySelectorAll('.league-row.checked:not(.already-enrolled)').length;
+    const btn = document.getElementById('enrollBtn');
+    btn.disabled = count === 0;
+    btn.textContent = count === 0
+      ? 'Select a League'
+      : 'Enroll ' + count + ' ' + (count === 1 ? 'League' : 'Leagues');
+  }
+
+  function handleEnroll() {
+    const btn = document.getElementById('enrollBtn');
+    btn.textContent = 'Enrolled! ✓';
+    btn.style.background = '#27AE60';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.querySelector('.dim-overlay').style.opacity = '0';
+      document.querySelector('.bottom-sheet').style.transform = 'translateY(100%)';
+      document.querySelector('.bottom-sheet').style.transition = 'transform 0.3s ease';
+    }, 800);
+  }
+
+  function handleSkip() {
+    document.querySelector('.dim-overlay').style.opacity = '0';
+    document.querySelector('.bottom-sheet').style.transform = 'translateY(100%)';
+    document.querySelector('.bottom-sheet').style.transition = 'transform 0.3s ease';
+  }
+</script>
+</body>
+</html>

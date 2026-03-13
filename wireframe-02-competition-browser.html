@@ -395,6 +395,21 @@
     .card-cta-row {
       margin-top: 10px;
     }
+    .enroll-league-row {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .enroll-league-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+    }
+    .enroll-league-cta {
+      font-size: 11px; font-weight: 800; color: #FF6F42;
+    }
     .btn-outline {
       width: 100%;
       background: transparent;
@@ -729,6 +744,10 @@
                   <button class="btn-filled">View Picks →</button>
                   <button class="btn-outline">Leaderboard ›</button>
                 </div>
+                <div class="enroll-league-row">
+                  <span class="enroll-league-label">Director? Enter your leagues</span>
+                  <span class="enroll-league-cta">Enroll a league ›<span class="cn">⑨</span></span>
+                </div>
               </div>
             </div>
 
@@ -770,6 +789,10 @@
                 <div class="card-cta-row">
                   <button class="btn-filled">View Team →</button>
                   <button class="btn-outline">Leaderboard ›</button>
+                </div>
+                <div class="enroll-league-row">
+                  <span class="enroll-league-label">Director? Enter your leagues</span>
+                  <span class="enroll-league-cta">Enroll a league ›</span>
                 </div>
               </div>
             </div>
@@ -977,6 +1000,16 @@
           <div class="ann-title">Finished competitions section</div>
           <div class="ann-desc">
             Collapsed by default — shows only a count ("FINISHED (3)"). Tapping the section label expands it. Finished cards are fully desaturated and non-interactive except for "View Results →". The developer should implement the section as an expandable accordion. Final rank is always shown so the user can recall past performance.
+          </div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">⑨</div>
+        <div class="ann-content">
+          <div class="ann-title">Enroll a league — director fallback CTA</div>
+          <div class="ann-desc">
+            Shown only on competitions the user has already joined personally. Visible to league directors only — non-directors never see this row. Tapping opens the Enroll League Sheet (Screen 14) without the post-join success header, allowing directors to enroll leagues at any point after joining, not just immediately after. Resolves the case where a director joined a competition before creating their league, or dismissed the post-join prompt.
           </div>
         </div>
       </div>
