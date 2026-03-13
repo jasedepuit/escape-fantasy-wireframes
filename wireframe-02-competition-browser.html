@@ -226,44 +226,6 @@
       border: 1.5px solid #0A0A0A;
     }
 
-    /* Competition Switcher Banner */
-    .comp-switcher-banner {
-      background: var(--bg-switcher);
-      border-bottom: 1px solid var(--border-medium);
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 44px;
-      gap: 12px;
-    }
-    .comp-switcher-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 1;
-    }
-    .comp-switcher-label {
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .comp-switcher-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.2px;
-    }
-    .comp-switcher-cta {
-      font-size: 12px;
-      color: #FF6F42;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-
     /* Section label */
     .section-lbl {
       font-size: 10px;
@@ -722,15 +684,6 @@
               </div>
           </div>
 
-          <!-- Competition Switcher Banner ① -->
-          <div class="comp-switcher-banner">
-            <div class="comp-switcher-left">
-              <div class="comp-switcher-label">Currently Viewing</div>
-              <div class="comp-switcher-name">Tour de France 2026</div>
-            </div>
-            <div class="comp-switcher-cta">Change ›<span class="cn">①</span></div>
-          </div>
-
           <!-- Main scrollable content -->
           <div class="screen-scroll">
 
@@ -951,9 +904,9 @@
       <div class="ann-item">
         <div class="ann-num">①</div>
         <div class="ann-content">
-          <div class="ann-title">Competition switcher banner</div>
+          <div class="ann-title">Competition switcher banner — not shown here</div>
           <div class="ann-desc">
-            The persistent context indicator. Tells the user which competition they're currently "inside" on the Compete tab. Tapping "Change ›" opens this Competition Browser screen. The selected competition becomes the active context for My Picks, Leaderboard, and Stage Detail sub-screens. On the Competition Browser itself, the banner shows the current selection so the user can see what they'd be changing.
+            The switcher banner appears on Compete sub-screens (My Picks, Leaderboard, Stage Detail) where competition context matters. It is not shown on the Competition Browser itself — this screen <em>is</em> the switcher, so a "currently viewing" indicator would be circular and redundant.
           </div>
         </div>
       </div>
