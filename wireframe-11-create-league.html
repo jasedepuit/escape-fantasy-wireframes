@@ -79,11 +79,9 @@
   .header-title { flex: 1; font-size: 16px; font-weight: 800; color: var(--text-primary); text-align: center; letter-spacing: -0.01em; }
   .header-spacer { width: 22px; flex-shrink: 0; }
 
-  /* ── PHONE INNER (scroll + pinned btn) ── */
-  .phone-inner { flex: 1; overflow: hidden; display: flex; flex-direction: column; position: relative; }
-
   /* ── SCROLL CONTENT ── */
-  .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+  .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 16px; }
+  .scroll-content::-webkit-scrollbar { display: none; }
 
   /* ── FORM SECTIONS ── */
   .form-section { padding: 16px 16px 4px; }
@@ -182,8 +180,22 @@
   }
   .toggle-switch.on::after { left: 21px; }
 
+  /* ── COMPETITIONS SCROLL CONTAINER ── */
+  .comp-list-wrap {
+    position: relative;
+    max-height: 162px; /* ~3 items visible */
+    overflow-y: auto;
+  }
+  .comp-list-wrap::-webkit-scrollbar { display: none; }
+  /* Fade hint at bottom when list is taller than the container */
+  .comp-list-fade {
+    pointer-events: none;
+    position: absolute; bottom: 0; left: 0; right: 0; height: 36px;
+    background: linear-gradient(to bottom, transparent, var(--bg-screen));
+  }
+
   /* ── PINNED CREATE BUTTON ── */
-  .create-btn-wrap { position: absolute; bottom: 80px; left: 8px; right: 8px; }
+  .create-btn-wrap { flex-shrink: 0; padding: 10px 8px 8px; }
   .create-btn {
     width: 100%; background: var(--accent); color: #fff; border: none;
     border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 800;
@@ -250,9 +262,8 @@
       <div class="header-spacer"></div>
     </div>
 
-    <!-- Scroll + pinned button -->
-    <div class="phone-inner">
-      <div class="scroll-content">
+    <!-- Scroll content -->
+    <div class="scroll-content">
 
         <!-- League Name -->
         <div class="form-section">
@@ -300,32 +311,53 @@
         <div class="form-section" style="padding-top:4px;">
           <div class="form-section-label">Include in Competitions</div>
 
-          <div class="comp-option checked" onclick="toggleComp(this)">
-            <div class="comp-checkbox">
-              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="comp-list-wrap" id="compListWrap">
+            <div class="comp-option checked" onclick="toggleComp(this)">
+              <div class="comp-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="comp-info">
+                <div class="comp-name">Tour de France 2026</div>
+                <div class="comp-dates">5 Jul – 27 Jul · Stage Race · Active</div>
+              </div>
             </div>
-            <div class="comp-info">
-              <div class="comp-name">Tour de France 2026</div>
-              <div class="comp-dates">5 Jul – 27 Jul · Stage Race · Active</div>
-            </div>
-          </div>
 
-          <div class="comp-option checked" onclick="toggleComp(this)">
-            <div class="comp-checkbox">
-              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="comp-option checked" onclick="toggleComp(this)">
+              <div class="comp-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="comp-info">
+                <div class="comp-name">Vuelta a España 2026</div>
+                <div class="comp-dates">22 Aug – 13 Sep · Stage Race · Upcoming</div>
+              </div>
             </div>
-            <div class="comp-info">
-              <div class="comp-name">Vuelta a España 2026</div>
-              <div class="comp-dates">22 Aug – 13 Sep · Stage Race · Upcoming</div>
-            </div>
-          </div>
 
-          <div class="comp-option" onclick="toggleComp(this)">
-            <div class="comp-checkbox"></div>
-            <div class="comp-info">
-              <div class="comp-name">Il Lombardia 2026</div>
-              <div class="comp-dates">10 Oct · One-Day Classic · Upcoming</div>
+            <div class="comp-option" onclick="toggleComp(this)">
+              <div class="comp-checkbox"></div>
+              <div class="comp-info">
+                <div class="comp-name">Il Lombardia 2026</div>
+                <div class="comp-dates">10 Oct · One-Day Classic · Upcoming</div>
+              </div>
             </div>
+
+            <div class="comp-option" onclick="toggleComp(this)">
+              <div class="comp-checkbox"></div>
+              <div class="comp-info">
+                <div class="comp-name">Paris–Roubaix 2026</div>
+                <div class="comp-dates">12 Apr · One-Day Classic · Upcoming</div>
+              </div>
+            </div>
+
+            <div class="comp-option" onclick="toggleComp(this)">
+              <div class="comp-checkbox"></div>
+              <div class="comp-info">
+                <div class="comp-name">Giro d'Italia 2026</div>
+                <div class="comp-dates">9 May – 31 May · Stage Race · Upcoming</div>
+              </div>
+            </div>
+
+            <!-- Fade hint — hides when list is fully scrolled -->
+            <div class="comp-list-fade" id="compFade"></div>
           </div>
 
         </div>
@@ -354,17 +386,15 @@
           </div>
         </div>
 
-      </div><!-- /scroll-content -->
+    </div><!-- /scroll-content -->
 
-      <!-- Pinned Create button -->
-      <div class="create-btn-wrap">
-        <button class="create-btn">
-          <svg viewBox="0 0 24 24"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/><path d="M9 12l2 2 4-4"/></svg>
-          Create League
-        </button>
-      </div>
-
-    </div><!-- /phone-inner -->
+    <!-- Create button — in normal flow above nav -->
+    <div class="create-btn-wrap">
+      <button class="create-btn">
+        <svg viewBox="0 0 24 24"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/><path d="M9 12l2 2 4-4"/></svg>
+        Create League
+      </button>
+    </div>
 
     <!-- Bottom Nav (Leagues active) -->
     <div class="bottom-nav">
@@ -465,6 +495,17 @@
       ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
       : '';
   }
+
+  // Show/hide the scroll-fade on the competitions list
+  const compWrap = document.getElementById('compListWrap');
+  const compFade = document.getElementById('compFade');
+  function updateCompFade() {
+    const atBottom = compWrap.scrollTop + compWrap.clientHeight >= compWrap.scrollHeight - 4;
+    compFade.style.opacity = atBottom ? '0' : '1';
+  }
+  compWrap.addEventListener('scroll', updateCompFade);
+  // Initial check
+  updateCompFade();
 </script>
 </body>
 </html>
