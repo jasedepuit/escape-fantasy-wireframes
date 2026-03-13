@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 11 – Create League · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-card-alt:   #2C2C2C;
+    --bg-input:      #2A2A2A;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.14);
+    --border-input:  rgba(255,255,255,0.16);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-card-alt:   #F0F0F0;
+    --bg-input:      #FFFFFF;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+    --border-input:  rgba(0,0,0,0.18);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+  body.light-mode .status-time { color: #111; }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    display: flex; align-items: center;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0; gap: 8px;
+  }
+  .header-back { font-size: 22px; color: var(--accent); flex-shrink: 0; line-height: 1; }
+  .header-title { flex: 1; font-size: 16px; font-weight: 800; color: var(--text-primary); text-align: center; letter-spacing: -0.01em; }
+  .header-spacer { width: 22px; flex-shrink: 0; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0;
+    background: var(--bg-screen);
+  }
+  .tab {
+    flex: 1; padding: 11px 0;
+    text-align: center; font-size: 13px; font-weight: 700;
+    color: var(--text-muted); position: relative; cursor: pointer;
+  }
+  .tab.active { color: var(--accent); }
+  .tab.active::after {
+    content: ''; position: absolute;
+    bottom: -1px; left: 20%; right: 20%;
+    height: 2px; background: var(--accent); border-radius: 1px;
+  }
+
+  /* ── SCROLL CONTENT ── */
+  .scroll-content { flex: 1; overflow-y: auto; }
+  .tab-panel { display: none; padding-bottom: 100px; }
+  .tab-panel.active { display: block; }
+
+  /* ── FORM SECTIONS ── */
+  .form-section {
+    padding: 16px 16px 4px;
+  }
+  .form-section-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  /* ── TEXT INPUT ── */
+  .input-wrap {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .input-wrap svg { width: 16px; height: 16px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .input-placeholder { font-size: 14px; color: var(--text-faint); flex: 1; }
+  .input-value { font-size: 14px; color: var(--text-primary); flex: 1; font-weight: 600; }
+
+  /* ── LOGO UPLOAD ── */
+  .logo-upload-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 10px;
+  }
+  .logo-preview {
+    width: 64px; height: 64px;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1.5px dashed var(--border-input);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .logo-preview svg { width: 22px; height: 22px; stroke: var(--text-faint); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .logo-upload-info { flex: 1; }
+  .logo-upload-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+  .logo-upload-hint { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .logo-upload-btn {
+    margin-top: 7px;
+    display: inline-flex; align-items: center; gap: 5px;
+    background: transparent; border: 1.5px solid var(--border-strong);
+    border-radius: 7px; padding: 5px 11px;
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    cursor: pointer;
+  }
+  .logo-upload-btn svg { width: 12px; height: 12px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── COLOUR SWATCHES ── */
+  .colour-row {
+    display: flex; gap: 10px; align-items: center;
+    margin-bottom: 10px;
+  }
+  .swatch {
+    width: 32px; height: 32px;
+    border-radius: 50%; cursor: pointer;
+    border: 2.5px solid transparent;
+    flex-shrink: 0;
+    transition: transform 0.1s;
+    position: relative;
+  }
+  .swatch.selected {
+    border-color: var(--text-primary);
+    transform: scale(1.15);
+  }
+  .swatch.selected::after {
+    content: '✓';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; color: #fff;
+  }
+
+  /* ── COMPETITION CHECKBOXES ── */
+  .comp-option {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .comp-option.checked { border-color: rgba(255,111,66,0.35); background: var(--accent-dim); }
+  .comp-checkbox {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--border-input);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .comp-option.checked .comp-checkbox {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .comp-checkbox svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .comp-info { flex: 1; }
+  .comp-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .comp-dates { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── RANKING METHOD ── */
+  .ranking-options {
+    display: flex; gap: 8px; margin-bottom: 4px;
+  }
+  .ranking-option {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 10px 8px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .ranking-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .ranking-option-title {
+    font-size: 12px; font-weight: 800;
+    color: var(--text-primary); margin-bottom: 3px;
+  }
+  .ranking-option-sub {
+    font-size: 10px; color: var(--text-muted); line-height: 1.3;
+  }
+  .ranking-recommended {
+    display: inline-block;
+    font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    background: var(--accent); color: #fff;
+    padding: 2px 5px; border-radius: 3px; margin-bottom: 4px;
+  }
+
+  /* ── TOGGLE ROWS ── */
+  .toggle-group {
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .toggle-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-info { flex: 1; }
+  .toggle-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .toggle-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.35; }
+  .help-icon {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-faint);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; color: var(--text-faint);
+    flex-shrink: 0; cursor: pointer;
+  }
+
+  /* Toggle switch */
+  .toggle-switch {
+    width: 44px; height: 26px;
+    border-radius: 13px;
+    background: var(--text-faint);
+    flex-shrink: 0;
+    position: relative; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-switch.on { background: #4CAF50; }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%; background: #fff;
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle-switch.on::after { left: 21px; }
+
+  /* ── CREATE BUTTON (pinned) ── */
+  .create-btn-wrap {
+    position: absolute;
+    bottom: 80px; left: 8px; right: 8px;
+  }
+  .create-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .create-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Pinned footer wrapper */
+  .phone-inner {
+    flex: 1; overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    background: var(--bg-nav);
+    border-top: 1px solid var(--border-strong);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 7px 0 22px; flex-shrink: 0;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; color: #505050; }
+  .nav-item.is-active { color: #FF6F42; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active .nav-label { color: #FF6F42; }
+
+  /* ── ANNOTATIONS ── */
+  .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map" target="_self">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div class="header-back">‹</div>
+      <div class="header-title">Create League</div>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- Standard / Advanced tabs -->
+    <div class="tab-bar">
+      <div class="tab active" id="tab-standard" onclick="switchTab('standard')">Standard</div>
+      <div class="tab" id="tab-advanced" onclick="switchTab('advanced')">Advanced</div>
+    </div>
+
+    <!-- Scroll + pinned button wrapper -->
+    <div class="phone-inner">
+
+      <div class="scroll-content">
+
+        <!-- ── STANDARD TAB ── -->
+        <div class="tab-panel active" id="panel-standard">
+
+          <!-- League Name -->
+          <div class="form-section">
+            <div class="form-section-label">League Name</div>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span class="input-placeholder">e.g. Escape Collective HQ</span>
+            </div>
+          </div>
+
+          <!-- Logo -->
+          <div class="form-section" style="padding-top:4px;">
+            <div class="form-section-label">League Logo</div>
+            <div class="logo-upload-row">
+              <div class="logo-preview">
+                <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+              <div class="logo-upload-info">
+                <div class="logo-upload-title">Upload an image</div>
+                <div class="logo-upload-hint">PNG or JPG · Recommended 256×256px · Optional — initials used if blank</div>
+                <div class="logo-upload-btn">
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Choose file
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Colour -->
+          <div class="form-section" style="padding-top:4px;">
+            <div class="form-section-label">League Colour</div>
+            <div class="colour-row">
+              <div class="swatch selected" style="background:#FF6F42;" data-c="orange" onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#3A7FD5;" data-c="blue"   onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#4CAF50;" data-c="green"  onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#9B59F5;" data-c="purple" onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#26A69A;" data-c="teal"   onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#EF5350;" data-c="red"    onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#FFA726;" data-c="amber"  onclick="selectColour(this)"></div>
+              <div class="swatch" style="background:#5C6BC0;" data-c="indigo" onclick="selectColour(this)"></div>
+            </div>
+          </div>
+
+          <!-- Competitions -->
+          <div class="form-section" style="padding-top:4px;">
+            <div class="form-section-label">Include in Competitions</div>
+
+            <div class="comp-option checked" onclick="toggleComp(this)">
+              <div class="comp-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="comp-info">
+                <div class="comp-name">Tour de France 2026</div>
+                <div class="comp-dates">5 Jul – 27 Jul · Stage Race · Active</div>
+              </div>
+            </div>
+
+            <div class="comp-option checked" onclick="toggleComp(this)">
+              <div class="comp-checkbox">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="comp-info">
+                <div class="comp-name">Vuelta a España 2026</div>
+                <div class="comp-dates">22 Aug – 13 Sep · Stage Race · Upcoming</div>
+              </div>
+            </div>
+
+            <div class="comp-option" onclick="toggleComp(this)">
+              <div class="comp-checkbox"></div>
+              <div class="comp-info">
+                <div class="comp-name">Il Lombardia 2026</div>
+                <div class="comp-dates">10 Oct · One-Day Classic · Upcoming</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Ranking Method -->
+          <div class="form-section" style="padding-top:4px;">
+            <div class="form-section-label">Ranking Method</div>
+            <div class="ranking-options">
+              <div class="ranking-option selected" onclick="selectRanking(this)">
+                <div class="ranking-recommended">Recommended</div>
+                <div class="ranking-option-title">By Points</div>
+                <div class="ranking-option-sub">Total UCI points earned across all picks</div>
+              </div>
+              <div class="ranking-option" onclick="selectRanking(this)">
+                <div style="height:16px;"></div>
+                <div class="ranking-option-title">By Wins</div>
+                <div class="ranking-option-sub">Count of stages where your pick won</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invite Only -->
+          <div class="form-section" style="padding-top:4px;">
+            <div class="form-section-label">Access</div>
+            <div class="toggle-group">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Invite Only</div>
+                  <div class="toggle-desc">Hidden from All Leagues browse. Members can only join via a shared invite code.</div>
+                </div>
+                <div class="help-icon" title="Learn more">?</div>
+                <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email notifications -->
+          <div class="form-section" style="padding-top:0;">
+            <div class="form-section-label">Email Notifications</div>
+            <div class="toggle-group">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Send Daily Digest</div>
+                  <div class="toggle-desc">Email all members a daily summary of standings and picks.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Use BCC for Email</div>
+                  <div class="toggle-desc">Members' email addresses are hidden from each other.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panel-standard -->
+
+        <!-- ── ADVANCED TAB ── -->
+        <div class="tab-panel" id="panel-advanced">
+
+          <div class="form-section">
+            <div class="form-section-label">Pick Rules</div>
+            <div class="toggle-group">
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Allow Different Pick to Main League</div>
+                  <div class="toggle-desc">Members can make a separate pick for this league, independent of their global competition pick.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Second Chance Pick</div>
+                  <div class="toggle-desc">If a member's pick abandons or DNS, they get one replacement pick for that stage.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Cap Time Loss Per Stage</div>
+                  <div class="toggle-desc">Limits the maximum time gap scored per stage, preventing a single bad pick from being catastrophic.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-section" style="padding-top:0;">
+            <div class="form-section-label">Chat</div>
+            <div class="toggle-group">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Enable League Chat</div>
+                  <div class="toggle-desc">Members can message each other and share picks in the league chat.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-label">Picks Visible Before Lock</div>
+                  <div class="toggle-desc">Members can see each other's picks before the stage deadline. Off = blind picks until lock.</div>
+                </div>
+                <div class="help-icon">?</div>
+                <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panel-advanced -->
+
+      </div><!-- /scroll-content -->
+
+      <!-- Pinned Create button -->
+      <div class="create-btn-wrap">
+        <button class="create-btn">
+          <svg viewBox="0 0 24 24"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/><path d="M9 12l2 2 4-4"/></svg>
+          Create League
+        </button>
+      </div>
+
+    </div><!-- /phone-inner -->
+
+    <!-- Bottom Nav (Leagues active) -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+        <div class="nav-label">Home</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+        <div class="nav-label">Compete</div>
+      </div>
+      <div class="nav-item is-active">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+        <div class="nav-label">Leagues</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+        <div class="nav-label">News</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+        <div class="nav-label">Account</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 11</div>
+  <div class="screen-name">Create League</div>
+  <div class="screen-desc">Accessed from the "Create League" button on Screen 9. Standard / Advanced tab structure matches the existing app. The Create button is pinned above the nav so it's always reachable without scrolling to the bottom.</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Standard Tab</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>League Name</strong> — free text. Validated on submit (required, max 40 chars). Shown as the card title throughout the app.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>Logo upload</strong> — optional PNG/JPG. If omitted, the league avatar uses the first letter of the league name on the colour background. Recommended 256×256px.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>League Colour</strong> — 8 preset swatches. Selected colour drives the card top stripe, avatar background, and any league-specific accent throughout the app. Replaces the current app's freeform colour picker with a constrained set to maintain visual consistency.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>Include in Competitions</strong> — new field not in current app. Multi-select from all competitions the user has joined. Leagues default to all active/upcoming competitions; director can deselect any. Allows a league to be scoped to a single race or span the full season.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Ranking Method</strong> — By Points (recommended) or By Wins. Shown as two side-by-side cards with a description, replacing the current app's dropdown.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>Invite Only toggle</strong> — on by default. When off, the league appears in the All Leagues browse tab and anyone can join without a code.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Advanced Tab</div>
+    <div class="callout">
+      <span class="cn">7</span>
+      <div class="callout-text"><strong>Allow Different Pick to Main League</strong> — lets members make a separate pick for this league, decoupled from their global competition pick. Useful for side-bet leagues with friends.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">8</span>
+      <div class="callout-text"><strong>Second Chance Pick</strong> — if a picked rider abandons or DNS, the member gets a one-time replacement pick for that stage only.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">9</span>
+      <div class="callout-text"><strong>Cap Time Loss Per Stage</strong> — on by default. Limits the maximum points gap per stage so a single bad pick doesn't end a season.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">10</span>
+      <div class="callout-text"><strong>Picks Visible Before Lock</strong> — new setting. Off by default, meaning picks are hidden from other members until the stage deadline passes. Creates a more competitive, sealed-envelope feel.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">After tapping Create League, the user is taken directly to a Share Invite sheet (native iOS/Android share sheet with the league's invite code and link). The new league then appears at the top of My Leagues on Screen 9.</div>
+</div>
+
+<script>
+  /* ── THEME ── */
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+
+  /* ── TAB SWITCHER ── */
+  function switchTab(which) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + which).classList.add('active');
+    document.getElementById('panel-' + which).classList.add('active');
+  }
+
+  /* ── COLOUR SWATCH ── */
+  function selectColour(el) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  /* ── RANKING METHOD ── */
+  function selectRanking(el) {
+    document.querySelectorAll('.ranking-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  /* ── TOGGLE SWITCH ── */
+  function toggleSwitch(el) {
+    el.classList.toggle('on');
+  }
+
+  /* ── COMPETITION CHECKBOX ── */
+  function toggleComp(el) {
+    el.classList.toggle('checked');
+    const box = el.querySelector('.comp-checkbox');
+    if (el.classList.contains('checked')) {
+      box.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else {
+      box.innerHTML = '';
+    }
+  }
+</script>
+</body>
+</html>
