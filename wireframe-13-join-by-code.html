@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 13 – Join by Code · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-input:      #2A2A2A;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.14);
+    --border-input:  rgba(255,255,255,0.16);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-input:      #FFFFFF;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+    --border-input:  rgba(0,0,0,0.18);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    display: flex; align-items: center;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0; gap: 8px;
+  }
+  .header-back { font-size: 22px; color: var(--accent); flex-shrink: 0; line-height: 1; cursor: pointer; }
+  .header-title { flex: 1; font-size: 16px; font-weight: 800; color: var(--text-primary); text-align: center; letter-spacing: -0.01em; }
+  .header-spacer { width: 22px; flex-shrink: 0; }
+
+  /* ── SCROLL CONTENT ── */
+  .screen-scroll { flex: 1; overflow-y: auto; padding-bottom: 16px; }
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 36px 24px 24px; gap: 10px;
+  }
+  .hero-icon {
+    width: 64px; height: 64px;
+    background: var(--accent-dim);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 6px;
+  }
+  .hero-icon svg { width: 32px; height: 32px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hero-title { font-size: 20px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; text-align: center; }
+  .hero-sub { font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; max-width: 260px; }
+
+  /* ── CODE ENTRY ── */
+  .code-section { padding: 0 20px 8px; }
+  .code-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+
+  .code-boxes { display: flex; gap: 8px; justify-content: center; margin-bottom: 4px; }
+  .code-box {
+    width: 44px; height: 56px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border-input);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 800;
+    color: var(--text-primary);
+    transition: border-color 0.15s, background 0.15s;
+    cursor: text; user-select: none;
+  }
+  .code-box.filled { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .code-box.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,111,66,0.18); }
+  .code-box.cursor::after { content: '|'; font-weight: 300; font-size: 20px; animation: blink 1s step-end infinite; color: var(--accent); }
+  .code-box.cursor { color: transparent; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes shake {
+    0%   { transform: translateX(0); }
+    20%  { transform: translateX(-6px); }
+    40%  { transform: translateX(6px); }
+    60%  { transform: translateX(-4px); }
+    80%  { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+  }
+
+  /* Hidden input triggers native keyboard on mobile */
+  .code-input-hidden {
+    position: absolute; opacity: 0; pointer-events: none;
+    width: 1px; height: 1px; top: -9999px;
+    font-size: 16px; /* prevents iOS zoom */
+  }
+  .code-hint { font-size: 11px; color: var(--text-faint); text-align: center; margin-top: 8px; }
+
+  /* ── ERROR STATE ── */
+  .error-banner {
+    margin: 12px 20px 0;
+    padding: 10px 14px;
+    background: rgba(220,60,60,0.12);
+    border: 1px solid rgba(220,60,60,0.3);
+    border-radius: 10px;
+    display: none; align-items: center; gap: 8px;
+  }
+  .error-banner.visible { display: flex; }
+  .error-icon { font-size: 14px; flex-shrink: 0; }
+  .error-text { font-size: 12px; font-weight: 600; color: #FF6B6B; line-height: 1.4; }
+
+  /* ── LEAGUE PREVIEW CARD ── */
+  .league-preview {
+    margin: 16px 20px 0;
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-strong);
+    padding: 14px 16px;
+    display: none;
+  }
+  .league-preview.visible { display: block; }
+  .lp-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+  .lp-header { display: flex; align-items: center; gap: 12px; }
+  .lp-logo { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0; }
+  .lp-meta { flex: 1; }
+  .lp-name { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px; }
+  .lp-detail { font-size: 11px; color: var(--text-muted); }
+  .lp-stats { display: flex; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-subtle); }
+  .lp-stat { flex: 1; text-align: center; }
+  .lp-stat-val { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+  .lp-stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 1px; }
+  .lp-stat + .lp-stat { border-left: 1px solid var(--border-subtle); }
+
+  /* ── DIVIDER + ALT CTA ── */
+  .divider { display: flex; align-items: center; gap: 10px; margin: 20px 20px 0; }
+  .divider-line { flex: 1; height: 1px; background: var(--border-subtle); }
+  .divider-label { font-size: 11px; color: var(--text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; }
+  .alt-hint { padding: 14px 20px 0; }
+  .alt-hint-text { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+  .alt-hint-link { color: var(--accent); font-weight: 700; cursor: pointer; }
+
+  /* ── JOIN BUTTON — in normal flow above nav ── */
+  .join-btn-wrap { flex-shrink: 0; padding: 10px 8px 8px; }
+  .join-btn {
+    width: 100%; padding: 15px;
+    background: var(--accent); color: #fff;
+    font-size: 15px; font-weight: 800; letter-spacing: 0.02em;
+    border: none; border-radius: 14px; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .join-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .join-btn:not(:disabled):active { transform: scale(0.98); }
+  .join-btn.success { background: #27AE60; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0;
+    background: var(--bg-nav);
+    border-top: 1px solid var(--border-strong);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 7px 0 22px;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-icon svg { width: 22px; height: 22px; fill: none; stroke: #505050; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-item.is-active .nav-icon svg { stroke: var(--accent); }
+  .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── ANNOTATION PANEL ── */
+  .annotation-panel { width: 300px; flex-shrink: 0; padding-top: 80px; }
+  .ann-title { font-size: 13px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+  .ann-card { background: #1E1E1E; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.07); }
+  body.light-mode .ann-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+  .ann-card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent); margin-bottom: 6px; }
+  .ann-card-body { font-size: 12px; color: #888; line-height: 1.6; }
+  .ann-card-body strong { color: #aaa; font-weight: 700; }
+  .ann-card-body code { font-family: 'SF Mono', monospace; font-size: 11px; background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px; color: #ccc; }
+  body.light-mode .ann-card-body { color: #555; }
+  body.light-mode .ann-card-body strong { color: #333; }
+  body.light-mode .ann-card-body code { background: rgba(0,0,0,0.07); color: #444; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="app-header">
+      <span class="header-back">‹</span>
+      <span class="header-title">Join by Code</span>
+      <span class="header-spacer"></span>
+    </div>
+
+    <!-- Scroll content -->
+    <div class="screen-scroll">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="hero-title">Enter Invite Code</div>
+        <div class="hero-sub">Ask your league director for a 6-character code to join their private league.</div>
+      </div>
+
+      <!-- Code Entry -->
+      <div class="code-section">
+        <div class="code-label">Invite Code</div>
+        <div class="code-boxes" id="codeBoxes" onclick="focusInput()">
+          <div class="code-box" id="b0"></div>
+          <div class="code-box" id="b1"></div>
+          <div class="code-box" id="b2"></div>
+          <div class="code-box" id="b3"></div>
+          <div class="code-box" id="b4"></div>
+          <div class="code-box" id="b5"></div>
+        </div>
+        <input class="code-input-hidden" id="codeInput" type="text" maxlength="6" autocomplete="one-time-code" spellcheck="false" inputmode="text" />
+        <div class="code-hint">Codes are not case-sensitive</div>
+      </div>
+
+      <!-- Error banner -->
+      <div class="error-banner" id="errorBanner">
+        <span class="error-icon">⚠</span>
+        <span class="error-text">No league found for <strong id="errorCode"></strong>. Check the code and try again.</span>
+      </div>
+
+      <!-- League preview (shown on valid lookup) -->
+      <div class="league-preview" id="leaguePreview">
+        <div class="lp-label">League Found</div>
+        <div class="lp-header">
+          <div class="lp-logo" style="background: #C0392B;">TF</div>
+          <div class="lp-meta">
+            <div class="lp-name">Tour de France Fanatics</div>
+            <div class="lp-detail">14 members · Tour de France 2026</div>
+          </div>
+        </div>
+        <div class="lp-stats">
+          <div class="lp-stat">
+            <div class="lp-stat-val">14</div>
+            <div class="lp-stat-label">Members</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-val">1</div>
+            <div class="lp-stat-label">Active Comp</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-val">Stage 8</div>
+            <div class="lp-stat-label">Current Stage</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider + alternate CTA -->
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-label">or</div>
+        <div class="divider-line"></div>
+      </div>
+      <div class="alt-hint">
+        <div class="alt-hint-text">
+          Looking to create your own league instead?<br>
+          <span class="alt-hint-link">Create a League</span>
+        </div>
+      </div>
+
+    </div><!-- /screen-scroll -->
+
+    <!-- Join button — in normal flow above nav -->
+    <div class="join-btn-wrap">
+      <button class="join-btn" id="joinBtn" disabled onclick="handleJoin()">Join League</button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+        <div class="nav-label">Home</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+        <div class="nav-label">Compete</div>
+      </div>
+      <div class="nav-item is-active">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+        <div class="nav-label">Leagues</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14M8 11H14M8 14H11"/></svg></div>
+        <div class="nav-label">News</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+        <div class="nav-label">Account</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="ann-title">Screen 13 — Join by Code</div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Code Format</div>
+    <div class="ann-card-body">
+      6-character alphanumeric code, <strong>case-insensitive</strong>. Rendered uppercase in the boxes. The hidden input captures keyboard entry; the visual boxes render each character. On mobile, tapping the boxes triggers the native keyboard.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Auto-Lookup</div>
+    <div class="ann-card-body">
+      Lookup fires automatically when all 6 characters are entered — no separate search tap needed. <strong>Valid code</strong> → league preview card appears, Join button enables. <strong>Invalid code</strong> → error banner + shake animation on the boxes. Editing any character resets to the blank state.
+      <br><br>
+      In this wireframe: <code>TDF26</code> resolves to "Tour de France Fanatics". Any other 6-char string triggers the error state.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">League Preview Card</div>
+    <div class="ann-card-body">
+      Shown only after a valid lookup. Displays <strong>league name, logo/colour, member count, active competition count, and current stage</strong> — enough context to confirm the user is joining the right league before committing.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Join Button</div>
+    <div class="ann-card-body">
+      Disabled (35% opacity) until a valid lookup succeeds. On tap: transitions to <strong>"Joined! 🎉"</strong> with a green background, then navigates to League Detail (Screen 10). If the league is already at capacity or the user is already a member, the button shows an appropriate error state instead.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Entry Points</div>
+    <div class="ann-card-body">
+      • <strong>League List (Screen 09)</strong> — "Join by Code" outline button in the action row.<br><br>
+      • <strong>Deep link</strong> — a shared invite URL can pre-fill the code and trigger lookup automatically, skipping the manual entry step.
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+
+  const INPUT    = document.getElementById('codeInput');
+  const BOXES    = Array.from({length: 6}, (_, i) => document.getElementById('b' + i));
+  const JOIN_BTN = document.getElementById('joinBtn');
+  const ERROR    = document.getElementById('errorBanner');
+  const PREVIEW  = document.getElementById('leaguePreview');
+  const DEMO     = 'TDF26';
+
+  function focusInput() { INPUT.focus(); }
+
+  function renderBoxes(val) {
+    const chars = val.toUpperCase().split('');
+    const cursor = chars.length < 6 ? chars.length : -1;
+    BOXES.forEach((box, i) => {
+      box.className = 'code-box';
+      if (i < chars.length) {
+        box.classList.add('filled');
+        box.textContent = chars[i];
+      } else if (i === cursor) {
+        box.classList.add('cursor');
+        box.textContent = '';
+      } else {
+        box.textContent = '';
+      }
+    });
+  }
+
+  function resetState() {
+    ERROR.classList.remove('visible');
+    PREVIEW.classList.remove('visible');
+    JOIN_BTN.disabled = true;
+    JOIN_BTN.textContent = 'Join League';
+    JOIN_BTN.className = 'join-btn';
+  }
+
+  INPUT.addEventListener('input', function () {
+    const raw = this.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
+    this.value = raw;
+    renderBoxes(raw);
+    resetState();
+    if (raw.length === 6) doLookup(raw.toUpperCase());
+  });
+
+  INPUT.addEventListener('focus', function () {
+    const pos = this.value.length;
+    if (pos < 6) BOXES[pos].classList.add('active');
+  });
+
+  INPUT.addEventListener('blur', function () {
+    BOXES.forEach(b => b.classList.remove('active'));
+  });
+
+  function doLookup(code) {
+    setTimeout(() => {
+      if (code === DEMO) {
+        PREVIEW.classList.add('visible');
+        JOIN_BTN.disabled = false;
+      } else {
+        document.getElementById('errorCode').textContent = '"' + code + '"';
+        ERROR.classList.add('visible');
+        const wrap = document.getElementById('codeBoxes');
+        wrap.style.animation = 'none';
+        wrap.offsetWidth;
+        wrap.style.animation = 'shake 0.4s ease';
+      }
+    }, 350);
+  }
+
+  function handleJoin() {
+    JOIN_BTN.textContent = 'Joined! 🎉';
+    JOIN_BTN.classList.add('success');
+    JOIN_BTN.disabled = true;
+  }
+
+  renderBoxes('');
+</script>
+</body>
+</html>
