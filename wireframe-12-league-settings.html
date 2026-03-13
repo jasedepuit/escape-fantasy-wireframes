@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 12 – League Settings · Escape Fantasy Wireframes</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── THEME ── */
+  :root {
+    --bg-page:       #111;
+    --bg-screen:     #1A1A1A;
+    --bg-card:       #242424;
+    --bg-input:      #2A2A2A;
+    --bg-nav:        #141414;
+    --text-primary:  #F0F0F0;
+    --text-muted:    #888;
+    --text-faint:    #555;
+    --accent:        #FF6F42;
+    --accent-dim:    rgba(255,111,66,0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.14);
+    --border-input:  rgba(255,255,255,0.16);
+    --danger:        #E53935;
+    --danger-dim:    rgba(229,57,53,0.1);
+    --danger-border: rgba(229,57,53,0.25);
+  }
+  body.light-mode {
+    --bg-page:       #E8E8E8;
+    --bg-screen:     #F5F5F5;
+    --bg-card:       #FFFFFF;
+    --bg-input:      #FFFFFF;
+    --bg-nav:        #FAFAFA;
+    --text-primary:  #111111;
+    --text-muted:    #666666;
+    --text-faint:    #AAAAAA;
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.14);
+    --border-input:  rgba(0,0,0,0.18);
+  }
+
+  /* ── PAGE ── */
+  body { background: var(--bg-page); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 40px; }
+
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone-wrap { flex-shrink: 0; }
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    border: 8px solid #2A2A2A;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  body.light-mode .phone { border-color: #C0C0C0; box-shadow: 0 32px 80px rgba(0,0,0,0.2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px 6px; flex-shrink: 0; }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    display: flex; align-items: center;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-strong);
+    flex-shrink: 0; gap: 8px;
+  }
+  .header-back { font-size: 22px; color: var(--accent); flex-shrink: 0; line-height: 1; cursor: pointer; }
+  .header-title { flex: 1; font-size: 16px; font-weight: 800; color: var(--text-primary); text-align: center; letter-spacing: -0.01em; }
+  .header-save {
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    flex-shrink: 0; cursor: pointer; opacity: 0.4; transition: opacity 0.2s;
+  }
+  .header-save.active { opacity: 1; }
+
+  /* ── PHONE INNER ── */
+  .phone-inner { flex: 1; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+  .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 24px; }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    padding: 20px 16px 8px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted);
+  }
+  .section-header:first-of-type { padding-top: 16px; }
+
+  /* ── TEXT INPUT ── */
+  .input-wrap {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 11px 16px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 0;
+  }
+  .input-wrap svg { width: 16px; height: 16px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .input-value { font-size: 14px; color: var(--text-primary); flex: 1; }
+  .input-chevron { font-size: 16px; color: var(--text-faint); }
+
+  /* ── LOGO ROW ── */
+  .logo-row {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 11px 16px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+  }
+  .logo-thumb {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0;
+  }
+  .logo-row-info { flex: 1; }
+  .logo-row-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .logo-row-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .logo-row-chevron { font-size: 16px; color: var(--text-faint); }
+
+  /* ── COLOUR SWATCHES ── */
+  .colour-card {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 16px;
+  }
+  .colour-row { display: flex; gap: 10px; align-items: center; }
+  .swatch {
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    border: 2.5px solid transparent; flex-shrink: 0; position: relative;
+    transition: transform 0.1s;
+  }
+  .swatch.selected { border-color: var(--text-primary); transform: scale(1.18); }
+  .swatch.selected::after {
+    content: '✓'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900; color: #fff;
+  }
+
+  /* ── TOGGLE GROUP ── */
+  .toggle-group {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .toggle-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; border-bottom: 1px solid var(--border-subtle); cursor: pointer;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-info { flex: 1; }
+  .toggle-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .toggle-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.35; }
+  .toggle-switch {
+    width: 44px; height: 26px; border-radius: 13px;
+    background: var(--text-faint); flex-shrink: 0; position: relative; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-switch.on { background: #4CAF50; }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%; background: #fff;
+    transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle-switch.on::after { left: 21px; }
+
+  /* ── COMPETITIONS LIST ── */
+  .comp-group {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .comp-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 16px; border-bottom: 1px solid var(--border-subtle); cursor: pointer;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-checkbox {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid var(--border-input); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .comp-row.checked .comp-checkbox { background: var(--accent); border-color: var(--accent); }
+  .comp-checkbox svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .comp-info { flex: 1; }
+  .comp-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .comp-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── INVITE CODE ROW ── */
+  .invite-code-row {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 13px 16px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+  }
+  .invite-code-pill {
+    background: var(--accent-dim);
+    border: 1px solid rgba(255,111,66,0.25);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 16px; font-weight: 900; color: var(--accent);
+    letter-spacing: 0.1em; font-family: 'SF Mono', monospace;
+    flex: 1; text-align: center;
+  }
+  .invite-code-action {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 700; color: var(--accent);
+  }
+  .invite-code-action svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── DANGER ZONE ── */
+  .danger-group {
+    background: var(--danger-dim);
+    border-top: 1px solid var(--danger-border);
+    border-bottom: 1px solid var(--danger-border);
+    overflow: hidden;
+  }
+  .danger-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--danger-border); cursor: pointer;
+  }
+  .danger-row:last-child { border-bottom: none; }
+  .danger-row svg { width: 18px; height: 18px; stroke: var(--danger); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .danger-label { flex: 1; font-size: 13px; font-weight: 700; color: var(--danger); }
+  .danger-chevron { font-size: 14px; color: var(--danger); opacity: 0.5; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    background: var(--bg-nav); border-top: 1px solid var(--border-strong);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 7px 0 22px; flex-shrink: 0;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active .nav-label { color: #FF6F42; }
+  .nav-icon svg { width: 22px; height: 22px; fill: none; stroke: #505050; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-item.is-active .nav-icon svg { stroke: #FF6F42; }
+
+  /* ── ANNOTATIONS ── */
+  .annotation-panel { width: 300px; padding-top: 8px; flex-shrink: 0; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .screen-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.02em; }
+  .screen-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+  .ann-group { margin-bottom: 20px; }
+  .ann-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 8px; }
+  .callout { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .callout-text strong { color: var(--text-primary); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 20px 0; }
+  .nav-note { font-size: 11px; color: var(--text-faint); font-style: italic; line-height: 1.5; }
+
+  /* ── DIRECTOR-ONLY BADGE ── */
+  .director-badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-muted); padding: 2px 7px; border-radius: 4px;
+    margin-left: 6px; vertical-align: middle;
+  }
+  body.light-mode .director-badge { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
+</style>
+</head>
+<body>
+
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map" target="_self">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+
+<!-- ═══════════════ PHONE ═══════════════ -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="fill:none;stroke:var(--text-primary)"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><path d="M2 9.5C6.5 4.5 17.5 4.5 22 9.5l-2 2C16.5 8 7.5 8 4 11.5l-2-2zm4 4C8 11 16 11 18 13.5l-2 2C14.5 13.5 9.5 13.5 8 15.5l-2-2zm4 4C11 16 13 16 14 17l-2 2-2-2z"/></svg>
+        <svg viewBox="0 0 24 24" style="fill:var(--text-primary)"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--text-primary)"/><rect x="4" y="9" width="12" height="7" rx="1"/></svg>
+      </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div class="header-back">‹</div>
+      <div class="header-title">League Settings</div>
+      <div class="header-save active" id="saveBtn" onclick="handleSave()">Save</div>
+    </div>
+
+    <!-- Scroll + content -->
+    <div class="phone-inner">
+      <div class="scroll-content" id="scrollContent">
+
+        <!-- ── IDENTITY ── -->
+        <div class="section-header">Identity</div>
+
+        <div class="input-wrap" style="margin-bottom:1px;">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span class="input-value">Escape Collective HQ</span>
+          <span class="input-chevron">›</span>
+        </div>
+
+        <div class="logo-row" style="margin-top:1px;">
+          <div class="logo-thumb" style="background:#3A7FD5;">EC</div>
+          <div class="logo-row-info">
+            <div class="logo-row-label">League Logo</div>
+            <div class="logo-row-hint">Tap to change · PNG or JPG recommended</div>
+          </div>
+          <div class="logo-row-chevron">›</div>
+        </div>
+
+        <!-- Colour -->
+        <div class="section-header">League Colour</div>
+        <div class="colour-card">
+          <div class="colour-row">
+            <div class="swatch" style="background:#FF6F42;" onclick="selectColour(this)"></div>
+            <div class="swatch selected" style="background:#3A7FD5;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#4CAF50;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#9B59F5;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#26A69A;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#EF5350;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#FFA726;" onclick="selectColour(this)"></div>
+            <div class="swatch" style="background:#5C6BC0;" onclick="selectColour(this)"></div>
+          </div>
+        </div>
+
+        <!-- ── COMPETITIONS ── -->
+        <div class="section-header">Competitions</div>
+        <div class="comp-group">
+          <div class="comp-row checked" onclick="toggleComp(this)">
+            <div class="comp-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="comp-info">
+              <div class="comp-name">Tour de France 2026</div>
+              <div class="comp-meta">5 Jul – 27 Jul · Stage Race · Active</div>
+            </div>
+          </div>
+          <div class="comp-row checked" onclick="toggleComp(this)">
+            <div class="comp-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="comp-info">
+              <div class="comp-name">Vuelta a España 2026</div>
+              <div class="comp-meta">22 Aug – 13 Sep · Stage Race · Upcoming</div>
+            </div>
+          </div>
+          <div class="comp-row" onclick="toggleComp(this)">
+            <div class="comp-checkbox"></div>
+            <div class="comp-info">
+              <div class="comp-name">Il Lombardia 2026</div>
+              <div class="comp-meta">10 Oct · One-Day Classic · Upcoming</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ACCESS ── -->
+        <div class="section-header">Access</div>
+        <div class="toggle-group">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Invite Only</div>
+              <div class="toggle-desc">Off = league appears in All Leagues and anyone can join without a code.</div>
+            </div>
+            <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+
+        <!-- Invite code (only shown when Invite Only is on) -->
+        <div class="invite-code-row" id="inviteCodeRow">
+          <div class="invite-code-pill">TDF26</div>
+          <div class="invite-code-action">
+            <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Share
+          </div>
+        </div>
+
+        <!-- ── NOTIFICATIONS ── -->
+        <div class="section-header">Notifications</div>
+        <div class="toggle-group">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Send Daily Digest Email</div>
+              <div class="toggle-desc">Emails all members a daily summary of standings and picks.</div>
+            </div>
+            <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+
+        <!-- ── GAMEPLAY ── -->
+        <div class="section-header">
+          Gameplay
+          <span class="director-badge">Director only</span>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Allow Different Pick</div>
+              <div class="toggle-desc">Members can pick a different rider from the stage winner pick. Useful for larger leagues.</div>
+            </div>
+            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Second Chance Pick</div>
+              <div class="toggle-desc">If a member's pick abandons or doesn't start, they can select a replacement before the next stage.</div>
+            </div>
+            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Picks Visible Before Lock</div>
+              <div class="toggle-desc">Members can see each other's picks before the stage start time.</div>
+            </div>
+            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Enable Chat</div>
+              <div class="toggle-desc">Show the Chat tab in League Detail for this league.</div>
+            </div>
+            <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+
+        <!-- ── DANGER ZONE ── -->
+        <div class="section-header" style="color: var(--danger); opacity: 0.7;">Danger Zone</div>
+        <div class="danger-group">
+          <div class="danger-row">
+            <svg viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1"/></svg>
+            <span class="danger-label">Leave League</span>
+            <span class="danger-chevron">›</span>
+          </div>
+          <div class="danger-row" id="deleteRow">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            <span class="danger-label">Delete League</span>
+            <span class="danger-chevron">›</span>
+          </div>
+        </div>
+
+        <div style="height: 30px;"></div>
+
+      </div><!-- /scroll-content -->
+    </div><!-- /phone-inner -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+        <div class="nav-label">Home</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+        <div class="nav-label">Compete</div>
+      </div>
+      <div class="nav-item is-active">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+        <div class="nav-label">Leagues</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14M8 11H14M8 14H11"/></svg></div>
+        <div class="nav-label">News</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon"><svg viewBox="0 0 22 22"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+        <div class="nav-label">Account</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<!-- ═══════════════ ANNOTATIONS ═══════════════ -->
+<div class="annotation-panel">
+  <div class="screen-title">Screen 12</div>
+  <div class="screen-name">League Settings</div>
+  <div class="screen-desc">Reached via the gear icon in the League Detail header (Screen 10). This screen covers both editable creation fields and the post-creation gameplay settings removed from the creation flow.</div>
+
+  <div class="ann-group">
+    <div class="ann-label">Identity & Access</div>
+    <div class="callout">
+      <span class="cn">1</span>
+      <div class="callout-text"><strong>Name, Logo, Colour, Competitions</strong> — all editable post-creation. Same fields as Create League. Colour uses the 8-swatch picker, not a freeform input.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">2</span>
+      <div class="callout-text"><strong>Invite Only + invite code</strong> — the current code (e.g. TDF26) is always visible so the director can easily share it. Tapping "Share" opens the native OS share sheet. If Invite Only is turned off, the code row hides and the league becomes discoverable.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Gameplay (Director only)</div>
+    <div class="callout">
+      <span class="cn">3</span>
+      <div class="callout-text"><strong>Allow Different Pick</strong> — 4% adoption. Not shown at creation, but valid for established leagues that want more variety. Director-only setting.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">4</span>
+      <div class="callout-text"><strong>Second Chance Pick</strong> — 5% adoption. Allows a replacement rider if the original pick abandons. Only relevant for stage races; director can enable after creation if desired.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">5</span>
+      <div class="callout-text"><strong>Picks Visible Before Lock</strong> — surfaced here rather than at creation. Some leagues prefer transparency, others strategic secrecy. Off by default.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">6</span>
+      <div class="callout-text"><strong>Enable Chat</strong> — on by default. Directors can disable it for leagues that don't use it, keeping the League Detail tab bar clean.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Save Behaviour</div>
+    <div class="callout">
+      <span class="cn">7</span>
+      <div class="callout-text"><strong>Save button</strong> in the header is always active (directors land here ready to change things). On tap it confirms changes and returns to League Detail. Toggle and swatch changes update immediately in the UI without requiring Save — Save only persists to the server.</div>
+    </div>
+  </div>
+
+  <div class="ann-group">
+    <div class="ann-label">Danger Zone</div>
+    <div class="callout">
+      <span class="cn">8</span>
+      <div class="callout-text"><strong>Leave League</strong> — available to all members. Tapping shows a confirmation sheet. If the leaver is the director, they're prompted to transfer directorship first.</div>
+    </div>
+    <div class="callout">
+      <span class="cn">9</span>
+      <div class="callout-text"><strong>Delete League</strong> — director only. Shows a destructive confirmation with the league name typed to confirm. Not shown to regular members.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="nav-note">Entry point: gear icon (⚙) in Screen 10 League Detail header. Non-directors see a read-only version of this screen — Gameplay section and Delete League are hidden, but they can still leave the league.</div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+
+  function selectColour(el) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    // Update logo thumb colour to match
+    const thumb = document.querySelector('.logo-thumb');
+    thumb.style.background = el.style.background;
+  }
+
+  function toggleSwitch(el) {
+    el.classList.toggle('on');
+    // Special case: Invite Only toggle shows/hides code row
+    const toggleRow = el.closest('.toggle-row');
+    if (toggleRow && toggleRow.querySelector('.toggle-label').textContent === 'Invite Only') {
+      const codeRow = document.getElementById('inviteCodeRow');
+      codeRow.style.display = el.classList.contains('on') ? 'flex' : 'none';
+    }
+  }
+
+  function toggleComp(el) {
+    el.classList.toggle('checked');
+    const box = el.querySelector('.comp-checkbox');
+    box.innerHTML = el.classList.contains('checked')
+      ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+      : '';
+  }
+
+  function handleSave() {
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'Saved ✓';
+    btn.style.opacity = '0.5';
+    setTimeout(() => {
+      btn.textContent = 'Save';
+      btn.style.opacity = '1';
+    }, 1500);
+  }
+</script>
+</body>
+</html>
