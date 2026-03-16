@@ -167,7 +167,7 @@
   .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
   .nav-item.is-active { color: var(--accent); }
   .nav-item.is-active .nav-label { color: var(--accent); }
-  /* Account badge dot */
+  /* Home tab badge dot — signals unread notifications */
   .nav-badge {
     position: absolute; top: 2px; right: 6px;
     width: 7px; height: 7px; border-radius: 50%;
@@ -312,9 +312,10 @@
 
   </div><!-- /scroll-content -->
 
-  <!-- Bottom nav — Home is where we came from, Account has badge dot -->
+  <!-- Bottom nav — Home is active; Home tab badge dot signals unread notifications -->
   <div class="bottom-nav">
     <div class="nav-item is-active">
+      <div class="nav-badge"></div>
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
       <div class="nav-label">Home</div>
     </div>
@@ -331,7 +332,6 @@
       <div class="nav-label">News</div>
     </div>
     <div class="nav-item">
-      <div class="nav-badge"></div>
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
       <div class="nav-label">Account</div>
     </div>
@@ -346,7 +346,7 @@
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">①</span> Entry Point</div>
     <div class="ann-card-body">
-      Accessed by tapping the <strong>bell icon on the Home screen only</strong>. The bottom nav Home tab stays active to make clear this is a child of Home, not a separate tab. The <strong>Account tab badge dot</strong> (bottom-right) is a secondary discovery path — it appears whenever there are unread notifications, encouraging users to check even if they navigate to Account for other reasons.
+      Accessed by tapping the <strong>bell icon on the Home screen only</strong>. The bottom nav Home tab stays active to make clear this is a child of Home, not a separate tab. The <strong>Home tab badge dot</strong> signals unread notifications wherever the user is in the app — the most natural and expected pattern on iOS/Android.
     </div>
   </div>
 
@@ -386,9 +386,9 @@
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">Account Tab Badge</div>
+    <div class="ann-card-title">Home Tab Badge Dot</div>
     <div class="ann-card-body">
-      The orange dot on the Account nav tab mirrors the unread count state. It disappears once the user visits this screen and all notifications are marked read. This means users who navigate to Account for other reasons (settings, theme change) are passively reminded to check their alerts without requiring an additional dedicated nav tab.
+      The orange dot on the Home nav tab appears whenever there are unread notifications. It disappears once the user visits this screen and all notifications are marked read (either manually or via "Mark all read"). This is the standard iOS/Android convention — the badge lives on the tab that owns the content, so users know exactly where to tap.
     </div>
   </div>
 </div>
