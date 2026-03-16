@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Escape Fantasy — Developer Handover</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:    #FF6F42;
+      --accent-lo: rgba(255,111,66,0.12);
+      --bg:        #111;
+      --bg-card:   #1C1C1C;
+      --bg-card2:  #242424;
+      --border:    rgba(255,255,255,0.08);
+      --text:      #E8E8E8;
+      --text-muted:#999;
+      --text-dim:  #666;
+      --green:     #34C759;
+      --blue:      #5B8BF5;
+      --orange:    #FF9500;
+      --purple:    #AF52DE;
+      --red:       #FF3B30;
+    }
+    body.light {
+      --bg:        #F2F3F5;
+      --bg-card:   #FFFFFF;
+      --bg-card2:  #F8F8F8;
+      --border:    rgba(0,0,0,0.09);
+      --text:      #111;
+      --text-muted:#555;
+      --text-dim:  #999;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      padding: 48px 40px;
+      min-width: 1000px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* ── Utility bar ── */
+    .util-bar {
+      position: fixed; top: 16px; right: 20px;
+      display: flex; gap: 10px; z-index: 100;
+    }
+    .util-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-muted); font-size: 11px; font-weight: 700;
+      padding: 6px 12px; border-radius: 6px; cursor: pointer;
+      text-decoration: none;
+    }
+    .util-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Page layout ── */
+    .page { max-width: 900px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .page-header {
+      margin-bottom: 48px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      font-size: 11px; font-weight: 800; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+    .page-title {
+      font-size: 36px; font-weight: 900; letter-spacing: -0.8px;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .page-sub { font-size: 15px; color: var(--text-muted); max-width: 620px; }
+
+    /* ── Quick facts strip ── */
+    .quick-facts {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .qf {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+    }
+    .qf span { color: var(--accent); }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 52px; }
+    .section-title {
+      font-size: 11px; font-weight: 800; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 16px; font-weight: 800; color: var(--text);
+      margin: 0 0 8px;
+    }
+    p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    ul { list-style: none; padding: 0; }
+    ul li {
+      font-size: 13px; color: var(--text-muted);
+      padding: 4px 0 4px 16px;
+      position: relative;
+    }
+    ul li::before {
+      content: '—';
+      position: absolute; left: 0;
+      color: var(--text-dim);
+    }
+    strong { color: var(--text); font-weight: 700; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+    }
+    .card-row {
+      display: flex; gap: 10px; margin-bottom: 10px;
+    }
+    .card-row .card { flex: 1; margin-bottom: 0; }
+    .card h3 { margin-bottom: 6px; }
+    .card p { font-size: 12px; }
+    .card ul li { font-size: 12px; }
+
+    /* ── Code / token blocks ── */
+    .code-block {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11.5px; line-height: 1.7;
+      color: #ccc;
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    body.light .code-block { color: #333; }
+    .code-block .cm { color: var(--text-dim); }
+    .code-block .cv { color: var(--accent); }
+    .code-block .ck { color: var(--blue); }
+
+    /* ── Tables ── */
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 12px; margin-bottom: 10px;
+    }
+    th {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-dim);
+      padding: 8px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 9px 12px; border-bottom: 1px solid var(--border);
+      color: var(--text-muted); vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    .pill {
+      display: inline-block; border-radius: 4px;
+      padding: 2px 8px; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .pill-ar { background: rgba(91,139,245,0.18); color: #5B8BF5; }
+    .pill-cl { background: rgba(52,199,89,0.18); color: #34C759; }
+    .pill-sp { background: rgba(255,149,0,0.18); color: #FF9500; }
+    .pill-uc { background: rgba(175,82,222,0.18); color: #AF52DE; }
+    .pill-wc { background: rgba(255,111,66,0.2); color: #FF6F42; }
+
+    /* ── Screen inventory ── */
+    .screen-row td:first-child { font-weight: 700; color: var(--text); font-size: 11px; }
+    .screen-row td:nth-child(2) { font-size: 11px; }
+    a.screen-link {
+      color: var(--accent); text-decoration: none; font-weight: 700;
+    }
+    a.screen-link:hover { text-decoration: underline; }
+
+    /* ── Flow diagram ── */
+    .flow-strip {
+      display: flex; align-items: center; gap: 0;
+      flex-wrap: wrap; gap: 4px;
+      margin-bottom: 8px;
+    }
+    .flow-node {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 12px;
+      font-size: 11px; font-weight: 700; color: var(--text);
+    }
+    .flow-node.accent { background: var(--accent-lo); border-color: var(--accent); color: var(--accent); }
+    .flow-arr { color: var(--text-dim); font-size: 14px; padding: 0 4px; }
+
+    /* ── Decision callout ── */
+    .decision {
+      background: var(--accent-lo);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    .decision-label {
+      font-size: 9px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent); margin-bottom: 4px;
+    }
+    .decision p { font-size: 12px; margin-bottom: 0; }
+
+    /* ── Two-col layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+    /* ── Footer ── */
+    .page-footer {
+      margin-top: 64px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--text-dim);
+      display: flex; justify-content: space-between;
+    }
+
+    /* ── Build order ── */
+    .build-phase {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 10px;
+    }
+    .phase-label {
+      font-size: 9px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 8px;
+    }
+    .phase-name {
+      font-size: 14px; font-weight: 800; color: var(--text);
+      margin-bottom: 8px;
+    }
+    .phase-screens {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .ps {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 5px; padding: 3px 10px;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+    }
+    .ps a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .ps a:hover { text-decoration: underline; }
+    .phase-note { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="util-bar">
+  <a href="screen-map.html" class="util-btn">← Screen Map</a>
+  <button class="util-btn" onclick="document.body.classList.toggle('light')">Light / Dark</button>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="eyebrow">Escape Fantasy · Developer Handover</div>
+    <h1 class="page-title">Technical Decisions &amp; Integration Spec</h1>
+    <p class="page-sub">This document captures the product and technical decisions made during wireframe design — everything the wireframe annotations contain individually, consolidated in one place. Read this first, then use the <a href="screen-map.html" style="color:var(--accent)">Screen Map</a> as your build reference.</p>
+  </div>
+
+  <!-- Quick facts -->
+  <div class="quick-facts">
+    <div class="qf"><span>25</span> wireframed screens</div>
+    <div class="qf"><span>5</span> nav tabs</div>
+    <div class="qf"><span>2</span> competition formats</div>
+    <div class="qf">Auth via <span>Ghost OTP</span></div>
+    <div class="qf">Built on <span>Escape Collective</span> membership</div>
+    <div class="qf">Dark mode <span>default</span> · light mode available</div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       1. SCREEN INVENTORY
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">1 · Screen Inventory</div>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Screen name</th><th>Tab</th><th>Format</th><th>Wireframe</th></tr>
+      </thead>
+      <tbody>
+        <tr class="screen-row"><td>01</td><td>Home Screen</td><td>Home</td><td>Both</td><td><a class="screen-link" href="wireframe-01-home-v2.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>01b</td><td>Home — Empty State</td><td>Home</td><td>Both</td><td><a class="screen-link" href="wireframe-01b-home-empty-state.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>02</td><td>Competition Browser</td><td>Compete</td><td>Both</td><td><a class="screen-link" href="wireframe-02-competition-browser.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>03</td><td>My Picks</td><td>Compete</td><td>Stage Race only</td><td><a class="screen-link" href="wireframe-03-my-picks.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>04</td><td>Rider Selection</td><td>Compete</td><td>Stage Race only</td><td><a class="screen-link" href="wireframe-04-rider-selection.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>05</td><td>Rider Profile Card</td><td>Modal</td><td>Stage Race</td><td><a class="screen-link" href="wireframe-05-rider-profile.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>06</td><td>AI Suggestion Overlay</td><td>Modal</td><td>Stage Race</td><td><a class="screen-link" href="wireframe-06-ai-suggestion.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>07</td><td>Per-Stage Results</td><td>Compete</td><td>Stage Race</td><td><a class="screen-link" href="wireframe-07-per-stage-results.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>08</td><td>Overall Leaderboard</td><td>Compete</td><td>Both</td><td><a class="screen-link" href="wireframe-08-leaderboard.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>09</td><td>League List</td><td>Leagues</td><td>Both</td><td><a class="screen-link" href="wireframe-09-league-list.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>10</td><td>League Detail (Standings + Chat)</td><td>Leagues</td><td>Both</td><td><a class="screen-link" href="wireframe-10-league-detail.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>11</td><td>Create League</td><td>Leagues</td><td>Both</td><td><a class="screen-link" href="wireframe-11-create-league.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>12</td><td>League Settings</td><td>Leagues</td><td>Both</td><td><a class="screen-link" href="wireframe-12-league-settings.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>13</td><td>Join by Code</td><td>Leagues</td><td>Both</td><td><a class="screen-link" href="wireframe-13-join-by-code.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>14</td><td>Enroll League Sheet</td><td>Modal</td><td>Both</td><td><a class="screen-link" href="wireframe-14-enroll-league-sheet.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>15</td><td>News Feed</td><td>News</td><td>—</td><td><a class="screen-link" href="wireframe-15-news-feed.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>16</td><td>Account &amp; Settings</td><td>Account</td><td>—</td><td><a class="screen-link" href="wireframe-16-account-settings.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>17</td><td>Notification Preferences</td><td>Account</td><td>—</td><td><a class="screen-link" href="wireframe-17-notification-preferences.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>18</td><td>Notification Feed</td><td>Home (child)</td><td>—</td><td><a class="screen-link" href="wireframe-18-notification-feed.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>19</td><td>Team Selection</td><td>Compete</td><td>Fantasy Teams only</td><td><a class="screen-link" href="wireframe-19-team-selection.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>20</td><td>Team Overview</td><td>Compete</td><td>Fantasy Teams only</td><td><a class="screen-link" href="wireframe-20-team-overview.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>21</td><td>Login</td><td>Auth</td><td>—</td><td><a class="screen-link" href="wireframe-21-login.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>22</td><td>Onboarding 1 — What is Escape Fantasy?</td><td>Auth</td><td>—</td><td><a class="screen-link" href="wireframe-22-onboarding-1.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>23</td><td>Onboarding 2 — Two ways to play</td><td>Auth</td><td>—</td><td><a class="screen-link" href="wireframe-23-onboarding-2.html">↗ open</a></td></tr>
+        <tr class="screen-row"><td>24</td><td>Onboarding 3 — Join first competition</td><td>Auth</td><td>—</td><td><a class="screen-link" href="wireframe-24-onboarding-3.html">↗ open</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       2. AUTHENTICATION & SESSIONS
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">2 · Authentication &amp; Sessions</div>
+
+    <div class="card" style="margin-bottom:10px;">
+      <h3>Ghost CMS Single Sign-On</h3>
+      <p>Escape Fantasy uses <strong>Escape Collective's Ghost membership system</strong> as the sole auth provider. Users sign in with their EC email address — no separate Escape Fantasy password is ever created or stored. A free EC account is sufficient; paid membership is not required to play.</p>
+    </div>
+
+    <div class="decision">
+      <div class="decision-label">Key Decision — Auth method</div>
+      <p><strong>Use Ghost's authentication code (OTP) flow, not magic links.</strong> Magic links cannot reliably deep-link back into a native app after the user taps the link in their email client. Auth codes are entered directly inside the app — no browser handoff required.</p>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <h3>OTP Flow</h3>
+        <ul>
+          <li>User enters EC email address</li>
+          <li>Tap "Email me a code" → Ghost sends 6-digit OTP</li>
+          <li>User enters code in-app; code expires in 10 minutes</li>
+          <li>Correct code → Ghost returns auth token</li>
+          <li>"Resend code" has a 60-second cooldown</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Session Management</h3>
+        <ul>
+          <li>Store Ghost auth token in secure device storage</li>
+          <li>Returning users with valid token skip login entirely</li>
+          <li>Login screen only shown when no valid session exists</li>
+          <li>Logout: confirm sheet → clear token → return to Login</li>
+          <li>Token refresh strategy: follow Ghost API docs</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Onboarding Flag</h3>
+      <p>The three onboarding screens (22–24) are shown <strong>exactly once</strong>, immediately after the first successful login. A boolean flag (e.g. <code style="background:var(--bg-card2);padding:1px 5px;border-radius:3px;font-size:11px;">ef_onboarding_complete</code>) must be persisted in local storage or equivalent. Once set, onboarding never triggers again — even after logout and re-login on the same device. A Skip button is available on all three screens; tapping it sets the flag and navigates directly to Home.</p>
+    </div>
+
+    <div class="card">
+      <h3>EC Account Creation</h3>
+      <p>The Login screen offers a "Create a free EC account" path that opens <strong>escapecollective.com/join</strong> in the device's default browser. If the OS supports universal links / app links, implement a deep-link back to the app's login screen after account creation. If not, the user returns manually and signs in.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       3. COMPETITION FORMATS
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">3 · Competition Formats</div>
+
+    <p>Every competition in Escape Fantasy is one of two formats. The format determines which screens a user sees after entering a competition from the Competition Browser or Home screen.</p>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 style="color:var(--accent)">Stage Race</h3>
+        <ul>
+          <li>One rider pick per stage</li>
+          <li>Picks earn points from real stage results</li>
+          <li>Highest cumulative points across all stages wins</li>
+          <li>Picks lock at a per-stage deadline</li>
+          <li>Auto-pick available if user misses deadline</li>
+        </ul>
+        <p style="margin-top:10px; font-size:11px;">
+          <strong>Screens:</strong> My Picks (03) → Rider Selection (04) → Rider Profile (05) → Per-Stage Results (07)
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--blue)">Fantasy Teams</h3>
+        <ul>
+          <li>Pick a squad of 9 riders across 4 classes + 1 wildcard</li>
+          <li>Spend a credit budget (amount varies per event)</li>
+          <li>All 9 riders score every stage</li>
+          <li>Transfer windows allow squad changes at rest days</li>
+          <li>No automatic substitutions ever</li>
+        </ul>
+        <p style="margin-top:10px; font-size:11px;">
+          <strong>Screens:</strong> Team Selection (19) → Team Overview (20)
+        </p>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-label">Key Decision — Format branching point</div>
+      <p>The format branch happens at the <strong>Competition Browser (02)</strong> and <strong>Home card CTAs (01)</strong>. Stage Race competitions show a <em>"My Picks →"</em> button; Fantasy Teams competitions show a <em>"View Team →"</em> (or <em>"Enter Team →"</em> if not yet entered). Screens 03–07 are Stage Race only. Screens 19–20 are Fantasy Teams only. The Leaderboard (08) and League screens (09–14) are shared across both formats.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       4. FANTASY TEAMS RULES
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">4 · Fantasy Teams Rules</div>
+
+    <div class="card" style="margin-bottom:10px;">
+      <h3>Squad Structure</h3>
+      <p>Every Fantasy Teams squad has exactly <strong>9 slots</strong> across 5 types. Slot counts may be configurable per competition by the competition director, but the default is below.</p>
+    </div>
+
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>Class</th><th>Abbrev.</th><th>Slots</th><th>Colour</th><th>CSS variable / hex</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pill-ar">All-Rounder</span></td><td>AR</td><td>2</td><td style="color:#5B8BF5;">■ Blue</td><td><code style="font-size:11px;">#5B8BF5</code></td></tr>
+        <tr><td><span class="pill pill-cl">Climber</span></td><td>CL</td><td>2</td><td style="color:#34C759;">■ Green</td><td><code style="font-size:11px;">#34C759</code></td></tr>
+        <tr><td><span class="pill pill-sp">Sprinter</span></td><td>SP</td><td>2</td><td style="color:#FF9500;">■ Orange</td><td><code style="font-size:11px;">#FF9500</code></td></tr>
+        <tr><td><span class="pill pill-uc">Unclassed</span></td><td>UC</td><td>2</td><td style="color:#AF52DE;">■ Purple</td><td><code style="font-size:11px;">#AF52DE</code></td></tr>
+        <tr><td><span class="pill pill-wc">Wildcard</span></td><td>WC</td><td>1</td><td style="color:#FF6F42;">■ Accent</td><td><code style="font-size:11px;">#FF6F42</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="card-row">
+      <div class="card">
+        <h3>Budget System</h3>
+        <ul>
+          <li>Credit budget is set per competition (varies event to event)</li>
+          <li>Rider prices set by the competition director, reflecting form</li>
+          <li>Budget bar updates live as riders are added/removed</li>
+          <li>Budget bar label turns red below 10 credits remaining</li>
+          <li>Over-budget riders: dimmed, price shown in red, + disabled</li>
+          <li>Confirm button disabled until all 9 slots filled and within budget</li>
+          <li>Unlimited changes allowed until the entry deadline</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Wildcard Slot</h3>
+        <ul>
+          <li>Accepts a rider from <em>any</em> class</li>
+          <li>If a user taps + on a rider whose class slots are full, offer to place them in the Wildcard slot with a confirmation prompt</li>
+        </ul>
+        <h3 style="margin-top:14px;">Transfer Windows</h3>
+        <ul>
+          <li>Transfer windows occur at intervals set by the competition director — typically at rest days</li>
+          <li>Window open/closed state shown by a badge in Team Overview header</li>
+          <li>When open: Transfer CTA turns orange, "Make Transfer →" is active</li>
+          <li>When closed: CTA shows next window countdown (greyed out)</li>
+          <li><strong>No automatic substitutions, ever</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>DNF / Abandoned Riders</h3>
+      <p>Riders who abandon or are disqualified are shown with a red <strong>DNF</strong> badge and dimmed to ~45% opacity in Team Overview. Their accumulated points up to the disqualification deadline stand. DNF state is a strong signal to act during the next transfer window. When a window is open, consider adding a direct <em>"Replace →"</em> shortcut on DNF rows in addition to the standard Transfer CTA.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       5. NOTIFICATION ARCHITECTURE
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">5 · Notification Architecture</div>
+
+    <div class="decision">
+      <div class="decision-label">Key Decision — Bell icon placement</div>
+      <p>The notification bell icon lives on the <strong>Home screen only</strong> (top-right header). It does <em>not</em> appear on Competition Browser, My Picks, Rider Selection, or any other screen. This keeps the notification entry point unambiguous and prevents UI clutter on task-focused screens.</p>
+    </div>
+
+    <div class="decision">
+      <div class="decision-label">Key Decision — Nav badge placement</div>
+      <p>The unread-notification badge dot lives on the <strong>Home tab</strong> in the bottom nav (not the Account tab). This is the standard iOS/Android convention — the badge lives on the tab that owns the content. The Account tab has no badge at any time.</p>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <h3>Notification Feed (Screen 18)</h3>
+        <ul>
+          <li>Accessed by tapping the bell icon on Home only</li>
+          <li>Home tab remains active in bottom nav (child of Home, not a separate tab)</li>
+          <li>Notifications persist for a rolling window (e.g. 30 days)</li>
+          <li>Not user-deletable — no dismiss/swipe-to-delete</li>
+          <li>Individual rows marked read on tap; "Mark all read" bulk action</li>
+          <li>"Mark all read" button only visible when unread items exist</li>
+          <li>Time-sensitive notifications (picks lock warnings) float to the top regardless of chronological order</li>
+          <li>Tapping any notification deep-links to the relevant screen</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Notification Types</h3>
+        <ul>
+          <li><strong>Picks closing soon</strong> — highest priority; navigates to My Picks for that stage</li>
+          <li><strong>Rank change</strong> — ↑ green / ↓ red; navigates to relevant leaderboard; rank-down is off by default</li>
+          <li><strong>League enrolled</strong> — director enrolled your league into a new competition; navigates to that competition</li>
+          <li><strong>Chat mention</strong> — league chat @mention; navigates to League Detail chat tab</li>
+        </ul>
+        <h3 style="margin-top:14px;">Preferences Shortcut</h3>
+        <p>The ⚙ icon in the Notification Feed header navigates directly to Notification Preferences (Screen 17). This is intentional — users reaching for mute controls are in context here.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Notification Preferences (Screen 17)</h3>
+      <p>Grouped into three sections: <strong>Fantasy</strong> (picks closing soon, leaderboard rank change, league rank change — all default on), <strong>Leagues</strong> (new league member, competition enrolled — both default on), and <strong>Chat</strong> (new messages — default on; mentions-only subordinate toggle — default off). Chat notifications are per-app, not per-league. An OS permission banner is shown when system notifications have not been granted, with a deep-link to device settings. Preference toggles are visible and saveable regardless of OS permission state.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       6. NAVIGATION ARCHITECTURE
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">6 · Navigation Architecture</div>
+
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>Tab</th><th>Root screen</th><th>Child screens</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Home</strong></td><td>01 Home</td><td>01b Empty State, 18 Notification Feed</td><td>Bell icon top-right; badge dot on Home tab when unread</td></tr>
+        <tr><td><strong>Compete</strong></td><td>02 Competition Browser</td><td>03 My Picks, 04 Rider Selection, 05 Rider Profile (modal), 06 AI Suggestion (modal), 07 Per-Stage Results, 08 Leaderboard, 19 Team Selection, 20 Team Overview</td><td>Format determines path from 02; see §3</td></tr>
+        <tr><td><strong>Leagues</strong></td><td>09 League List</td><td>10 League Detail, 11 Create League, 12 League Settings, 13 Join by Code, 14 Enroll Sheet (modal)</td><td>—</td></tr>
+        <tr><td><strong>News</strong></td><td>15 News Feed</td><td>Article Reader (not yet wireframed)</td><td>EC RSS / Ghost API; articles open in-app or default browser</td></tr>
+        <tr><td><strong>Account</strong></td><td>16 Account &amp; Settings</td><td>17 Notification Preferences</td><td>No badge dot on this tab</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-bottom:12px;">Key Cross-Tab Flows</h3>
+
+    <div class="card" style="margin-bottom:8px;">
+      <strong>Quick pick from Home</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node accent">Home (01)</div>
+        <div class="flow-arr">→ "Pick Stage N →"</div>
+        <div class="flow-node">Rider Selection (04)</div>
+      </div>
+      <p style="font-size:11px; margin-top:6px;">Tapping the pick CTA on a Home competition card bypasses My Picks and goes directly to Rider Selection for that stage.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <strong>Competition switcher</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node">Any Compete screen</div>
+        <div class="flow-arr">→ switcher banner</div>
+        <div class="flow-node">Competition Browser (02)</div>
+      </div>
+      <p style="font-size:11px; margin-top:6px;">Persistent switcher banner on all Compete sub-screens. Opens the Competition Browser without resetting the Compete tab's navigation history.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <strong>Article reader → pick flow</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node">News article</div>
+        <div class="flow-arr">→ "Pick your rider" CTA</div>
+        <div class="flow-node">Rider Selection (04)</div>
+      </div>
+      <p style="font-size:11px; margin-top:6px;">Stage preview articles show a pinned "Pick your rider" CTA at the bottom. Deep-links to Rider Selection for the relevant stage.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <strong>Notification → action</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node">Notification Feed (18)</div>
+        <div class="flow-arr">→ tap any row</div>
+        <div class="flow-node">Relevant screen (direct)</div>
+      </div>
+      <p style="font-size:11px; margin-top:6px;">Every notification row is a deep-link. Picks lock → My Picks. Rank change → Leaderboard. League enrolled → Competition Browser. Chat mention → League Detail chat tab.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <strong>Team format join → team selection</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node">Competition Browser (02)</div>
+        <div class="flow-arr">→ "Enter Team →"</div>
+        <div class="flow-node">Team Selection (19)</div>
+        <div class="flow-arr">→ confirm</div>
+        <div class="flow-node">Team Overview (20)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <strong>Transfer window open</strong>
+      <div class="flow-strip" style="margin-top:8px;">
+        <div class="flow-node">Home card CTA switches to "Make Transfer →"</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node">Team Selection (19) — pre-filled with current squad</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       7. THIRD-PARTY INTEGRATIONS
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">7 · Third-Party Integrations</div>
+
+    <div class="card" style="margin-bottom:10px;">
+      <h3>Ghost CMS — Auth &amp; Membership</h3>
+      <p>Used for authentication (see §2) and to validate EC membership status. The Account screen shows an <strong>"EC Member"</strong> badge on the profile header — this should reflect actual subscription status from Ghost. Access to News tab content may be membership-gated depending on EC's article paywall settings; confirm with the EC team.</p>
+      <ul style="margin-top:8px;">
+        <li>Auth endpoint: Ghost's <code style="font-size:11px; background:var(--bg-card2); padding:1px 5px; border-radius:3px;">members/api</code> — use the auth-code (OTP) flow</li>
+        <li>Session token storage: device secure storage (Keychain / Keystore)</li>
+        <li>Free account sufficient; no paid membership gate on game features</li>
+      </ul>
+    </div>
+
+    <div class="card" style="margin-bottom:10px;">
+      <h3>EC RSS / Ghost API — News Feed</h3>
+      <p>The News tab (Screen 15) surfaces Escape Collective articles. Use the Ghost Content API or RSS feed. Articles should open in an in-app browser or the device's default browser — confirm the preferred behaviour with EC. Stage preview articles that can link to a pick flow require the article to carry metadata identifying the relevant stage/competition.</p>
+    </div>
+
+    <div class="card">
+      <h3>Race Results Data</h3>
+      <p>Scoring in both formats depends on real-time race results. The wireframes do not specify the results data source — this needs to be confirmed with the EC team. Key requirements implied by the UI: stage finish positions, GC standings, sprint classification points, and KOM points per stage; rider abandonment / disqualification status; results available promptly after each stage to trigger scoring and notifications.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       8. DESIGN TOKENS
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">8 · Design Tokens</div>
+
+    <p>All wireframes use the following CSS custom property system. Copy this block as the foundation for the production design token file.</p>
+
+    <div class="code-block"><span class="cm">/* ── Escape Fantasy — Core Design Tokens ── */</span>
+
+:root {
+  <span class="cm">/* Brand */</span>
+  <span class="ck">--accent</span>:          <span class="cv">#FF6F42</span>;  <span class="cm">/* primary orange — CTAs, active states, badges */</span>
+  <span class="ck">--accent-lo</span>:       <span class="cv">rgba(255,111,66,0.12)</span>;
+
+  <span class="cm">/* Dark mode (default) */</span>
+  <span class="ck">--bg-screen</span>:       <span class="cv">#111</span>;      <span class="cm">/* outermost background */</span>
+  <span class="ck">--bg-card</span>:         <span class="cv">#1C1C1E</span>;  <span class="cm">/* card / list row backgrounds */</span>
+  <span class="ck">--bg-input</span>:        <span class="cv">#242424</span>;  <span class="cm">/* text inputs, chips */</span>
+  <span class="ck">--border</span>:          <span class="cv">rgba(255,255,255,0.08)</span>;
+  <span class="ck">--text-primary</span>:    <span class="cv">#E8E8E8</span>;
+  <span class="ck">--text-muted</span>:      <span class="cv">#999</span>;
+  <span class="ck">--text-dim</span>:        <span class="cv">#555</span>;
+
+  <span class="cm">/* Rider class colours */</span>
+  <span class="ck">--class-ar</span>:        <span class="cv">#5B8BF5</span>;  <span class="cm">/* All-Rounder — blue */</span>
+  <span class="ck">--class-cl</span>:        <span class="cv">#34C759</span>;  <span class="cm">/* Climber — green */</span>
+  <span class="ck">--class-sp</span>:        <span class="cv">#FF9500</span>;  <span class="cm">/* Sprinter — orange */</span>
+  <span class="ck">--class-uc</span>:        <span class="cv">#AF52DE</span>;  <span class="cm">/* Unclassed — purple */</span>
+  <span class="ck">--class-wc</span>:        <span class="cv">#FF6F42</span>;  <span class="cm">/* Wildcard — accent (same as --accent) */</span>
+
+  <span class="cm">/* Semantic */</span>
+  <span class="ck">--green</span>:           <span class="cv">#34C759</span>;  <span class="cm">/* rank up, transfer window open */</span>
+  <span class="ck">--red</span>:             <span class="cv">#FF3B30</span>;  <span class="cm">/* rank down, DNF, over-budget, destructive actions */</span>
+  <span class="ck">--blue</span>:            <span class="cv">#5B8BF5</span>;  <span class="cm">/* Fantasy Teams format badge */</span>
+}
+
+<span class="cm">/* Light mode overrides — applied via body.light-mode */</span>
+body.light-mode {
+  <span class="ck">--bg-screen</span>:       <span class="cv">#F2F3F5</span>;
+  <span class="ck">--bg-card</span>:         <span class="cv">#FFFFFF</span>;
+  <span class="ck">--bg-input</span>:        <span class="cv">#F0F0F0</span>;
+  <span class="ck">--border</span>:          <span class="cv">rgba(0,0,0,0.09)</span>;
+  <span class="ck">--text-primary</span>:    <span class="cv">#111</span>;
+  <span class="ck">--text-muted</span>:      <span class="cv">#555</span>;
+  <span class="ck">--text-dim</span>:        <span class="cv">#999</span>;
+}</div>
+
+    <div class="card">
+      <h3>Theme Behaviour</h3>
+      <ul>
+        <li>Default on first launch: <strong>follow device system preference</strong></li>
+        <li>User can override in Account → Settings (segmented Light / Dark control — no sub-screen)</li>
+        <li>Choice persists across sessions</li>
+        <li>Competition card images and overlays: overlay text (<code style="font-size:11px; background:var(--bg-card2); padding:1px 5px; border-radius:3px;">.race-name</code>, stage badges) must always be <code style="font-size:11px; background:var(--bg-card2); padding:1px 5px; border-radius:3px;">color: #fff</code> — hardcoded, not themed — because they sit over a photo gradient</li>
+        <li>App header bell icon: must switch from white (dark mode) to <code style="font-size:11px; background:var(--bg-card2); padding:1px 5px; border-radius:3px;">#111</code> (light mode)</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       9. ACCOUNT & SETTINGS NOTES
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">9 · Account &amp; Settings Notes</div>
+
+    <div class="card-row">
+      <div class="card">
+        <h3>Profile</h3>
+        <ul>
+          <li>Shows avatar initials, display name, email, EC membership badge</li>
+          <li>Tapping navigates to a profile edit screen (not yet wireframed)</li>
+          <li>EC Member badge reflects Ghost subscription status</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Log Out</h3>
+        <ul>
+          <li>Label and icon shown in red (destructive action signalling)</li>
+          <li>Must trigger a confirmation sheet before logging out</li>
+          <li>Tapping away from the sheet cancels</li>
+          <li>On confirm: clear session token → return to Login (Screen 21)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Version Footer</h3>
+      <p>App version string in the Account screen footer should be pulled from build metadata at compile time. Terms of Service and Privacy Policy links open in the device's default browser.</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────────
+       10. RECOMMENDED BUILD ORDER
+  ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">10 · Recommended Build Order</div>
+    <p>Dependencies flow downward. Each phase assumes the previous is working.</p>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 1</div>
+      <div class="phase-name">Auth &amp; Shell</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-21-login.html">21 · Login</a></div>
+        <div class="ps"><a href="wireframe-22-onboarding-1.html">22 · Onboarding 1</a></div>
+        <div class="ps"><a href="wireframe-23-onboarding-2.html">23 · Onboarding 2</a></div>
+        <div class="ps"><a href="wireframe-24-onboarding-3.html">24 · Onboarding 3</a></div>
+        <div class="ps">Bottom nav shell (5 tabs)</div>
+      </div>
+      <div class="phase-note">Ghost OTP integration, session token storage, onboarding flag. Everything else depends on a valid session.</div>
+    </div>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name">Home &amp; Notifications</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-01-home-v2.html">01 · Home</a></div>
+        <div class="ps"><a href="wireframe-01b-home-empty-state.html">01b · Home Empty State</a></div>
+        <div class="ps"><a href="wireframe-18-notification-feed.html">18 · Notification Feed</a></div>
+        <div class="ps"><a href="wireframe-17-notification-preferences.html">17 · Notification Preferences</a></div>
+      </div>
+      <div class="phase-note">Sets up the main entry point. Nav badge dot, bell icon, and notification read/unread state should all be functional here.</div>
+    </div>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name">Stage Race Format</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-02-competition-browser.html">02 · Competition Browser</a></div>
+        <div class="ps"><a href="wireframe-03-my-picks.html">03 · My Picks</a></div>
+        <div class="ps"><a href="wireframe-04-rider-selection.html">04 · Rider Selection</a></div>
+        <div class="ps"><a href="wireframe-05-rider-profile.html">05 · Rider Profile</a></div>
+        <div class="ps"><a href="wireframe-06-ai-suggestion.html">06 · AI Suggestion</a></div>
+        <div class="ps"><a href="wireframe-07-per-stage-results.html">07 · Per-Stage Results</a></div>
+        <div class="ps"><a href="wireframe-08-leaderboard.html">08 · Leaderboard</a></div>
+      </div>
+      <div class="phase-note">Core competition experience. Requires race results data source to be agreed. Build Competition Browser first — it's the entry point for both formats.</div>
+    </div>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 4</div>
+      <div class="phase-name">Fantasy Teams Format</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-19-team-selection.html">19 · Team Selection</a></div>
+        <div class="ps"><a href="wireframe-20-team-overview.html">20 · Team Overview</a></div>
+      </div>
+      <div class="phase-note">Requires the Competition Browser (02) to already branch on format. Transfer window state should be driven server-side by the competition director.</div>
+    </div>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 5</div>
+      <div class="phase-name">Leagues</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-09-league-list.html">09 · League List</a></div>
+        <div class="ps"><a href="wireframe-10-league-detail.html">10 · League Detail</a></div>
+        <div class="ps"><a href="wireframe-11-create-league.html">11 · Create League</a></div>
+        <div class="ps"><a href="wireframe-12-league-settings.html">12 · League Settings</a></div>
+        <div class="ps"><a href="wireframe-13-join-by-code.html">13 · Join by Code</a></div>
+        <div class="ps"><a href="wireframe-14-enroll-league-sheet.html">14 · Enroll Sheet</a></div>
+      </div>
+      <div class="phase-note">Can be parallelised with Phase 3/4. The chat system within League Detail is the most complex component here.</div>
+    </div>
+
+    <div class="build-phase">
+      <div class="phase-label">Phase 6</div>
+      <div class="phase-name">News &amp; Account</div>
+      <div class="phase-screens">
+        <div class="ps"><a href="wireframe-15-news-feed.html">15 · News Feed</a></div>
+        <div class="ps"><a href="wireframe-16-account-settings.html">16 · Account &amp; Settings</a></div>
+      </div>
+      <div class="phase-note">News requires Ghost Content API / RSS integration. Account settings (theme toggle, logout) can be built early but deprioritised for first release.</div>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <div>Escape Fantasy App Redesign · Developer Handover v1.0 · March 2026</div>
+    <div><a href="screen-map.html" style="color:var(--accent); text-decoration:none;">← Back to Screen Map</a></div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  document.querySelector('.mode-toggle, [onclick*="light"]') &&
+    document.querySelectorAll('[onclick*="light"]').forEach(function(b){
+      b.addEventListener('click', function(){ document.body.classList.toggle('light'); });
+    });
+</script>
+</body>
+</html>
