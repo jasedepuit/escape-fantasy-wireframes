@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 18 – Notification Feed</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: row; align-items: flex-start;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --bg-unread:     rgba(255,111,66,0.07);
+    --border-subtle: rgba(255,255,255,0.08);
+    --border-unread: rgba(255,111,66,0.18);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --bg-unread:     rgba(255,111,66,0.06);
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-unread: rgba(255,111,66,0.25);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE ── */
+  .phone {
+    width: 375px; height: 812px; background: var(--bg-screen);
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0; height: 52px;
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .header-back { font-size: 22px; color: var(--accent); cursor: pointer; flex-shrink: 0; line-height: 1; }
+  .app-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); flex: 1; }
+  .header-settings { color: var(--text-muted); cursor: pointer; display: flex; align-items: center; }
+
+  /* ── MARK ALL READ ── */
+  .mark-all-bar {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 8px 16px 4px;
+  }
+  .mark-all-btn {
+    font-size: 11px; font-weight: 700; color: var(--accent); cursor: pointer; background: none; border: none; padding: 0;
+  }
+
+  /* ── SCROLL ── */
+  .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 8px; scrollbar-width: none; }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── TIME GROUP HEADER ── */
+  .group-hdr {
+    padding: 14px 16px 6px;
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-dim);
+  }
+
+  /* ── NOTIFICATION ROW ── */
+  .notif-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+    position: relative;
+  }
+  .notif-row.unread {
+    background: var(--bg-unread);
+    border-bottom-color: var(--border-unread);
+  }
+  .notif-row:active { opacity: 0.8; }
+
+  /* Unread dot */
+  .unread-dot {
+    position: absolute; top: 16px; left: 6px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    display: none;
+  }
+  .notif-row.unread .unread-dot { display: block; }
+
+  /* Icon bubble */
+  .notif-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-lock     { background: rgba(255,111,66,0.15); color: var(--accent); }
+  .icon-rank     { background: rgba(52,199,89,0.15);  color: #34C759; }
+  .icon-league   { background: rgba(100,160,245,0.15); color: #64A0F5; }
+  .icon-chat     { background: rgba(175,120,255,0.15); color: #AF78FF; }
+  .icon-result   { background: rgba(255,214,10,0.15);  color: #C8A800; }
+  .icon-enroll   { background: rgba(100,160,245,0.15); color: #64A0F5; }
+
+  /* Text block */
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-title {
+    font-size: 13px; font-weight: 700; color: var(--text-primary);
+    line-height: 1.3; margin-bottom: 2px;
+  }
+  .notif-row.unread .notif-title { font-weight: 800; }
+  .notif-desc {
+    font-size: 12px; color: var(--text-muted); line-height: 1.4;
+  }
+  .notif-time {
+    font-size: 10px; color: var(--text-dim); margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* ── EMPTY STATE (all read / no notifications) ── */
+  .empty-notif {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 32px; text-align: center; display: none;
+  }
+  .empty-notif-icon { color: var(--text-dim); margin-bottom: 16px; }
+  .empty-notif-title { font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
+  .empty-notif-sub { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 80px;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-screen);
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; min-width: 44px; position: relative; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+  /* Account badge dot */
+  .nav-badge {
+    position: absolute; top: 2px; right: 6px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    border: 1.5px solid var(--bg-screen);
+  }
+
+  /* ── ANNOTATIONS ── */
+  .annotations { width: 320px; flex-shrink: 0; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; display: block; }
+  .ann-card { background: #222; border: 1px solid #333; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  body.light-mode .ann-card { background: #f5f5f5; border-color: #ddd; }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  body.light-mode .ann-card-title { color: #555; }
+  .ann-card-body { font-size: 12px; color: #777; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #bbb; font-weight: 700; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,111,66,0.18); color: #FF6F42; font-size: 9px; font-weight: 900; margin-left: 2px; vertical-align: middle; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 12.2 1.3 15 4"/><path d="M3.5 6.5C5.5 4.5 10.5 4.5 12.5 6.5"/><path d="M6 9C7 8 9 8 10 9"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="currentColor" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <div class="app-header">
+    <span class="header-back">‹</span>
+    <span class="app-header-title">Notifications<span class="cn">①</span></span>
+    <!-- Settings shortcut -->
+    <div class="header-settings">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v1.2M9 15.3v1.2M1.5 9h1.2M15.3 9h1.2M3.7 3.7l.85.85M13.45 13.45l.85.85M14.3 3.7l-.85.85M4.55 13.45l-.85.85"/></svg><span class="cn">②</span>
+    </div>
+  </div>
+
+  <!-- Mark all read bar -->
+  <div class="mark-all-bar">
+    <button class="mark-all-btn" onclick="markAllRead()">Mark all as read<span class="cn">③</span></button>
+  </div>
+
+  <div class="scroll-content">
+
+    <!-- TODAY -->
+    <div class="group-hdr">Today</div>
+
+    <!-- Unread: picks lock warning -->
+    <div class="notif-row unread">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-lock">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="8" width="10" height="8" rx="2"/><path d="M6 8V6a3 3 0 0 1 6 0v2"/><circle cx="9" cy="12" r="1" fill="currentColor"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">Picks lock in 2 hours<span class="cn">④</span></div>
+        <div class="notif-desc">Tour de France · Stage 9 · Pau → Cauterets-Cambasque</div>
+        <div class="notif-time">8:02 AM</div>
+      </div>
+    </div>
+
+    <!-- Unread: rank change up -->
+    <div class="notif-row unread">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-rank">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3l-5 5h3v7h4V8h3L9 3z"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">You moved up to 3rd<span class="cn">⑤</span></div>
+        <div class="notif-desc">Tour de France Fanatics · after Stage 8 results</div>
+        <div class="notif-time">7:34 AM</div>
+      </div>
+    </div>
+
+    <!-- Read: stage result -->
+    <div class="notif-row">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-result">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h8v6.5C13 11.5 11.3 14 9 14s-4-2.5-4-5.5V2z"/><path d="M5 5H3c0 0 0 4 2 4"/><path d="M13 5h2c0 0 0 4-2 4"/><path d="M7 17h4M9 14v3"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">Stage 8 result — Pogačar wins</div>
+        <div class="notif-desc">Your pick scored 12 pts · Tour de France 2026</div>
+        <div class="notif-time">6:58 AM</div>
+      </div>
+    </div>
+
+    <!-- YESTERDAY -->
+    <div class="group-hdr">Yesterday</div>
+
+    <!-- Read: league enrolled -->
+    <div class="notif-row">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-enroll">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1L3 4v5.5C3 13.5 5.5 16.5 9 17.5c3.5-1 6-4 6-8V4L9 1z"/><path d="M6.5 9l2 2 3-3"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">League entered into new competition<span class="cn">⑥</span></div>
+        <div class="notif-desc">Tour de France Fanatics · Paris–Roubaix Challenge added</div>
+        <div class="notif-time">Yesterday, 4:12 PM</div>
+      </div>
+    </div>
+
+    <!-- Read: chat message -->
+    <div class="notif-row">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-chat">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h14v10H9.5l-4 3.5V12H2V2z"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">New message in Tour de France Fanatics</div>
+        <div class="notif-desc">"Anyone else going full GC on Stage 9 picks?"</div>
+        <div class="notif-time">Yesterday, 2:45 PM</div>
+      </div>
+    </div>
+
+    <!-- Read: rank change down (negative) -->
+    <div class="notif-row">
+      <div class="unread-dot"></div>
+      <div class="notif-icon icon-rank" style="background:rgba(255,80,80,0.12); color:#FF5050;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l5-5h-3V3H7v7H4l5 5z"/></svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">You dropped to 5th in overall standings</div>
+        <div class="notif-desc">Tour de France 2026 · after Stage 7</div>
+        <div class="notif-time">Yesterday, 9:10 AM</div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-content -->
+
+  <!-- Bottom nav — Home is where we came from, Account has badge dot -->
+  <div class="bottom-nav">
+    <div class="nav-item is-active">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+      <div class="nav-label">Compete</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+      <div class="nav-label">Leagues</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+      <div class="nav-label">News</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-badge"></div>
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+      <div class="nav-label">Account</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="annotations">
+  <span class="ann-screen-label">Screen 18 · Notification Feed — Annotations</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Entry Point</div>
+    <div class="ann-card-body">
+      Accessed by tapping the <strong>bell icon on the Home screen only</strong>. The bottom nav Home tab stays active to make clear this is a child of Home, not a separate tab. The <strong>Account tab badge dot</strong> (bottom-right) is a secondary discovery path — it appears whenever there are unread notifications, encouraging users to check even if they navigate to Account for other reasons.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Preferences Shortcut</div>
+    <div class="ann-card-body">
+      The ⚙ icon in the header navigates to <strong>Notification Preferences (Screen 17)</strong>. Placing it here means users who want to reduce noise can reach settings directly from the context where they're experiencing that noise — more intuitive than navigating Account → Notification Preferences.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> Mark All as Read</div>
+    <div class="ann-card-body">
+      Clears all unread states in one tap. Appears only when at least one notification is unread. Individual rows are also marked read on tap. <strong>No delete/dismiss</strong> — notifications persist for a rolling window (e.g. 30 days) and are not user-deletable. If the list becomes very long, consider pagination or a "load earlier" pattern rather than infinite scroll.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Picks Lock Warning</div>
+    <div class="ann-card-body">
+      Time-sensitive notifications show at the top regardless of strict chronological order. <strong>Tapping navigates directly to My Picks</strong> for that stage — one tap from notification to action. The lock warning is the highest-priority notification type in the app; consider a more urgent visual treatment (e.g. accent border) if multiple lock warnings stack.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> Rank Change</div>
+    <div class="ann-card-body">
+      Positive rank changes (↑) shown in green, negative (↓) in red. <strong>Tapping navigates to the relevant leaderboard</strong> — either the competition leaderboard or the league leaderboard depending on context. Both rank-up and rank-down are shown; rank-down notifications are off by default (configurable in Notification Preferences).
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑥</span> League Enrolled Notification</div>
+    <div class="ann-card-body">
+      Generated when a <strong>league director enrolls your league into a new competition</strong>. Tapping navigates to the Competition detail for that race, so the member can review and set their picks. This is the in-app complement to the push notification for the same event.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Account Tab Badge</div>
+    <div class="ann-card-body">
+      The orange dot on the Account nav tab mirrors the unread count state. It disappears once the user visits this screen and all notifications are marked read. This means users who navigate to Account for other reasons (settings, theme change) are passively reminded to check their alerts without requiring an additional dedicated nav tab.
+    </div>
+  </div>
+</div>
+
+<script>
+  function markAllRead() {
+    document.querySelectorAll('.notif-row.unread').forEach(r => r.classList.remove('unread'));
+    document.querySelector('.mark-all-btn').style.display = 'none';
+  }
+  document.querySelectorAll('.notif-row').forEach(row => {
+    row.addEventListener('click', () => row.classList.remove('unread'));
+  });
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+</script>
+</body>
+</html>
