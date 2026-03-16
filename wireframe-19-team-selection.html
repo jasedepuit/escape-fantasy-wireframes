@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 19 – Team Selection</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: row; align-items: flex-start;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --border-subtle: rgba(255,255,255,0.08);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+    --col-ar:        #5B8BF5;
+    --col-cl:        #34C759;
+    --col-sp:        #FF9500;
+    --col-uc:        #AF52DE;
+    --col-wc:        #FF6F42;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px; height: 812px; background: var(--bg-screen);
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; background: var(--bg-screen);
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; height: 54px;
+    background: var(--bg-screen);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-back { font-size: 24px; color: var(--accent); cursor: pointer; line-height: 1; font-weight: 300; }
+  .header-titles { display: flex; flex-direction: column; gap: 1px; }
+  .header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px; }
+  .header-sub { font-size: 10px; color: var(--text-muted); }
+  .deadline-badge {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,149,0,0.15); color: #FF9500;
+    border: 1px solid rgba(255,149,0,0.3);
+    border-radius: 10px; padding: 4px 8px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.02em; flex-shrink: 0;
+  }
+  body.light-mode .deadline-badge { background: rgba(255,149,0,0.1); }
+
+  /* ── BUDGET BAR ── */
+  .budget-bar {
+    flex-shrink: 0;
+    padding: 8px 16px 7px;
+    background: var(--bg-screen);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .budget-labels {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .budget-label-used { font-size: 12px; font-weight: 800; color: var(--text-primary); }
+  .budget-label-used span { font-weight: 400; color: var(--text-muted); font-size: 11px; }
+  .budget-label-rem { font-size: 10px; color: var(--text-muted); }
+  .budget-label-rem em { color: var(--accent); font-style: normal; font-weight: 700; }
+  .budget-track {
+    height: 5px; background: var(--bg-card2); border-radius: 3px; overflow: hidden;
+  }
+  .budget-fill {
+    height: 100%; background: var(--accent); border-radius: 3px; width: 67.5%;
+  }
+
+  /* ── SQUAD STRIP ── */
+  .squad-strip-wrap {
+    flex-shrink: 0;
+    padding: 8px 0 8px 16px;
+    background: var(--bg-screen);
+    border-bottom: 2px solid var(--border-subtle);
+  }
+  .squad-strip-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-right: 16px; margin-bottom: 7px;
+  }
+  .squad-strip-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .squad-count { font-size: 10px; font-weight: 700; color: var(--accent); }
+  .squad-strip {
+    display: flex; gap: 6px;
+    overflow-x: auto; padding-right: 16px; padding-bottom: 2px;
+  }
+  .squad-strip::-webkit-scrollbar { display: none; }
+
+  .slot-chip {
+    flex-shrink: 0; width: 62px; height: 56px;
+    border-radius: 10px; border: 1.5px solid var(--border-subtle);
+    background: var(--bg-card);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px; position: relative; cursor: pointer;
+    padding: 4px;
+  }
+  .slot-chip.filled { border-color: rgba(255,255,255,0.14); }
+  .slot-chip.empty { border-style: dashed; opacity: 0.65; }
+  .slot-chip-class {
+    font-size: 7px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 5px; border-radius: 3px; color: #fff; line-height: 1.3;
+  }
+  .slot-chip-name { font-size: 9px; font-weight: 700; color: var(--text-primary); text-align: center; line-height: 1.2; max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .slot-chip-price { font-size: 8px; color: var(--text-muted); }
+  .slot-chip-add { font-size: 15px; color: var(--text-dim); line-height: 1; }
+  .slot-remove {
+    position: absolute; top: 2px; right: 4px;
+    font-size: 10px; color: var(--text-dim); line-height: 1;
+  }
+  .chip-ar  { background: var(--col-ar); }
+  .chip-cl  { background: var(--col-cl); }
+  .chip-sp  { background: var(--col-sp); }
+  .chip-uc  { background: var(--col-uc); }
+  .chip-wc  { background: var(--col-wc); }
+
+  /* ── FILTER TABS ── */
+  .filter-tabs-bar {
+    flex-shrink: 0;
+    display: flex;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-x: auto;
+  }
+  .filter-tabs-bar::-webkit-scrollbar { display: none; }
+  .ftab {
+    flex-shrink: 0;
+    padding: 9px 12px 8px;
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: color 0.15s;
+  }
+  .ftab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── SCROLL CONTENT ── */
+  .scroll-content {
+    flex: 1; overflow-y: auto;
+    background: var(--bg-screen);
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  .pool-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 16px; border-bottom: 1px solid var(--border-subtle);
+  }
+  .pool-count { font-size: 10px; color: var(--text-muted); }
+  .sort-btn {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    display: flex; align-items: center; gap: 3px; cursor: pointer;
+  }
+
+  /* Rider rows */
+  .rider-row {
+    display: flex; align-items: center;
+    padding: 10px 14px 10px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 10px; position: relative;
+    background: var(--bg-screen);
+  }
+  .rider-row::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 0 2px 2px 0;
+  }
+  .rider-row.ar::before { background: var(--col-ar); }
+  .rider-row.cl::before { background: var(--col-cl); }
+  .rider-row.sp::before { background: var(--col-sp); }
+  .rider-row.uc::before { background: var(--col-uc); }
+  .rider-row.selected { background: var(--bg-card); }
+  .rider-row.over-budget { opacity: 0.4; }
+
+  .rider-num {
+    width: 18px; text-align: center;
+    font-size: 10px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
+  }
+  .rider-info { flex: 1; min-width: 0; }
+  .rider-name { font-size: 13px; font-weight: 800; color: var(--text-primary); line-height: 1.2; }
+  .rider-meta { display: flex; align-items: center; gap: 5px; margin-top: 2px; flex-wrap: wrap; }
+  .rider-team { font-size: 10px; color: var(--text-muted); }
+  .rider-class-pill {
+    font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 1px 5px; border-radius: 3px; color: #fff; flex-shrink: 0;
+  }
+  .pill-ar { background: var(--col-ar); }
+  .pill-cl { background: var(--col-cl); }
+  .pill-sp { background: var(--col-sp); }
+  .pill-uc { background: var(--col-uc); }
+
+  .rider-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+  .rider-price { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+  .rider-price.selected-price { color: var(--accent); }
+  .rider-price.over { color: #F56A6A; }
+
+  .add-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 300; cursor: pointer; flex-shrink: 0; line-height: 1;
+  }
+  .add-btn.add     { background: var(--accent); color: #fff; }
+  .add-btn.remove  { background: rgba(255,111,66,0.15); color: var(--accent); font-size: 14px; font-weight: 700; }
+  .add-btn.blocked { background: var(--bg-card2); color: var(--text-dim); cursor: default; }
+
+  /* ── CONFIRM BAR ── */
+  .confirm-bar {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    background: var(--bg-screen);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .confirm-btn {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-size: 14px; font-weight: 800; cursor: not-allowed;
+    background: var(--bg-card2); color: var(--text-dim);
+    letter-spacing: -0.2px;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 60px;
+    display: flex; align-items: center; justify-content: space-around;
+    background: var(--bg-screen);
+    border-top: 1px solid var(--border-subtle);
+    padding: 0 4px;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── CALLOUT NUMBERS ── */
+  .cn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 9px; font-weight: 900;
+    margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+  }
+
+  /* ── ANNOTATIONS ── */
+  .ann-panel {
+    width: 320px; flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 10px;
+    padding-top: 60px;
+  }
+  .ann-screen-label {
+    font-size: 11px; font-weight: 800; color: #888;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .ann-card {
+    background: #242424; border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  body.light-mode .ann-card { background: #fff; border-color: rgba(0,0,0,0.1); }
+  .ann-card-title {
+    font-size: 12px; font-weight: 800; color: #e0e0e0; margin-bottom: 5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  body.light-mode .ann-card-title { color: #111; }
+  .ann-card-body { font-size: 11px; color: #999; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #ccc; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .ann-card-body code { background: rgba(255,111,66,0.15); color: var(--accent); border-radius: 3px; padding: 1px 4px; font-size: 10px; }
+  .class-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 2px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<!-- Fixed controls -->
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" id="modeBtn" onclick="document.body.classList.toggle('light-mode')">Light / Dark</button>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1" opacity="0.4"/><rect x="4" y="2" width="3" height="10" rx="1" opacity="0.6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 8 0 8 0S12.2 1.3 15 4"/><path d="M3.5 6.5C5.2 4.8 6.5 4 8 4S10.8 4.8 12.5 6.5"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/><path d="M22.5 4.5v3a1.5 1.5 0 0 0 0-3z"/></svg>
+    </div>
+  </div>
+
+  <!-- App Header -->
+  <div class="app-header">
+    <div class="header-left">
+      <div class="header-back">‹</div>
+      <div class="header-titles">
+        <div class="header-title">Select Your Team <span class="cn">①</span></div>
+        <div class="header-sub">Tour de France 2026</div>
+      </div>
+    </div>
+    <div class="deadline-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
+      3d 14h <span class="cn">②</span>
+    </div>
+  </div>
+
+  <!-- Budget Bar -->
+  <div class="budget-bar">
+    <div class="budget-labels">
+      <span class="budget-label-used">67.5 <span>/ 100 credits used</span> <span class="cn">③</span></span>
+      <span class="budget-label-rem"><em>32.5</em> remaining</span>
+    </div>
+    <div class="budget-track">
+      <div class="budget-fill"></div>
+    </div>
+  </div>
+
+  <!-- Squad Strip -->
+  <div class="squad-strip-wrap">
+    <div class="squad-strip-header">
+      <span class="squad-strip-label">Your Squad <span class="cn">④</span></span>
+      <span class="squad-count">5 / 9 selected</span>
+    </div>
+    <div class="squad-strip">
+
+      <!-- AR 1 – filled: Pogačar -->
+      <div class="slot-chip filled">
+        <span class="slot-remove">×</span>
+        <span class="slot-chip-class chip-ar">AR</span>
+        <span class="slot-chip-name">Pogačar</span>
+        <span class="slot-chip-price">24.5</span>
+      </div>
+
+      <!-- AR 2 – filled: Vingegaard -->
+      <div class="slot-chip filled">
+        <span class="slot-remove">×</span>
+        <span class="slot-chip-class chip-ar">AR</span>
+        <span class="slot-chip-name">Vingegaard</span>
+        <span class="slot-chip-price">22.0</span>
+      </div>
+
+      <!-- CL 1 – filled: Bernal -->
+      <div class="slot-chip filled">
+        <span class="slot-remove">×</span>
+        <span class="slot-chip-class chip-cl">CL</span>
+        <span class="slot-chip-name">Bernal</span>
+        <span class="slot-chip-price">15.5</span>
+      </div>
+
+      <!-- CL 2 – empty -->
+      <div class="slot-chip empty">
+        <span class="slot-chip-class chip-cl">CL</span>
+        <span class="slot-chip-add">+</span>
+      </div>
+
+      <!-- SP 1 – filled: Philipsen -->
+      <div class="slot-chip filled">
+        <span class="slot-remove">×</span>
+        <span class="slot-chip-class chip-sp">SP</span>
+        <span class="slot-chip-name">Philipsen</span>
+        <span class="slot-chip-price">13.0</span>
+      </div>
+
+      <!-- SP 2 – empty -->
+      <div class="slot-chip empty">
+        <span class="slot-chip-class chip-sp">SP</span>
+        <span class="slot-chip-add">+</span>
+      </div>
+
+      <!-- UC 1 – empty -->
+      <div class="slot-chip empty">
+        <span class="slot-chip-class chip-uc">UC</span>
+        <span class="slot-chip-add">+</span>
+      </div>
+
+      <!-- UC 2 – empty -->
+      <div class="slot-chip empty">
+        <span class="slot-chip-class chip-uc">UC</span>
+        <span class="slot-chip-add">+</span>
+      </div>
+
+      <!-- WC – empty -->
+      <div class="slot-chip empty">
+        <span class="slot-chip-class chip-wc">WC ★ <span class="cn">⑤</span></span>
+        <span class="slot-chip-add">+</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs-bar">
+    <div class="ftab active" onclick="setTab(this)">All <span class="cn">⑥</span></div>
+    <div class="ftab" onclick="setTab(this)" style="color:#5B8BF5;">All-Rounder</div>
+    <div class="ftab" onclick="setTab(this)" style="color:#34C759;">Climber</div>
+    <div class="ftab" onclick="setTab(this)" style="color:#FF9500;">Sprinter</div>
+    <div class="ftab" onclick="setTab(this)" style="color:#AF52DE;">Unclassed</div>
+  </div>
+
+  <!-- Rider Pool -->
+  <div class="scroll-content">
+
+    <div class="pool-header">
+      <span class="pool-count">124 riders available</span>
+      <span class="sort-btn">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+        Price ▾ <span class="cn">⑦</span>
+      </span>
+    </div>
+
+    <!-- Rider 1 – selected AR: Pogačar -->
+    <div class="rider-row ar selected">
+      <div class="rider-num">1</div>
+      <div class="rider-info">
+        <div class="rider-name">Tadej Pogačar</div>
+        <div class="rider-meta">
+          <span class="rider-team">UAE Team Emirates</span>
+          <span class="rider-class-pill pill-ar">All-Rounder</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price selected-price">24.5</span>
+        <div class="add-btn remove">✓</div>
+      </div>
+    </div>
+
+    <!-- Rider 2 – selected AR: Vingegaard -->
+    <div class="rider-row ar selected">
+      <div class="rider-num">2</div>
+      <div class="rider-info">
+        <div class="rider-name">Jonas Vingegaard</div>
+        <div class="rider-meta">
+          <span class="rider-team">Visma–Lease a Bike</span>
+          <span class="rider-class-pill pill-ar">All-Rounder</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price selected-price">22.0</span>
+        <div class="add-btn remove">✓</div>
+      </div>
+    </div>
+
+    <!-- Rider 3 – AR: Evenepoel, not selected, within budget -->
+    <div class="rider-row ar">
+      <div class="rider-num">3</div>
+      <div class="rider-info">
+        <div class="rider-name">Remco Evenepoel</div>
+        <div class="rider-meta">
+          <span class="rider-team">Soudal – Quick-Step</span>
+          <span class="rider-class-pill pill-ar">All-Rounder</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price">20.5</span>
+        <div class="add-btn add">+</div>
+      </div>
+    </div>
+
+    <!-- Rider 4 – selected CL: Bernal -->
+    <div class="rider-row cl selected">
+      <div class="rider-num">4</div>
+      <div class="rider-info">
+        <div class="rider-name">Egan Bernal</div>
+        <div class="rider-meta">
+          <span class="rider-team">INEOS Grenadiers</span>
+          <span class="rider-class-pill pill-cl">Climber</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price selected-price">15.5</span>
+        <div class="add-btn remove">✓</div>
+      </div>
+    </div>
+
+    <!-- Rider 5 – CL: Ciccone, not selected -->
+    <div class="rider-row cl">
+      <div class="rider-num">5</div>
+      <div class="rider-info">
+        <div class="rider-name">Giulio Ciccone</div>
+        <div class="rider-meta">
+          <span class="rider-team">Lidl–Trek</span>
+          <span class="rider-class-pill pill-cl">Climber</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price">14.0</span>
+        <div class="add-btn add">+</div>
+      </div>
+    </div>
+
+    <!-- Rider 6 – selected SP: Philipsen -->
+    <div class="rider-row sp selected">
+      <div class="rider-num">6</div>
+      <div class="rider-info">
+        <div class="rider-name">Jasper Philipsen</div>
+        <div class="rider-meta">
+          <span class="rider-team">Alpecin–Deceuninck</span>
+          <span class="rider-class-pill pill-sp">Sprinter</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price selected-price">13.0</span>
+        <div class="add-btn remove">✓</div>
+      </div>
+    </div>
+
+    <!-- Rider 7 – SP: Van Aert, not selected -->
+    <div class="rider-row sp">
+      <div class="rider-num">7</div>
+      <div class="rider-info">
+        <div class="rider-name">Wout van Aert</div>
+        <div class="rider-meta">
+          <span class="rider-team">Visma–Lease a Bike</span>
+          <span class="rider-class-pill pill-sp">Sprinter</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price">11.5</span>
+        <div class="add-btn add">+</div>
+      </div>
+    </div>
+
+    <!-- Rider 8 – UC: Laporte, not selected -->
+    <div class="rider-row uc">
+      <div class="rider-num">8</div>
+      <div class="rider-info">
+        <div class="rider-name">Christophe Laporte</div>
+        <div class="rider-meta">
+          <span class="rider-team">Visma–Lease a Bike</span>
+          <span class="rider-class-pill pill-uc">Unclassed</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price">8.5</span>
+        <div class="add-btn add">+</div>
+      </div>
+    </div>
+
+    <!-- Rider 9 – AR: Rodríguez, OVER BUDGET -->
+    <div class="rider-row ar over-budget">
+      <div class="rider-num">9</div>
+      <div class="rider-info">
+        <div class="rider-name">Carlos Rodríguez <span class="cn">⑧</span></div>
+        <div class="rider-meta">
+          <span class="rider-team">INEOS Grenadiers</span>
+          <span class="rider-class-pill pill-ar">All-Rounder</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price over">36.0</span>
+        <div class="add-btn blocked">+</div>
+      </div>
+    </div>
+
+    <!-- Rider 10 – UC: Asgreen, not selected -->
+    <div class="rider-row uc">
+      <div class="rider-num">10</div>
+      <div class="rider-info">
+        <div class="rider-name">Kasper Asgreen</div>
+        <div class="rider-meta">
+          <span class="rider-team">Soudal – Quick-Step</span>
+          <span class="rider-class-pill pill-uc">Unclassed</span>
+        </div>
+      </div>
+      <div class="rider-right">
+        <span class="rider-price">7.0</span>
+        <div class="add-btn add">+</div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-content -->
+
+  <!-- Confirm Bar -->
+  <div class="confirm-bar">
+    <button class="confirm-btn">Confirm Team — 4 slots remaining <span class="cn">⑨</span></button>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item is-active">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+      <div class="nav-label">Compete</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+      <div class="nav-label">Leagues</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+      <div class="nav-label">News</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+      <div class="nav-label">Account</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="ann-panel">
+  <span class="ann-screen-label">Screen 19 · Team Selection — Annotations</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Screen Context</div>
+    <div class="ann-card-body">
+      Shown for <strong>Teams-based competitions</strong> only — not used for Stage Race format (which uses Rider Selection, Screen 04). Accessed via <code>Enter Team →</code> on the Competition Browser, or <code>Make Transfer →</code> when a transfer window is open. When arriving mid-competition during a transfer window, slots are pre-filled with the current team.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Entry Deadline</div>
+    <div class="ann-card-body">
+      Countdown to team lock (entry deadline). Once expired the screen becomes <strong>read-only</strong> and the Confirm button is replaced with a locked state. Per the rules: unlimited changes are allowed up until this deadline. During a transfer window, this shows the window close time instead.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> Budget Bar</div>
+    <div class="ann-card-body">
+      Credit total is set per competition (varies event to event). Bar fills as credits are spent and updates live with each add/remove. Remaining label turns <strong style="color:#F56A6A">red</strong> when under 10 credits remaining. Rider prices reflect past results and recent form, as set by the competition director.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Squad Strip</div>
+    <div class="ann-card-body">
+      Horizontal scroll strip showing all 9 slots: <strong>2× All-Rounder · 2× Climber · 2× Sprinter · 2× Unclassed · 1× Wildcard</strong>. Slot counts are configurable per competition. Filled slots show class badge + surname + price + <code>×</code> to remove. Empty slots show class badge + <code>+</code>. Tapping a filled slot removes that rider and scrolls the pool to their row.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> Wildcard Slot</div>
+    <div class="ann-card-body">
+      The ★ Wildcard accepts a rider from <strong>any class</strong>, letting managers specialise. When tapping <code>+</code> on a rider whose class slots are already full, the app offers to place them into the Wildcard slot instead (with a confirmation prompt).
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑥</span> Class Filter Tabs</div>
+    <div class="ann-card-body">
+      Filter the rider pool by the four classes from the rules: <span class="class-dot" style="background:#5B8BF5"></span><strong>All-Rounder</strong> · <span class="class-dot" style="background:#34C759"></span><strong>Climber</strong> · <span class="class-dot" style="background:#FF9500"></span><strong>Sprinter</strong> · <span class="class-dot" style="background:#AF52DE"></span><strong>Unclassed</strong>. The "All" tab shows every rider. Left-border colour on each row matches the class for quick scanning.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑦</span> Sort Control</div>
+    <div class="ann-card-body">
+      Default sort: <code>Price ▾</code> (highest first, as star riders are most decision-worthy). Also sortable by name A–Z or by recent form. Sort persists when switching filter tabs.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑧</span> Over-Budget State</div>
+    <div class="ann-card-body">
+      Riders whose price exceeds remaining credits are dimmed and their <code>+</code> button is disabled. Price displays in red to signal the constraint. This updates live — removing a selected rider may re-enable over-budget options.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑨</span> Confirm Button</div>
+    <div class="ann-card-body">
+      Disabled (grey, <code>cursor: not-allowed</code>) until all 9 slots are filled and the team is within budget. Label updates to show remaining slots: <code>"4 slots remaining"</code> → <code>"1 slot remaining"</code> → <code>"Confirm Team →"</code> (orange, active). On confirm, team is saved and the user is taken to the Team Overview screen. Can be re-confirmed any number of times before the deadline.
+    </div>
+  </div>
+
+</div><!-- /ann-panel -->
+
+<script>
+  function setTab(el) {
+    document.querySelectorAll('.ftab').forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
