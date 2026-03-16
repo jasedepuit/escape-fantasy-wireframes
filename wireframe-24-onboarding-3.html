@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 24 – Onboarding 3: Join first competition</title>
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; display: flex; flex-direction: row; align-items: flex-start;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent: #FF6F42; --bg-screen: #121212; --bg-card: #1e1e1e;
+    --bg-card2: #252525; --border-subtle: rgba(255,255,255,0.08);
+    --text-primary: #f0f0f0; --text-muted: #888; --text-dim: #555;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111; --bg-screen: #f2f2f7; --bg-card: #ffffff;
+    --bg-card2: #f0f0f5; --border-subtle: rgba(0,0,0,0.08);
+    --text-primary: #111; --text-muted: #777; --text-dim: #bbb;
+  }
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; }
+  body.light-mode .back-to-map { background: #222; }
+  .phone { width: 375px; height: 812px; background: var(--bg-screen); border-radius: 44px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+  .status-bar { flex-shrink: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--bg-screen); }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 9px; font-weight: 900; margin-left: 3px; vertical-align: middle; flex-shrink: 0; }
+  .ann-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 60px; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .ann-card { background: #242424; border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.07); }
+  body.light-mode .ann-card { background: #fff; border-color: rgba(0,0,0,0.1); }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #e0e0e0; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+  body.light-mode .ann-card-title { color: #111; }
+  .ann-card-body { font-size: 11px; color: #999; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #ccc; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .ann-card-body code { background: rgba(255,111,66,0.15); color: var(--accent); border-radius: 3px; padding: 1px 4px; font-size: 10px; }
+  .ob-chrome { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 0; }
+  .ob-back { font-size: 22px; color: var(--accent); font-weight: 300; cursor: pointer; width: 28px; }
+  .ob-skip { font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+  .ob-dots { display: flex; gap: 6px; align-items: center; margin-top: 16px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); }
+  .dot.active { width: 20px; border-radius: 4px; background: var(--accent); }
+  .ob-footer { flex-shrink: 0; padding: 12px 24px 28px; display: flex; flex-direction: column; gap: 8px; }
+  .ob-next-btn { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: -0.2px; }
+  .ob-secondary-btn { width: 100%; padding: 13px; background: transparent; color: var(--text-muted); border: 1px solid var(--border-subtle); border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* main layout */
+  .ob-body { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+  .ob-body::-webkit-scrollbar { display: none; }
+  .ob-header { padding: 12px 24px 8px; }
+  .ob-heading { font-size: 24px; font-weight: 900; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1.1; }
+  .ob-sub { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 6px; }
+  .ob-dots-wrap { padding: 8px 24px 0; display: flex; gap: 6px; }
+
+  /* comp cards */
+  .comp-list { padding: 10px 16px 0; display: flex; flex-direction: column; gap: 10px; }
+  .ob-comp-card {
+    background: var(--bg-card); border-radius: 14px;
+    border: 1px solid var(--border-subtle); overflow: hidden;
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .ob-comp-card.selected { border-color: var(--accent); border-width: 2px; }
+  .comp-img-area {
+    height: 80px; width: 100%; position: relative;
+    display: flex; align-items: flex-end; padding: 10px 12px;
+  }
+  .comp-img-tdf {
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%),
+    linear-gradient(135deg, #1a2a4a 0%, #2d4a6e 30%, #4a7da8 50%, #8fa8bf 65%, #c5d4df 75%, #3a5878 100%);
+  }
+  .comp-img-giro {
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%),
+    linear-gradient(135deg, #3a0020 0%, #7a1040 30%, #c03060 50%, #e06080 70%, #f090a0 85%, #c05070 100%);
+  }
+  .comp-img-vuelta {
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%),
+    linear-gradient(135deg, #1a0a3a 0%, #3a1870 30%, #6030b0 50%, #9060d0 70%, #b080e0 85%, #5020a0 100%);
+  }
+  .comp-name { font-size: 14px; font-weight: 900; color: #fff; letter-spacing: -0.2px; }
+  .comp-badges { display: flex; gap: 5px; margin-top: 4px; }
+  .comp-badge {
+    font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 6px; border-radius: 4px; color: #fff;
+  }
+  .badge-format-sr { background: rgba(255,111,66,0.85); }
+  .badge-format-ft { background: rgba(91,139,245,0.85); }
+  .badge-live { background: rgba(255,111,66,0.9); }
+  .badge-upcoming { background: rgba(255,255,255,0.15); }
+  .comp-body-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px;
+  }
+  .comp-body-left { display: flex; flex-direction: column; gap: 2px; }
+  .comp-stages { font-size: 11px; color: var(--text-muted); }
+  .comp-entries { font-size: 11px; color: var(--text-muted); }
+  .comp-join-btn {
+    padding: 7px 16px; border-radius: 8px; border: none;
+    background: var(--accent); color: #fff;
+    font-size: 12px; font-weight: 800; cursor: pointer; flex-shrink: 0;
+  }
+  .comp-join-btn.joined {
+    background: rgba(52,199,89,0.15); color: #34C759;
+    border: 1px solid rgba(52,199,89,0.3);
+  }
+  /* selected check overlay */
+  .selected-check {
+    display: none; position: absolute; top: 8px; right: 8px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent);
+    align-items: center; justify-content: center;
+  }
+  .ob-comp-card.selected .selected-check { display: flex; }
+</style>
+</head>
+<body>
+<div class="back-to-map-wrap"><a href="screen-map.html" class="back-to-map">← Screen Map</a></div>
+<div class="mode-toggle-wrap"><button class="mode-toggle" onclick="document.body.classList.toggle('light-mode')">Light / Dark</button></div>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1" opacity="0.4"/><rect x="4" y="2" width="3" height="10" rx="1" opacity="0.6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 8 0 8 0S12.2 1.3 15 4"/><path d="M3.5 6.5C5.2 4.8 6.5 4 8 4S10.8 4.8 12.5 6.5"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor" stroke="none"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/><path d="M22.5 4.5v3a1.5 1.5 0 0 0 0-3z"/></svg></div>
+  </div>
+
+  <div class="ob-chrome">
+    <div class="ob-back">‹</div>
+    <div class="ob-skip">Skip</div>
+  </div>
+
+  <div class="ob-body">
+    <div class="ob-header">
+      <div class="ob-heading">Pick your first<br>competition <span class="cn">①</span></div>
+      <div class="ob-sub">Join one now to get started — you can enter more any time from the Compete tab.</div>
+    </div>
+
+    <div class="ob-dots-wrap">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot active"></div>
+    </div>
+
+    <!-- Competition list -->
+    <div class="comp-list">
+
+      <!-- TDF — selected -->
+      <div class="ob-comp-card selected" id="card1" onclick="selectCard('card1')">
+        <div class="comp-img-area comp-img-tdf" style="position:relative;">
+          <div class="selected-check">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Tour de France 2026 <span class="cn">②</span></div>
+            <div class="comp-badges">
+              <span class="comp-badge badge-live">Live · Stage 12</span>
+              <span class="comp-badge badge-format-sr">Stage Race</span>
+              <span class="comp-badge badge-format-ft">Teams</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-body-row">
+          <div class="comp-body-left">
+            <span class="comp-stages">21 stages · 2,541 entries</span>
+          </div>
+          <button class="comp-join-btn joined" onclick="event.stopPropagation()">Joined ✓</button>
+        </div>
+      </div>
+
+      <!-- Giro — not selected -->
+      <div class="ob-comp-card" id="card2" onclick="selectCard('card2')">
+        <div class="comp-img-area comp-img-giro" style="position:relative;">
+          <div class="selected-check">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Giro d'Italia 2026</div>
+            <div class="comp-badges">
+              <span class="comp-badge badge-upcoming">Upcoming · May 2026</span>
+              <span class="comp-badge badge-format-sr">Stage Race</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-body-row">
+          <div class="comp-body-left">
+            <span class="comp-stages">21 stages · Opens in 47 days</span>
+          </div>
+          <button class="comp-join-btn" onclick="event.stopPropagation()">Join</button>
+        </div>
+      </div>
+
+      <!-- Vuelta — not selected -->
+      <div class="ob-comp-card" id="card3" onclick="selectCard('card3')">
+        <div class="comp-img-area comp-img-vuelta" style="position:relative;">
+          <div class="selected-check">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="comp-name">Vuelta a España 2026</div>
+            <div class="comp-badges">
+              <span class="comp-badge badge-upcoming">Upcoming · Aug 2026</span>
+              <span class="comp-badge badge-format-ft">Teams</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-body-row">
+          <div class="comp-body-left">
+            <span class="comp-stages">21 stages · Opens in 160 days</span>
+          </div>
+          <button class="comp-join-btn" onclick="event.stopPropagation()">Join</button>
+        </div>
+      </div>
+
+    </div><!-- /comp-list -->
+  </div><!-- /ob-body -->
+
+  <div class="ob-footer">
+    <button class="ob-next-btn">Go to Home → <span class="cn">③</span></button>
+    <button class="ob-secondary-btn">Browse all competitions</button>
+  </div>
+</div>
+
+<div class="ann-panel">
+  <span class="ann-screen-label">Screen 24 · Onboarding 3 — Annotations</span>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Competition Picker</div>
+    <div class="ann-card-body">Shows the same competitions available in the full Competition Browser (Screen 02), filtered to <strong>currently active or upcoming only</strong> — past/completed events are excluded. This is a curated, frictionless first-entry moment. Joining here is equivalent to joining from the Competition Browser — same logic applies.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Live Competition — Already Joined</div>
+    <div class="ann-card-body">If a live competition exists, it is shown first and can be pre-selected (or even auto-joined) so the user can immediately make picks. The <code>Joined ✓</code> state and card selection reflect this. For mid-race joining, the user can still score from the next available stage — they don't miss out entirely.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> "Go to Home" CTA</div>
+    <div class="ann-card-body">Final button in the onboarding flow. Navigates to the Home screen (Screen 01). If the user has joined a competition, the Home screen immediately shows that competition card. The onboarding flag is set here — this screen never appears again on subsequent launches.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title">Browse All Competitions</div>
+    <div class="ann-card-body">Secondary CTA. Also navigates to Home but opens the Competition Browser tab. Equivalent to the user navigating there manually — provided for users who don't see a relevant competition in this curated list.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title">Format Badges</div>
+    <div class="ann-card-body">Each competition shows which format(s) it supports — Stage Race (orange), Fantasy Teams (blue) — using the same colour language as the rest of the app. Useful context before committing to an entry, especially for new users who just learned the distinction on Screen 23.</div>
+  </div>
+</div>
+
+<script>
+  function selectCard(id) {
+    document.querySelectorAll('.ob-comp-card').forEach(function(c) {
+      c.classList.remove('selected');
+      c.querySelector('.comp-join-btn').classList.remove('joined');
+      c.querySelector('.comp-join-btn').textContent = 'Join';
+    });
+    var card = document.getElementById(id);
+    card.classList.add('selected');
+    card.querySelector('.comp-join-btn').classList.add('joined');
+    card.querySelector('.comp-join-btn').textContent = 'Joined ✓';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 22 – Onboarding 1: What is Escape Fantasy?</title>
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: row; align-items: flex-start;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent: #FF6F42; --bg-screen: #121212; --bg-card: #1e1e1e;
+    --bg-card2: #252525; --border-subtle: rgba(255,255,255,0.08);
+    --text-primary: #f0f0f0; --text-muted: #888; --text-dim: #555;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111;
+    --bg-screen: #f2f2f7; --bg-card: #ffffff; --bg-card2: #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08); --text-primary: #111;
+    --text-muted: #777; --text-dim: #bbb;
+  }
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; }
+  body.light-mode .back-to-map { background: #222; }
+  .phone {
+    width: 375px; height: 812px; background: var(--bg-screen);
+    border-radius: 44px; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+  .status-bar {
+    flex-shrink: 0; height: 44px; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 24px; background: var(--bg-screen);
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+  .cn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: 9px; font-weight: 900;
+    margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+  }
+  .ann-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 60px; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .ann-card { background: #242424; border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.07); }
+  body.light-mode .ann-card { background: #fff; border-color: rgba(0,0,0,0.1); }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #e0e0e0; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+  body.light-mode .ann-card-title { color: #111; }
+  .ann-card-body { font-size: 11px; color: #999; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #ccc; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .ann-card-body code { background: rgba(255,111,66,0.15); color: var(--accent); border-radius: 3px; padding: 1px 4px; font-size: 10px; }
+
+
+  /* onboarding chrome */
+  .ob-chrome {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 20px 0;
+  }
+  .ob-back { font-size: 22px; color: var(--accent); font-weight: 300; cursor: pointer; width: 28px; }
+  .ob-skip { font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+  .ob-body {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 0 28px; overflow-y: auto;
+  }
+  .ob-body::-webkit-scrollbar { display: none; }
+  .ob-illus {
+    width: 100%; max-width: 280px; margin: 20px auto 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ob-heading {
+    font-size: 26px; font-weight: 900; color: var(--text-primary);
+    letter-spacing: -0.6px; line-height: 1.1; text-align: center;
+    margin-top: 24px;
+  }
+  .ob-sub {
+    font-size: 14px; color: var(--text-muted); line-height: 1.55;
+    text-align: center; margin-top: 12px;
+  }
+  /* progress dots */
+  .ob-dots {
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 28px;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-dim);
+  }
+  .dot.active { width: 20px; border-radius: 4px; background: var(--accent); }
+  /* next button */
+  .ob-footer { flex-shrink: 0; padding: 16px 24px 28px; }
+  .ob-next-btn {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 14px;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    letter-spacing: -0.2px;
+  }
+
+  .feature-cards { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 20px; }
+  .feature-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg-card); border-radius: 12px;
+    padding: 14px; border: 1px solid var(--border-subtle);
+  }
+  .feature-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .feature-text { flex: 1; min-width: 0; }
+  .feature-title { font-size: 13px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px; }
+  .feature-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="back-to-map-wrap"><a href="screen-map.html" class="back-to-map">← Screen Map</a></div>
+<div class="mode-toggle-wrap"><button class="mode-toggle" onclick="document.body.classList.toggle('light-mode')">Light / Dark</button></div>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1" opacity="0.4"/><rect x="4" y="2" width="3" height="10" rx="1" opacity="0.6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 8 0 8 0S12.2 1.3 15 4"/><path d="M3.5 6.5C5.2 4.8 6.5 4 8 4S10.8 4.8 12.5 6.5"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor" stroke="none"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/><path d="M22.5 4.5v3a1.5 1.5 0 0 0 0-3z"/></svg></div>
+  </div>
+
+  <div class="ob-chrome">
+    <div class="ob-back"></div><!-- no back on screen 1 -->
+    <div class="ob-skip">Skip <span class="cn">①</span></div>
+  </div>
+
+  <div class="ob-body">
+    <!-- Illustration: trophy + bike -->
+    <div class="ob-illus" style="height:140px;">
+      <svg viewBox="0 0 280 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <!-- road -->
+        <ellipse cx="140" cy="130" rx="130" ry="14" fill="rgba(255,111,66,0.06)"/>
+        <!-- bike frame -->
+        <g transform="translate(60,20)">
+          <circle cx="32" cy="85" r="28" stroke="#FF6F42" stroke-width="3" fill="none" opacity="0.25"/>
+          <circle cx="128" cy="85" r="28" stroke="#FF6F42" stroke-width="3" fill="none" opacity="0.25"/>
+          <circle cx="32" cy="85" r="6" fill="#FF6F42" opacity="0.4"/>
+          <circle cx="128" cy="85" r="6" fill="#FF6F42" opacity="0.4"/>
+          <!-- frame -->
+          <line x1="32" y1="85" x2="80" y2="30" stroke="#FF6F42" stroke-width="3" opacity="0.6"/>
+          <line x1="80" y1="30" x2="128" y2="85" stroke="#FF6F42" stroke-width="3" opacity="0.6"/>
+          <line x1="80" y1="30" x2="75" y2="85" stroke="#FF6F42" stroke-width="3" opacity="0.6"/>
+          <line x1="75" y1="85" x2="32" y2="85" stroke="#FF6F42" stroke-width="3" opacity="0.3"/>
+          <!-- handlebars -->
+          <line x1="80" y1="30" x2="90" y2="20" stroke="#FF6F42" stroke-width="3" opacity="0.5"/>
+          <line x1="85" y1="20" x2="98" y2="22" stroke="#FF6F42" stroke-width="3" opacity="0.5"/>
+          <!-- rider dots -->
+          <circle cx="80" cy="16" r="8" fill="#FF6F42" opacity="0.5"/>
+        </g>
+        <!-- trophy -->
+        <g transform="translate(185,15)">
+          <rect x="20" y="60" width="40" height="6" rx="2" fill="#FF6F42" opacity="0.6"/>
+          <rect x="28" y="54" width="24" height="8" rx="2" fill="#FF6F42" opacity="0.5"/>
+          <path d="M10 10 Q10 50 40 50 Q70 50 70 10 Z" fill="rgba(255,111,66,0.15)" stroke="#FF6F42" stroke-width="2.5" opacity="0.7"/>
+          <path d="M10 15 Q0 15 0 30 Q0 42 12 44" stroke="#FF6F42" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M70 15 Q80 15 80 30 Q80 42 68 44" stroke="#FF6F42" stroke-width="2" fill="none" opacity="0.5"/>
+          <circle cx="40" cy="28" r="8" fill="#FF6F42" opacity="0.3"/>
+          <path d="M36 28 l3 3 l6-6" stroke="#FF6F42" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="ob-heading">Welcome to<br>Escape Fantasy <span class="cn">②</span></div>
+    <div class="ob-sub">The fantasy cycling game built for real fans — powered by Escape Collective.</div>
+
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,111,66,0.12);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6F42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="feature-text">
+          <div class="feature-title">Compete with friends <span class="cn">③</span></div>
+          <div class="feature-desc">Create private leagues or join public competitions run by EC.</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(91,139,245,0.12);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8BF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v7M9 18h6"/></svg>
+        </div>
+        <div class="feature-text">
+          <div class="feature-title">Two ways to play</div>
+          <div class="feature-desc">Pick a rider per stage, or build a full team with a budget.</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(52,199,89,0.12);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="feature-text">
+          <div class="feature-title">Real race results</div>
+          <div class="feature-desc">Points from actual stage finishes, GC, sprint and KOM classifications.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ob-dots" style="margin-top:20px;">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <div class="ob-footer">
+    <button class="ob-next-btn">Next →</button>
+  </div>
+</div>
+
+<div class="ann-panel">
+  <span class="ann-screen-label">Screen 22 · Onboarding 1 — Annotations</span>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Skip Button</div>
+    <div class="ann-card-body">Available on all three onboarding screens. Tapping jumps directly to the Home screen (Screen 01). A <strong>first-time-seen flag</strong> is set in local storage regardless of whether the user skips, so the onboarding never shows again. The flag can be reset via Account → App Settings for testing.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Escape Fantasy Branding</div>
+    <div class="ann-card-body">Uses the <strong>Escape Fantasy stacked logo</strong> (not the EC master logo) as this is the product's own identity moment. White variant in dark mode, black in light mode — same switching pattern as the app header logo.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> Feature Cards</div>
+    <div class="ann-card-body">Three concise value propositions. Not interactive — purely informational. Copy should be short enough to scan in one glance. Icons use class colours from the rest of the app (orange, blue, green) to start building visual language familiarity.</div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-card-title">Progress Dots</div>
+    <div class="ann-card-body">Three dots indicating position in the 3-screen onboarding flow. Active dot is wider (pill shape) in orange. Tapping dots does not navigate — only Next / Back buttons do, keeping the interaction unambiguous.</div>
+  </div>
+</div>
+</body>
+</html>
