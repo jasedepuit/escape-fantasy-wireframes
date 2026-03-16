@@ -376,7 +376,7 @@
     <div class="ann-card-body">
       Lookup fires automatically when all 6 characters are entered — no separate search tap needed. <strong>Valid code</strong> → league preview card appears, Join button enables. <strong>Invalid code</strong> → error banner + shake animation on the boxes. Editing any character resets to the blank state.
       <br><br>
-      In this wireframe: <code>TDF26</code> resolves to "Tour de France Fanatics". Any other 6-char string triggers the error state.
+      In this wireframe: <code>TDF026</code> resolves to "Tour de France Fanatics". Any other 6-char string triggers the error state.
     </div>
   </div>
 
@@ -419,7 +419,7 @@
   const JOIN_BTN = document.getElementById('joinBtn');
   const ERROR    = document.getElementById('errorBanner');
   const PREVIEW  = document.getElementById('leaguePreview');
-  const DEMO     = 'TDF26';
+  const DEMO     = 'TDF026';
 
   function focusInput() { INPUT.focus(); }
 
