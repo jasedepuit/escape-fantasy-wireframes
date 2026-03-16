@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 17 – Notification Preferences</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+    gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --border-subtle: rgba(255,255,255,0.08);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+    --toggle-off:    #3a3a3a;
+    --toggle-on:     #34C759;
+  }
+  body.light-mode {
+    background: #e8e8e8;
+    color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+    --toggle-off:    #ccc;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0; height: 52px;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 12px;
+  }
+  .header-back {
+    font-size: 22px; color: var(--accent); cursor: pointer; flex-shrink: 0; line-height: 1;
+  }
+  .app-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); flex: 1; text-align: center; }
+  .header-spacer { width: 22px; flex-shrink: 0; } /* balance the back button */
+
+  /* ── SCROLL ── */
+  .scroll-content {
+    flex: 1; overflow-y: auto; padding: 20px 16px;
+    scrollbar-width: none;
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── OS PERMISSION BANNER ── */
+  .os-banner {
+    background: rgba(255,111,66,0.1);
+    border: 1px solid rgba(255,111,66,0.25);
+    border-radius: 12px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .os-banner-icon { color: var(--accent); flex-shrink: 0; }
+  .os-banner-text { font-size: 12px; color: var(--text-muted); line-height: 1.4; flex: 1; }
+  .os-banner-text strong { color: var(--accent); font-weight: 700; }
+  .os-banner-cta { font-size: 11px; font-weight: 800; color: var(--accent); flex-shrink: 0; cursor: pointer; }
+
+  /* ── SECTION ── */
+  .notif-section { margin-bottom: 24px; }
+  .section-label {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted);
+    margin-bottom: 8px; padding-left: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-label-icon { opacity: 0.7; }
+
+  .notif-group {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .notif-row {
+    display: flex; align-items: center;
+    padding: 13px 16px; gap: 12px;
+  }
+  .notif-row + .notif-row { border-top: 1px solid var(--border-subtle); }
+  .notif-row-text { flex: 1; }
+  .notif-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .notif-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; line-height: 1.3; }
+
+  /* ── TOGGLE ── */
+  .toggle {
+    width: 44px; height: 26px; border-radius: 13px;
+    background: var(--toggle-off);
+    position: relative; flex-shrink: 0; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--toggle-on); }
+  .toggle::after {
+    content: ''; position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 80px;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-screen);
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; min-width: 44px; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── ANNOTATIONS ── */
+  .annotations { width: 320px; flex-shrink: 0; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; display: block; }
+  .ann-card { background: #222; border: 1px solid #333; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  body.light-mode .ann-card { background: #f5f5f5; border-color: #ddd; }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  body.light-mode .ann-card-title { color: #555; }
+  .ann-card-body { font-size: 12px; color: #777; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #bbb; font-weight: 700; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,111,66,0.18); color: #FF6F42; font-size: 9px; font-weight: 900; margin-left: 2px; vertical-align: middle; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 12.2 1.3 15 4"/><path d="M3.5 6.5C5.5 4.5 10.5 4.5 12.5 6.5"/><path d="M6 9C7 8 9 8 10 9"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="currentColor" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <div class="app-header">
+    <span class="header-back">‹</span>
+    <span class="app-header-title">Notifications</span>
+    <span class="header-spacer"></span>
+  </div>
+
+  <div class="scroll-content">
+
+    <!-- OS permission banner -->
+    <div class="os-banner">
+      <svg class="os-banner-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 2C6.2 2 4 4.2 4 7v5l-1.5 2h13L14 12V7c0-2.8-2.2-5-5-5z"/><path d="M7 15.5a2 2 0 0 0 4 0"/></svg>
+      <span class="os-banner-text"><strong>Notifications are off.</strong> Enable them in Settings to receive alerts.</span>
+      <span class="os-banner-cta">Open Settings<span class="cn">①</span></span>
+    </div>
+
+    <!-- Fantasy section -->
+    <div class="notif-section">
+      <div class="section-label">
+        <svg class="section-label-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2h5v5.5C9 9.4 7.9 11 6.5 11S4 9.4 4 7.5V2z"/><path d="M4 4H2C2 4 2 7.5 4 7.5"/><path d="M9 4h2c0 0 0 3.5-2 3.5"/><path d="M5.5 13h2M6.5 11v2"/></svg>
+        Fantasy<span class="cn">②</span>
+      </div>
+      <div class="notif-group">
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">Picks closing soon</div>
+            <div class="notif-sub">Reminder before the lock window for an upcoming stage</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">Leaderboard updates</div>
+            <div class="notif-sub">Your position changes after a stage result</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">League leaderboards</div>
+            <div class="notif-sub">Position changes within your private leagues</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- League section -->
+    <div class="notif-section">
+      <div class="section-label">
+        <svg class="section-label-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 1L2 3.5V7C2 10 4 12 6.5 12.5C9 12 11 10 11 7V3.5L6.5 1Z"/></svg>
+        League<span class="cn">③</span>
+      </div>
+      <div class="notif-group">
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">League enrolled in competition</div>
+            <div class="notif-sub">Your director has entered your league into a new competition</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">New member joined</div>
+            <div class="notif-sub">Someone joins a league you're directing</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat section -->
+    <div class="notif-section">
+      <div class="section-label">
+        <svg class="section-label-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2h9v7H7l-3 2.5V9H2V2z"/></svg>
+        Chat<span class="cn">④</span>
+      </div>
+      <div class="notif-group">
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">New chat message</div>
+            <div class="notif-sub">A new message is posted in a league you're part of</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-text">
+            <div class="notif-label">Mentions only</div>
+            <div class="notif-sub">Only notify when someone @mentions you<span class="cn">⑤</span></div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+      <div class="nav-label">Compete</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+      <div class="nav-label">Leagues</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+      <div class="nav-label">News</div>
+    </div>
+    <div class="nav-item is-active">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+      <div class="nav-label">Account</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="annotations">
+  <span class="ann-screen-label">Screen 17 · Notification Preferences — Annotations</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> OS Permission Banner</div>
+    <div class="ann-card-body">
+      Shown only when the user has not yet granted (or has revoked) iOS/Android notification permissions. <strong>"Open Settings"</strong> deep-links to the device's notification settings for the app. The banner disappears once permission is granted. Toggles below are still visible and configurable regardless — preferences are saved for when permission is eventually granted.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Fantasy Section</div>
+    <div class="ann-card-body">
+      Covers competition-level events: pick lock reminders, personal leaderboard position changes, and league leaderboard changes. All three default <strong>on</strong> — high-value signals the user is unlikely to want to miss. "Picks closing soon" replaces the old "Stage Picks closing soon" label with a shorter, clearer name.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> League Section</div>
+    <div class="ann-card-body">
+      <strong>League enrolled in competition</strong> — default on. Tells members when their director has entered the league into a new competition so they don't miss the picks window.<br><br>
+      <strong>New member joined</strong> — default off. Directed at league directors. Most members won't care; noisy for large public leagues.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Chat Section</div>
+    <div class="ann-card-body">
+      Chat notifications are per-app, not per-league — a single toggle covers all leagues the user is in. If chat volume becomes a concern, a per-league granularity could be added in a future iteration (accessible from League Settings).
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> Mentions Only</div>
+    <div class="ann-card-body">
+      Subordinate toggle — only meaningful when <strong>New chat message</strong> is on. When enabled, suppresses all chat notifications except direct @mentions, reducing noise for active leagues. Default off (users receive all messages by default). Consider disabling this toggle visually when its parent is off.
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+  }
+</script>
+</body>
+</html>

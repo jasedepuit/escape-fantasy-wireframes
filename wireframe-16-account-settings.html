@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 16 – Account &amp; Settings</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+    gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --border-subtle: rgba(255,255,255,0.08);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+  }
+  body.light-mode {
+    background: #e8e8e8;
+    color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .app-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); }
+
+  /* ── SCROLL ── */
+  .scroll-content {
+    flex: 1; overflow-y: auto; padding: 16px 16px 8px;
+    scrollbar-width: none;
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── PROFILE HEADER ── */
+  .profile-header {
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .profile-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: #fff; flex-shrink: 0;
+    letter-spacing: -0.5px;
+  }
+  .profile-info { flex: 1; }
+  .profile-name { font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 3px; }
+  .profile-meta { display: flex; align-items: center; gap: 6px; }
+  .profile-email { font-size: 11px; color: var(--text-muted); }
+  .profile-badge {
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 6px; border-radius: 20px;
+    background: rgba(255,111,66,0.15); color: var(--accent);
+    border: 1px solid rgba(255,111,66,0.25);
+  }
+  .profile-chevron { color: var(--text-dim); }
+
+  /* ── SECTION ── */
+  .settings-section { margin-bottom: 20px; }
+  .section-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted);
+    margin-bottom: 6px; padding-left: 4px;
+  }
+  .settings-group {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .settings-row {
+    display: flex; align-items: center;
+    padding: 13px 16px; gap: 12px;
+    cursor: pointer;
+  }
+  .settings-row + .settings-row {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .settings-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-theme    { background: #2C2C2C; }
+  .icon-notif    { background: #1A3A5C; }
+  .icon-announce { background: #3A1A5C; }
+  .icon-rules    { background: #1A3A2A; }
+  .icon-support  { background: #3A2A1A; }
+  .icon-logout   { background: #3A1A1A; }
+  body.light-mode .icon-theme    { background: #e0e0e0; }
+  body.light-mode .icon-notif    { background: #dce8f5; }
+  body.light-mode .icon-announce { background: #ecdcf5; }
+  body.light-mode .icon-rules    { background: #dcf5e5; }
+  body.light-mode .icon-support  { background: #f5ecdC; }
+  body.light-mode .icon-logout   { background: #f5dcdc; }
+
+  .settings-row-label {
+    flex: 1;
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+  }
+  .settings-chevron { color: var(--text-dim); }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle-group {
+    display: flex; background: var(--bg-card2);
+    border-radius: 8px; padding: 3px; gap: 2px;
+  }
+  .theme-btn {
+    padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
+    border: none; cursor: pointer; color: var(--text-muted); background: transparent;
+    transition: background 0.15s, color 0.15s;
+  }
+  .theme-btn.active { background: var(--accent); color: #fff; }
+
+  /* ── FOOTER ── */
+  .account-footer {
+    flex-shrink: 0;
+    padding: 10px 16px 12px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+  .footer-link { font-size: 11px; color: var(--text-muted); cursor: pointer; }
+  .footer-version { font-size: 11px; color: var(--text-dim); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 80px;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-screen);
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; min-width: 44px; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── ANNOTATIONS ── */
+  .annotations { width: 320px; flex-shrink: 0; margin-top: 0; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; display: block; }
+  .ann-card { background: #222; border: 1px solid #333; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  body.light-mode .ann-card { background: #f5f5f5; border-color: #ddd; }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  body.light-mode .ann-card-title { color: #555; }
+  .ann-card-body { font-size: 12px; color: #777; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #bbb; font-weight: 700; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,111,66,0.18); color: #FF6F42; font-size: 9px; font-weight: 900; margin-left: 2px; vertical-align: middle; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 12.2 1.3 15 4"/><path d="M3.5 6.5C5.5 4.5 10.5 4.5 12.5 6.5"/><path d="M6 9C7 8 9 8 10 9"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="currentColor" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <div class="app-header">
+    <span class="app-header-title">Account</span>
+  </div>
+
+  <div class="scroll-content">
+
+    <!-- Profile header -->
+    <div class="profile-header">
+      <div class="profile-avatar">JD</div>
+      <div class="profile-info">
+        <div class="profile-name">Jase de Puit<span class="cn">①</span></div>
+        <div class="profile-meta">
+          <span class="profile-email">jase@escapecollective.com</span>
+        </div>
+        <div class="profile-meta" style="margin-top:4px;">
+          <span class="profile-badge">EC Member</span>
+        </div>
+      </div>
+      <svg class="profile-chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>
+    </div>
+
+    <!-- Preferences -->
+    <div class="settings-section">
+      <div class="section-label">Preferences<span class="cn">②</span></div>
+      <div class="settings-group">
+        <!-- Theme row -->
+        <div class="settings-row" style="cursor:default;">
+          <div class="settings-icon icon-theme">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#aaa"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1 1M11.8 11.8l1 1M11.8 3.2l-1 1M4.2 11.8l-1 1"/></svg>
+          </div>
+          <span class="settings-row-label">Theme</span>
+          <div class="theme-toggle-group">
+            <button class="theme-btn active" id="btnLight">Light</button>
+            <button class="theme-btn" id="btnDark">Dark</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- App -->
+    <div class="settings-section">
+      <div class="section-label">App</div>
+      <div class="settings-group">
+        <div class="settings-row">
+          <div class="settings-icon icon-notif">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#6AB0F5"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6v4l-1 1.5h11L12.5 10V6c0-2.5-2-4.5-4.5-4.5z"/><path d="M6.5 13a1.5 1.5 0 0 0 3 0"/></svg>
+          </div>
+          <span class="settings-row-label">Notifications<span class="cn">③</span></span>
+          <svg class="settings-chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>
+        </div>
+        <div class="settings-row">
+          <div class="settings-icon icon-announce">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#B06AF5"><path d="M2 5h8l2-2v8l-2-2H2V5z"/><path d="M5 9v3"/></svg>
+          </div>
+          <span class="settings-row-label">Announcements</span>
+          <svg class="settings-chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>
+        </div>
+        <div class="settings-row">
+          <div class="settings-icon icon-rules">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#6AF5A0"><rect x="3" y="2" width="10" height="12" rx="1.5"/><path d="M6 5.5h4M6 8h4M6 10.5h2"/></svg>
+          </div>
+          <span class="settings-row-label">Fantasy Rules</span>
+          <svg class="settings-chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support -->
+    <div class="settings-section">
+      <div class="section-label">Support</div>
+      <div class="settings-group">
+        <div class="settings-row">
+          <div class="settings-icon icon-support">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#F5B06A"><circle cx="8" cy="8" r="6"/><path d="M6 6.5c0-1.1.9-2 2-2s2 .9 2 2c0 1-1 1.5-2 2v.5"/><circle cx="8" cy="11.5" r="0.7" fill="currentColor"/></svg>
+          </div>
+          <span class="settings-row-label">Contact Support</span>
+          <svg class="settings-chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account actions -->
+    <div class="settings-section">
+      <div class="section-label">Account</div>
+      <div class="settings-group">
+        <div class="settings-row">
+          <div class="settings-icon icon-logout">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" color="#F56A6A"><path d="M10 3h3v10h-3M6 5L3 8l3 3M3 8h7"/></svg>
+          </div>
+          <span class="settings-row-label" style="color:#F56A6A;">Log Out<span class="cn">④</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- Footer -->
+  <div class="account-footer">
+    <span class="footer-link">Terms</span>
+    <span class="footer-link">Privacy</span>
+    <span class="footer-version">Ver. 2.0.0<span class="cn">⑤</span></span>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+      <div class="nav-label">Compete</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+      <div class="nav-label">Leagues</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+      <div class="nav-label">News</div>
+    </div>
+    <div class="nav-item is-active">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+      <div class="nav-label">Account</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="annotations">
+  <span class="ann-screen-label">Screen 16 · Account &amp; Settings — Annotations</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Profile Header</div>
+    <div class="ann-card-body">
+      Replaces the plain list row from the old design with a <strong>prominent profile card</strong> showing avatar initials, display name, email, and EC membership badge. Tapping navigates to a profile edit screen (not yet in scope). The <strong>EC Member badge</strong> confirms active Escape Collective membership — relevant since access to content on the news tab may depend on subscription status.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Theme Toggle</div>
+    <div class="ann-card-body">
+      Inline Light / Dark segmented control — no chevron, no sub-screen. Applies immediately. Default follows the device system setting on first launch. Choosing here overrides the system preference and persists across sessions.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> Notifications Row</div>
+    <div class="ann-card-body">
+      Navigates to the <strong>Notification Preferences screen (Screen 17)</strong>. Grouped here under "App" alongside Announcements and Fantasy Rules for logical cohesion.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Log Out</div>
+    <div class="ann-card-body">
+      Destructive action — label and icon shown in red to signal consequence. No chevron (not a sub-screen). Should trigger a <strong>confirmation sheet</strong> ("Are you sure?") before logging the user out. Tapping away from the sheet cancels.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> Version / Footer</div>
+    <div class="ann-card-body">
+      App version string pulled from build metadata. Terms and Privacy open in the default browser (same rationale as news articles). Kept in footer to avoid cluttering the settings list.
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+    // Sync the inline theme buttons
+    document.getElementById('btnLight').classList.toggle('active', isLight);
+    document.getElementById('btnDark').classList.toggle('active', !isLight);
+    sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  // Inline theme buttons
+  document.getElementById('btnLight').addEventListener('click', () => {
+    if (!document.body.classList.contains('light-mode')) toggleMode();
+  });
+  document.getElementById('btnDark').addEventListener('click', () => {
+    if (document.body.classList.contains('light-mode')) toggleMode();
+  });
+  if (sessionStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.mode-toggle').textContent = '🌙 Dark';
+    document.getElementById('btnLight').classList.add('active');
+    document.getElementById('btnDark').classList.remove('active');
+  }
+</script>
+</body>
+</html>
