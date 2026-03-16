@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen 20 – Team Overview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: row; align-items: flex-start;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --border-subtle: rgba(255,255,255,0.08);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+    --col-ar:        #5B8BF5;
+    --col-cl:        #34C759;
+    --col-sp:        #FF9500;
+    --col-uc:        #AF52DE;
+    --col-wc:        #FF6F42;
+    --green:         #34C759;
+    --red:           #F56A6A;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px; height: 812px; background: var(--bg-screen);
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; background: var(--bg-screen);
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; height: 54px;
+    background: var(--bg-screen);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-back { font-size: 24px; color: var(--accent); cursor: pointer; line-height: 1; font-weight: 300; }
+  .header-titles { display: flex; flex-direction: column; gap: 1px; }
+  .header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px; }
+  .header-sub { font-size: 10px; color: var(--text-muted); }
+
+  /* transfer window badge */
+  .transfer-badge {
+    display: flex; align-items: center; gap: 4px;
+    border-radius: 10px; padding: 4px 9px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.02em; flex-shrink: 0;
+  }
+  .transfer-badge.closed {
+    background: rgba(255,255,255,0.06); color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+  }
+  .transfer-badge.open {
+    background: rgba(52,199,89,0.15); color: var(--green);
+    border: 1px solid rgba(52,199,89,0.3);
+  }
+
+  /* ── COMP SWITCHER ── */
+  .comp-switcher {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--bg-card2);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .comp-switcher-name { font-size: 12px; font-weight: 800; color: var(--text-primary); }
+  .comp-switcher-change { font-size: 11px; color: var(--accent); font-weight: 700; cursor: pointer; }
+
+  /* ── SCROLL CONTENT ── */
+  .scroll-content {
+    flex: 1; overflow-y: auto;
+    background: var(--bg-screen);
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── SUMMARY HERO ── */
+  .summary-hero {
+    margin: 12px 16px;
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .summary-top {
+    display: flex; align-items: stretch;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .summary-stat {
+    flex: 1; padding: 14px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    border-right: 1px solid var(--border-subtle);
+  }
+  .summary-stat:last-child { border-right: none; }
+  .stat-value { font-size: 22px; font-weight: 900; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+  .stat-value.accent { color: var(--accent); }
+  .stat-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-delta { font-size: 10px; font-weight: 700; }
+  .stat-delta.up { color: var(--green); }
+  .stat-delta.down { color: var(--red); }
+
+  .summary-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+  }
+  .next-transfer-label { font-size: 11px; color: var(--text-muted); }
+  .next-transfer-val { font-size: 11px; font-weight: 700; color: var(--text-primary); }
+
+  /* ── SECTION HEADER ── */
+  .section-hdr {
+    padding: 10px 16px 6px;
+    font-size: 10px; font-weight: 800; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  /* ── RIDER ROWS ── */
+  .rider-row {
+    display: flex; align-items: center;
+    padding: 10px 14px 10px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 10px; position: relative;
+    background: var(--bg-screen);
+  }
+  .rider-row::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 0 2px 2px 0;
+  }
+  .rider-row.ar::before { background: var(--col-ar); }
+  .rider-row.cl::before { background: var(--col-cl); }
+  .rider-row.sp::before { background: var(--col-sp); }
+  .rider-row.uc::before { background: var(--col-uc); }
+  .rider-row.wc::before { background: var(--col-wc); }
+  .rider-row.dnf { opacity: 0.45; }
+
+  .rider-info { flex: 1; min-width: 0; }
+  .rider-name-line { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .rider-name { font-size: 13px; font-weight: 800; color: var(--text-primary); line-height: 1.2; }
+  .rider-team { font-size: 10px; color: var(--text-muted); }
+  .rider-class-pill {
+    font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 1px 5px; border-radius: 3px; color: #fff; flex-shrink: 0;
+  }
+  .pill-ar { background: var(--col-ar); }
+  .pill-cl { background: var(--col-cl); }
+  .pill-sp { background: var(--col-sp); }
+  .pill-uc { background: var(--col-uc); }
+  .pill-wc { background: var(--col-wc); }
+
+  .dnf-badge {
+    font-size: 8px; font-weight: 800; letter-spacing: 0.05em;
+    background: rgba(245,106,106,0.2); color: var(--red);
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  .rider-pts-col { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+  .rider-pts { font-size: 16px; font-weight: 900; color: var(--text-primary); line-height: 1; }
+  .rider-pts.top { color: var(--accent); }
+  .rider-pts-label { font-size: 9px; color: var(--text-muted); }
+
+  /* ── TRANSFER CTA BAR ── */
+  .transfer-cta-bar {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    background: var(--bg-screen);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .transfer-cta-btn {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    background: var(--bg-card2); color: var(--text-dim);
+    letter-spacing: -0.2px;
+  }
+  .transfer-cta-btn.open-window {
+    background: var(--accent); color: #fff; cursor: pointer;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 60px;
+    display: flex; align-items: center; justify-content: space-around;
+    background: var(--bg-screen);
+    border-top: 1px solid var(--border-subtle);
+    padding: 0 4px;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── CALLOUT NUMBERS ── */
+  .cn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 9px; font-weight: 900;
+    margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+  }
+
+  /* ── ANNOTATIONS ── */
+  .ann-panel {
+    width: 320px; flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 10px;
+    padding-top: 60px;
+  }
+  .ann-screen-label {
+    font-size: 11px; font-weight: 800; color: #888;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .ann-card {
+    background: #242424; border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  body.light-mode .ann-card { background: #fff; border-color: rgba(0,0,0,0.1); }
+  .ann-card-title {
+    font-size: 12px; font-weight: 800; color: #e0e0e0; margin-bottom: 5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  body.light-mode .ann-card-title { color: #111; }
+  .ann-card-body { font-size: 11px; color: #999; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #ccc; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .ann-card-body code { background: rgba(255,111,66,0.15); color: var(--accent); border-radius: 3px; padding: 1px 4px; font-size: 10px; }
+  .class-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 2px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<!-- Fixed controls -->
+<div class="back-to-map-wrap">
+  <a href="screen-map.html" class="back-to-map">← Screen Map</a>
+</div>
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="document.body.classList.toggle('light-mode')">Light / Dark</button>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1" opacity="0.4"/><rect x="4" y="2" width="3" height="10" rx="1" opacity="0.6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 8 0 8 0S12.2 1.3 15 4"/><path d="M3.5 6.5C5.2 4.8 6.5 4 8 4S10.8 4.8 12.5 6.5"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/><path d="M22.5 4.5v3a1.5 1.5 0 0 0 0-3z"/></svg>
+    </div>
+  </div>
+
+  <!-- App Header -->
+  <div class="app-header">
+    <div class="header-left">
+      <div class="header-back">‹</div>
+      <div class="header-titles">
+        <div class="header-title">My Team <span class="cn">①</span></div>
+        <div class="header-sub">Tour de France 2026</div>
+      </div>
+    </div>
+    <!-- Transfer window badge — this wireframe shows CLOSED state; see annotation for open state -->
+    <div class="transfer-badge closed" id="transferBadge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Transfers closed <span class="cn">②</span>
+    </div>
+  </div>
+
+  <!-- Competition Switcher -->
+  <div class="comp-switcher">
+    <span class="comp-switcher-name">Tour de France 2026</span>
+    <span class="comp-switcher-change">Change ›</span>
+  </div>
+
+  <!-- Scroll Content -->
+  <div class="scroll-content">
+
+    <!-- Summary Hero Card -->
+    <div class="summary-hero">
+      <div class="summary-top">
+        <div class="summary-stat">
+          <div class="stat-value accent">12<span style="font-size:13px">th</span></div>
+          <div class="stat-label">Overall Rank</div>
+          <div class="stat-delta up">▲ 4</div>
+        </div>
+        <div class="summary-stat">
+          <div class="stat-value">3,847</div>
+          <div class="stat-label">Total Pts</div>
+          <div class="stat-delta" style="font-size:9px; color:var(--text-muted)">Stage 12 of 21</div>
+        </div>
+        <div class="summary-stat">
+          <div class="stat-value">4,210</div>
+          <div class="stat-label">Leader's Pts</div>
+          <div class="stat-delta" style="font-size:9px; color:var(--text-muted)">–363 behind</div>
+        </div>
+      </div>
+      <div class="summary-bottom">
+        <span class="next-transfer-label">Next transfer window <span class="cn">③</span></span>
+        <span class="next-transfer-val">Rest Day 1 · 4d 6h</span>
+      </div>
+    </div>
+
+    <!-- Squad section -->
+    <div class="section-hdr">Your Squad <span class="cn">④</span></div>
+
+    <!-- All-Rounder 1: Pogačar -->
+    <div class="rider-row ar">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Tadej Pogačar</span>
+          <span class="rider-class-pill pill-ar">AR</span>
+        </div>
+        <div class="rider-team">UAE Team Emirates</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts top">1,240</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- All-Rounder 2: Vingegaard -->
+    <div class="rider-row ar">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Jonas Vingegaard</span>
+          <span class="rider-class-pill pill-ar">AR</span>
+        </div>
+        <div class="rider-team">Visma–Lease a Bike</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">980</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Climber 1: Bernal -->
+    <div class="rider-row cl">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Egan Bernal</span>
+          <span class="rider-class-pill pill-cl">CL</span>
+        </div>
+        <div class="rider-team">INEOS Grenadiers</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">540</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Climber 2: Ciccone -->
+    <div class="rider-row cl">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Giulio Ciccone</span>
+          <span class="rider-class-pill pill-cl">CL</span>
+        </div>
+        <div class="rider-team">Lidl–Trek</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">310</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Sprinter 1: Philipsen -->
+    <div class="rider-row sp">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Jasper Philipsen</span>
+          <span class="rider-class-pill pill-sp">SP</span>
+        </div>
+        <div class="rider-team">Alpecin–Deceuninck</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">480</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Sprinter 2: Van Aert — DNF -->
+    <div class="rider-row sp dnf">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Wout van Aert</span>
+          <span class="rider-class-pill pill-sp">SP</span>
+          <span class="dnf-badge">DNF <span class="cn">⑤</span></span>
+        </div>
+        <div class="rider-team">Visma–Lease a Bike</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts" style="color:var(--text-dim)">147</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Unclassed 1: Laporte -->
+    <div class="rider-row uc">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Christophe Laporte</span>
+          <span class="rider-class-pill pill-uc">UC</span>
+        </div>
+        <div class="rider-team">Visma–Lease a Bike</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">210</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Unclassed 2: Asgreen -->
+    <div class="rider-row uc">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Kasper Asgreen</span>
+          <span class="rider-class-pill pill-uc">UC</span>
+        </div>
+        <div class="rider-team">Soudal – Quick-Step</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">95</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Wildcard: Ciccone (already listed above, this is WC slot) -->
+    <div class="rider-row wc">
+      <div class="rider-info">
+        <div class="rider-name-line">
+          <span class="rider-name">Remco Evenepoel</span>
+          <span class="rider-class-pill pill-wc">WC ★</span>
+        </div>
+        <div class="rider-team">Soudal – Quick-Step</div>
+      </div>
+      <div class="rider-pts-col">
+        <span class="rider-pts">845</span>
+        <span class="rider-pts-label">pts</span>
+      </div>
+    </div>
+
+    <!-- Bottom spacer so last row isn't hidden behind CTA -->
+    <div style="height: 8px;"></div>
+
+  </div><!-- /scroll-content -->
+
+  <!-- Transfer CTA Bar — shows locked state when window is closed -->
+  <div class="transfer-cta-bar">
+    <button class="transfer-cta-btn" id="transferBtn">
+      Transfers locked — opens Rest Day 1 <span class="cn">⑥</span>
+    </button>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item is-active">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H15V11C15 13.8 13.2 16 11 16C8.8 16 7 13.8 7 11V3Z"/><path d="M7 6H4C4 6 4 11.5 7 11.5"/><path d="M15 6H18C18 6 18 11.5 15 11.5"/><path d="M8.5 19H13.5M11 16V19"/></svg></div>
+      <div class="nav-label">Compete</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2L4 5.5V11C4 15.5 7 19 11 20C15 19 18 15.5 18 11V5.5L11 2Z"/></svg></div>
+      <div class="nav-label">Leagues</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="14" height="16" rx="2"/><path d="M8 8H14"/><path d="M8 11H14"/><path d="M8 14H11"/></svg></div>
+      <div class="nav-label">News</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 19C3 15.7 6.7 13 11 13C15.3 13 19 15.7 19 19"/></svg></div>
+      <div class="nav-label">Account</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="ann-panel">
+  <span class="ann-screen-label">Screen 20 · Team Overview — Annotations</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">①</span> Entry Points</div>
+    <div class="ann-card-body">
+      Accessed from the <code>View Team →</code> CTA on a Home competition card or the Competition Browser, for Teams-format competitions only. Also the destination after confirming a team on the Team Selection screen (Screen 19). Acts as the primary ongoing view for a Teams competition — the equivalent of My Picks (Screen 03) for Stage Race format.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">②</span> Transfer Window Badge</div>
+    <div class="ann-card-body">
+      Two states: <strong>Closed</strong> (grey lock icon, shown here) and <strong>Open</strong> (green, pulsing lock-open icon). Per the rules, transfer windows occur at regular intervals set by the competition director — typically at rest days. When open, the badge turns green and the bottom CTA becomes active. The Home card's CTA also switches from <code>View Team →</code> to <code>Make Transfer →</code>.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">③</span> Next Transfer Window</div>
+    <div class="ann-card-body">
+      Countdown to the next window displayed in the summary card. If no further transfer windows are configured for this competition, this row is hidden. If a window is currently open it shows the window <strong>close</strong> time instead: <code>Window closes in 18h 40m</code>.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Squad List</div>
+    <div class="ann-card-body">
+      9 riders listed in class order: All-Rounder → Climber → Sprinter → Unclassed → Wildcard. Left-border colour matches class: <span class="class-dot" style="background:#5B8BF5"></span>AR · <span class="class-dot" style="background:#34C759"></span>CL · <span class="class-dot" style="background:#FF9500"></span>SP · <span class="class-dot" style="background:#AF52DE"></span>UC · <span class="class-dot" style="background:#FF6F42"></span>WC. Points shown are cumulative across all scored categories (stage finish, GC, sprint classification, KOM). Highest scorer's points are highlighted in orange.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> DNF / Abandoned State</div>
+    <div class="ann-card-body">
+      Riders who have abandoned or been disqualified are dimmed and carry a red <code>DNF</code> badge. Their accumulated points stand (per the rules: points gained before a disqualification deadline stand). This is a strong visual signal to act during the next transfer window. When a transfer window is open, a DNF rider's row could offer a direct <code>Replace →</code> shortcut.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑥</span> Transfer CTA Button</div>
+    <div class="ann-card-body">
+      Two states mirroring the window badge: <strong>Locked</strong> (grey, disabled, shows next window time) and <strong>Open</strong> (orange, active — <code>Make Transfer →</code>). Tapping the active button navigates to Team Selection (Screen 19) with the current squad pre-filled, ready for swaps. No automatic substitutions are ever made per the rules.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">Summary Stats</div>
+    <div class="ann-card-body">
+      <strong>Rank</strong> with delta arrow (▲/▼ change since last stage). <strong>Total Pts</strong> with current stage progress. <strong>Leader's Pts</strong> showing the gap to first place. These three stats give a quick competitive snapshot without needing to visit the leaderboard.
+    </div>
+  </div>
+
+</div><!-- /ann-panel -->
+
+<script>
+  /* Demo: toggle transfer window open state */
+  var open = false;
+  document.getElementById('transferBadge').addEventListener('click', function() {
+    open = !open;
+    if (open) {
+      this.className = 'transfer-badge open';
+      this.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 6-4.7"/></svg> Transfers open';
+      document.getElementById('transferBtn').className = 'transfer-cta-btn open-window';
+      document.getElementById('transferBtn').textContent = 'Make Transfer →';
+    } else {
+      this.className = 'transfer-badge closed';
+      this.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Transfers closed';
+      document.getElementById('transferBtn').className = 'transfer-cta-btn';
+      document.getElementById('transferBtn').textContent = 'Transfers locked — opens Rest Day 1';
+    }
+  });
+</script>
+
+</body>
+</html>
