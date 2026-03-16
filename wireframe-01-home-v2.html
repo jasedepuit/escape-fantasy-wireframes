@@ -290,7 +290,7 @@
     .race-name {
       font-size: 16px;
       font-weight: 900;
-      color: var(--text-primary);
+      color: #fff; /* always white — overlaid on photo gradient */
       letter-spacing: -0.3px;
       line-height: 1.1;
     }
@@ -303,8 +303,8 @@
       font-size: 9px; font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;
     }
-    .b-live    { background: rgba(255,111,66,0.9); color: var(--text-primary); }
-    .b-stage   { background: rgba(255,255,255,0.15); color: var(--text-primary); backdrop-filter: blur(4px); }
+    .b-live    { background: rgba(255,111,66,0.9); color: #fff; } /* always white on photo */
+    .b-stage   { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); } /* always white on photo */
     .b-team    { background: rgba(180,130,255,0.25); color: #C8A0FF; backdrop-filter: blur(4px); }
     .b-upcoming { background: rgba(255,255,255,0.1); color: #AAA; }
 
@@ -474,6 +474,13 @@
     .nav-label { font-size: 9px; font-weight: 700; color: #505050; text-transform: uppercase; letter-spacing: 0.04em; }
     .nav-item.is-active { color: #FF6F42; }
     .nav-item.is-active .nav-label { color: #FF6F42; }
+    /* Unread notification badge on Home tab */
+    .nav-badge {
+      position: absolute; top: 2px; right: 6px;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #FF6F42;
+      border: 1.5px solid var(--bg-screen);
+    }
 
     /* Callout numbers */
     .cn {
@@ -3424,6 +3431,7 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
           <!-- Bottom Nav -->
           <div class="bottom-nav">
             <div class="nav-item is-active">
+              <div class="nav-badge"></div>
               <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L11 3L19 10V19H14V14H8V19H3V10Z"/></svg></div>
               <div class="nav-label">Home</div>
             </div>
