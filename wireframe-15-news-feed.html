@@ -91,19 +91,18 @@
     font-size: 20px; font-weight: 900;
     color: var(--text-primary); letter-spacing: -0.5px;
   }
-  /* EC logo lockup */
-  .ec-source {
-    display: flex; align-items: center; gap: 6px;
-  }
-  .ec-logo-box {
-    width: 20px; height: 20px; border-radius: 5px;
-    background: var(--accent);
+  /* EC logo placeholder */
+  .ec-logo-placeholder {
+    height: 24px; padding: 0 8px;
+    border-radius: 5px;
+    background: var(--bg-card2);
+    border: 1px dashed var(--text-dim);
     display: flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: 900; color: #fff; letter-spacing: -0.5px;
+    gap: 4px;
   }
-  .ec-label {
-    font-size: 10px; font-weight: 700; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.05em;
+  .ec-logo-placeholder-text {
+    font-size: 9px; font-weight: 800; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.06em;
   }
 
   /* ── SCROLL CONTENT ── */
@@ -263,9 +262,20 @@
   <!-- App header -->
   <div class="app-header">
     <div class="app-header-title">News</div>
-    <div class="ec-source">
-      <div class="ec-logo-box">EC</div>
-      <span class="ec-label">Escape Collective<span class="cn">①</span></span>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <!-- EC logo placeholder -->
+      <div class="ec-logo-placeholder">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" color="#666"><circle cx="5.5" cy="5.5" r="4"/><path d="M3 5.5h5M5.5 3v5"/></svg>
+        <span class="ec-logo-placeholder-text">EC Logo<span class="cn">①</span></span>
+      </div>
+      <!-- Filter icon -->
+      <div style="color:var(--text-muted); cursor:pointer; display:flex; align-items:center;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <line x1="3" y1="5" x2="17" y2="5"/>
+          <line x1="6" y1="10" x2="14" y2="10"/>
+          <line x1="8" y1="15" x2="12" y2="15"/>
+        </svg><span class="cn">④</span>
+      </div>
     </div>
   </div>
 
@@ -282,9 +292,9 @@
           <span class="article-pill pill-report">Race Report<span class="cn">②</span></span>
           <span class="article-time">2h ago</span>
         </div>
-        <div class="article-headline">Pogačar Surges on Laruns Climb to Extend GC Lead</div>
+        <div class="article-headline">Pogačar Surges on Laruns Climb to Extend GC Lead<span class="cn">⑤</span></div>
         <div class="article-excerpt">The Slovenian champion put time into all rivals on the final ascent, with Vingegaard and Evenepoel unable to match his pace in the final 3km.</div>
-        <div class="article-author">Caley Fretz</div>
+        <div class="article-author">Caley Fretz<span class="cn">⑥</span></div>
       </div>
     </div>
 
@@ -297,7 +307,7 @@
         </div>
         <div class="article-headline">Stage 9 Preview: Everything You Need to Know Before Cauterets</div>
         <div class="article-excerpt">The queen stage of this year's Tour arrives earlier than expected. Here's the route, the climbs, and who we think wins.</div>
-        <div class="article-author">James Huang</div>
+        <div class="article-author">Dane Cash</div>
       </div>
     </div>
 
@@ -363,30 +373,44 @@
   <div class="ann-screen-label">Screen 15 · News Feed — Annotations</div>
 
   <div class="ann-card">
-    <div class="ann-card-title"><span class="cn">①</span> Content Source</div>
+    <div class="ann-card-title"><span class="cn">①</span> EC Logo</div>
     <div class="ann-card-body">
-      All articles sourced from <strong>escapecollective.com via RSS feed</strong>. The EC logo lockup in the header makes the provenance clear. Feed is a straight chronological list — no personalisation or filtering at this stage. Tapping an article opens the full piece in an in-app browser or the Escape Collective website.
+      Placeholder for the <strong>Escape Collective logo asset</strong> in the header. Makes the content source clear to users. Final asset (SVG or PNG) to be supplied — dashed box indicates logo placement. Tapping could deep-link to escapecollective.com, TBD.
     </div>
   </div>
 
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">②</span> Article Type Pills</div>
     <div class="ann-card-body">
-      Category tag pulled from the RSS item's category or tag field. Examples shown: <strong>Race Report</strong> (purple), <strong>Stage Preview</strong> (blue), <strong>Feature</strong> (green), <strong>News</strong> (grey). Colour-coded for fast scanning. Mapping from EC's taxonomy to these pill labels will need to be defined at implementation.
+      Category tag pulled from the RSS item's category or tag field. Examples shown: <strong>Race Report</strong> (purple), <strong>Stage Preview</strong> (blue), <strong>Feature</strong> (green), <strong>News</strong> (grey). Colour-coded for fast scanning. Mapping from EC's taxonomy to these pill labels to be defined at implementation.
     </div>
   </div>
 
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">③</span> Image vs Compact Cards</div>
     <div class="ann-card-body">
-      Cards with an <strong>article image</strong> (from RSS <code>&lt;media:content&gt;</code> or <code>&lt;enclosure&gt;</code>) display the image at the top. Articles without images fall back to a compact text-only card. The feed naturally mixes both — no need to enforce uniformity.
+      Cards with an <strong>article image</strong> (from RSS <code>&lt;media:content&gt;</code> or <code>&lt;enclosure&gt;</code>) display the image at the top. Articles without images fall back to a compact text-only layout. The feed naturally mixes both — no enforced uniformity needed.
     </div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">RSS Fields Used</div>
+    <div class="ann-card-title"><span class="cn">④</span> Filter</div>
     <div class="ann-card-body">
-      Headline → <code>title</code> · Excerpt → <code>description</code> (truncated to 2 lines) · Author → <code>dc:creator</code> · Time → <code>pubDate</code> (displayed as relative, e.g. "2h ago") · Image → <code>media:content</code> or <code>enclosure</code> · Pill category → <code>category</code>.
+      Filter icon opens a sheet to narrow the feed by <strong>article type</strong> (Race Reports, Previews, Features, News) or by race. Not yet wireframed in detail — included as a placeholder to signal intent. Default state shows all types unfiltered.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑤</span> Card Tap</div>
+    <div class="ann-card-body">
+      Tapping anywhere on a card opens the full article. Options: (a) <strong>in-app browser</strong> (keeps the user inside the app), or (b) hand-off to <strong>Safari / default browser</strong>. Recommendation is in-app browser with a share sheet icon so users can still forward the link. TBD with product.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">⑥</span> RSS Fields Used</div>
+    <div class="ann-card-body">
+      Headline → <code>title</code> · Excerpt → <code>description</code> (truncated to 2 lines) · Author → <code>dc:creator</code> · Time → <code>pubDate</code> (relative, e.g. "2h ago") · Image → <code>media:content</code> or <code>enclosure</code> · Pill category → <code>category</code>.
     </div>
   </div>
 </div>
