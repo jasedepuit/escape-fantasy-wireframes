@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 310" width="750" height="310">
+  <defs>
+
+    <!-- Background: dark navy, slightly warmer than men's TdF -->
+    <linearGradient id="tdff-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#06080F"/>
+      <stop offset="32%"  stop-color="#0E1425"/>
+      <stop offset="68%"  stop-color="#181E38"/>
+      <stop offset="100%" stop-color="#201C40"/>
+    </linearGradient>
+
+    <!-- Bottom overlay -->
+    <linearGradient id="tdff-ovr-b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#000000" stop-opacity="0"/>
+      <stop offset="45%"  stop-color="#000000" stop-opacity="0.52"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.90"/>
+    </linearGradient>
+
+    <!-- Top vignette -->
+    <linearGradient id="tdff-ovr-t" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.42"/>
+      <stop offset="38%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Left vignette -->
+    <linearGradient id="tdff-ovr-l" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.55"/>
+      <stop offset="42%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Yellow-to-rose mountain glow (dual-tone) -->
+    <linearGradient id="tdff-mtn-glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#FFD700" stop-opacity="0.16"/>
+      <stop offset="60%"  stop-color="#F472B6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#F472B6" stop-opacity="0"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- ① Base background -->
+  <rect width="750" height="310" fill="url(#tdff-bg)"/>
+
+  <!-- ② Dual glow: yellow (sun) + rose (femmes identity) -->
+  <ellipse cx="460" cy="50" rx="280" ry="130" fill="#FFD700" fill-opacity="0.13"/>
+  <ellipse cx="460" cy="50" rx="155" ry="75"  fill="#FFB300" fill-opacity="0.10"/>
+  <!-- Rose glow — lower, warmer -->
+  <ellipse cx="560" cy="115" rx="220" ry="100" fill="#EC4899" fill-opacity="0.14"/>
+  <ellipse cx="560" cy="115" rx="110" ry="52"  fill="#F9A8D4" fill-opacity="0.10"/>
+
+  <!-- ③ Far mountain range — same Alpine profile as men's TdF -->
+  <path d="M 0,235 L 62,198 L 118,172 L 175,192 L 232,144 L 288,168 L 335,110 L 388,138 L 442,102 L 498,130 L 552,152 L 608,126 L 664,160 L 720,142 L 750,168 L 750,310 L 0,310 Z"
+        fill="rgba(10,8,30,0.72)"/>
+
+  <!-- ④ Dual-tone rim-light on peaks -->
+  <rect x="0" y="90" width="750" height="160" fill="url(#tdff-mtn-glow)"/>
+
+  <!-- ⑤ Near mountain range -->
+  <path d="M 0,286 L 48,258 L 96,240 L 152,264 L 208,220 L 256,240 L 310,196 L 362,218 L 416,180 L 470,204 L 524,220 L 580,200 L 630,230 L 682,220 L 726,248 L 750,260 L 750,310 L 0,310 Z"
+        fill="rgba(5,4,18,0.85)"/>
+
+  <!-- ⑥ Peak highlight — yellow-to-rose gradient on summit -->
+  <ellipse cx="442" cy="102" rx="30" ry="13" fill="rgba(255,180,100,0.20)"/>
+
+  <!-- ⑦ Subtle diagonal texture -->
+  <line x1="505" y1="0"  x2="750" y2="162" stroke="rgba(244,114,182,0.04)" stroke-width="22"/>
+  <line x1="572" y1="0"  x2="750" y2="112" stroke="rgba(255,215,0,0.03)"   stroke-width="13"/>
+  <line x1="635" y1="0"  x2="750" y2="65"  stroke="rgba(244,114,182,0.02)" stroke-width="8"/>
+
+  <!-- ⑧ Bottom text overlay -->
+  <rect width="750" height="310" fill="url(#tdff-ovr-b)"/>
+
+  <!-- ⑨ Top vignette -->
+  <rect width="750" height="310" fill="url(#tdff-ovr-t)"/>
+
+  <!-- ⑩ Left vignette -->
+  <rect width="750" height="310" fill="url(#tdff-ovr-l)"/>
+
+  <!-- ⑪ French flag strip -->
+  <rect x="40" y="222" width="4" height="50" rx="2" fill="#002395"/>
+  <rect x="45" y="222" width="4" height="50" rx="2" fill="#FFFFFF"/>
+  <rect x="50" y="222" width="4" height="50" rx="2" fill="#ED2939"/>
+
+  <!-- ⑫ Race name — two lines -->
+  <text x="63" y="252"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="30" font-weight="900" fill="#FFFFFF"
+        letter-spacing="-0.5">TOUR DE FRANCE</text>
+  <text x="63" y="270"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="16" font-weight="800" fill="#F9A8D4"
+        letter-spacing="1.5">FEMMES</text>
+  <text x="63" y="285"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="12" font-weight="600" fill="rgba(255,255,255,0.50)"
+        letter-spacing="3.5">2026</text>
+
+  <!-- ⑬ Accent dots — yellow-to-rose -->
+  <circle cx="710" cy="255" r="5" fill="#FFD700" fill-opacity="0.75"/>
+  <circle cx="724" cy="255" r="3" fill="#F472B6" fill-opacity="0.60"/>
+  <circle cx="734" cy="255" r="2" fill="#F472B6" fill-opacity="0.35"/>
+
+</svg>

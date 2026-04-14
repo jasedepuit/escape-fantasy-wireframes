@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 310" width="750" height="310">
+  <defs>
+
+    <!-- Background: deep black-rose to bright cerise — warmer/more saturated than men's -->
+    <linearGradient id="girow-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#120008"/>
+      <stop offset="28%"  stop-color="#440020"/>
+      <stop offset="62%"  stop-color="#960048"/>
+      <stop offset="100%" stop-color="#D4006A"/>
+    </linearGradient>
+
+    <!-- Bottom overlay -->
+    <linearGradient id="girow-ovr-b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#000000" stop-opacity="0"/>
+      <stop offset="48%"  stop-color="#000000" stop-opacity="0.52"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.90"/>
+    </linearGradient>
+
+    <!-- Top vignette -->
+    <linearGradient id="girow-ovr-t" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.40"/>
+      <stop offset="38%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Left vignette -->
+    <linearGradient id="girow-ovr-l" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.52"/>
+      <stop offset="45%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- ① Base background -->
+  <rect width="750" height="310" fill="url(#girow-bg)"/>
+
+  <!-- ② Atmospheric glow — warmer/brighter cerise than men's Giro -->
+  <ellipse cx="475" cy="68" rx="270" ry="128" fill="#E91E8C" fill-opacity="0.22"/>
+  <ellipse cx="475" cy="68" rx="145" ry="68"  fill="#F472B6" fill-opacity="0.18"/>
+
+  <!-- ③ Far mountain range — slight profile variation from men's Giro -->
+  <path d="M 0,228 L 52,188 L 106,162 L 158,183 L 215,132 L 270,156 L 316,98 L 369,126 L 422,88 L 478,116 L 530,140 L 586,112 L 640,150 L 698,132 L 750,160 L 750,310 L 0,310 Z"
+        fill="rgba(140,0,58,0.50)"/>
+
+  <!-- ④ Near mountain range -->
+  <path d="M 0,284 L 46,256 L 92,238 L 146,260 L 202,214 L 250,234 L 305,188 L 355,210 L 410,174 L 464,198 L 516,216 L 572,194 L 624,228 L 674,218 L 720,246 L 750,260 L 750,310 L 0,310 Z"
+        fill="rgba(48,0,20,0.76)"/>
+
+  <!-- ⑤ Peak highlight -->
+  <ellipse cx="422" cy="88" rx="26" ry="12" fill="rgba(255,120,180,0.22)"/>
+
+  <!-- ⑥ Diagonal texture lines -->
+  <line x1="510" y1="0"  x2="750" y2="158" stroke="rgba(255,255,255,0.028)" stroke-width="20"/>
+  <line x1="575" y1="0"  x2="750" y2="108" stroke="rgba(255,255,255,0.022)" stroke-width="12"/>
+  <line x1="638" y1="0"  x2="750" y2="60"  stroke="rgba(255,255,255,0.016)" stroke-width="7"/>
+
+  <!-- ⑦ Bottom text overlay -->
+  <rect width="750" height="310" fill="url(#girow-ovr-b)"/>
+
+  <!-- ⑧ Top vignette -->
+  <rect width="750" height="310" fill="url(#girow-ovr-t)"/>
+
+  <!-- ⑨ Left vignette -->
+  <rect width="750" height="310" fill="url(#girow-ovr-l)"/>
+
+  <!-- ⑩ Italian flag strip -->
+  <rect x="40" y="222" width="4" height="50" rx="2" fill="#009246"/>
+  <rect x="45" y="222" width="4" height="50" rx="2" fill="#FFFFFF"/>
+  <rect x="50" y="222" width="4" height="50" rx="2" fill="#CE2B37"/>
+
+  <!-- ⑪ Race name — two lines to accommodate DONNE subtitle -->
+  <text x="63" y="252"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="30" font-weight="900" fill="#FFFFFF"
+        letter-spacing="-0.5">GIRO D'ITALIA</text>
+  <text x="63" y="270"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="16" font-weight="800" fill="#F9A8D4"
+        letter-spacing="1.5">DONNE</text>
+  <text x="63" y="285"
+        font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="12" font-weight="600" fill="rgba(255,255,255,0.50)"
+        letter-spacing="3.5">2026</text>
+
+  <!-- ⑫ Accent dots — cerise -->
+  <circle cx="710" cy="255" r="5" fill="#E91E8C" fill-opacity="0.72"/>
+  <circle cx="724" cy="255" r="3" fill="#E91E8C" fill-opacity="0.42"/>
+  <circle cx="734" cy="255" r="2" fill="#E91E8C" fill-opacity="0.26"/>
+
+</svg>

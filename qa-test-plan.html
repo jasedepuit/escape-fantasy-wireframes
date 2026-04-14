@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Escape Fantasy — QA Test Plan</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; background: #F0F1F4; color: #111; padding: 40px; min-width: 1100px; }
+
+    /* Header */
+    .page-hdr { max-width: 1060px; margin: 0 auto 32px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #FF6F42; padding-bottom: 16px; }
+    .page-hdr h1 { font-size: 11px; font-weight: 800; color: #FF6F42; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .page-hdr h2 { font-size: 26px; font-weight: 900; color: #111; letter-spacing: -0.4px; }
+    .page-hdr p  { font-size: 12px; color: #888; margin-top: 3px; }
+
+    /* Score bar */
+    .score-bar { max-width: 1060px; margin: 0 auto 28px; background: #fff; border-radius: 12px; padding: 16px 24px; display: flex; gap: 32px; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .score-item { text-align: center; }
+    .score-num  { font-size: 28px; font-weight: 900; line-height: 1; }
+    .score-lbl  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-top: 2px; }
+    .s-pass { color: #34C759; }
+    .s-fail { color: #FF3B30; }
+    .s-skip { color: #FF9500; }
+    .s-total{ color: #111; }
+    .progress-wrap { flex: 1; }
+    .progress-bar { height: 8px; background: #E8E9EC; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #34C759; border-radius: 4px; transition: width 0.3s; width: 0%; }
+    .progress-lbl { font-size: 11px; color: #888; margin-top: 5px; }
+    .btn-reset { background: #F0F1F4; border: none; border-radius: 7px; padding: 8px 14px; font-size: 11px; font-weight: 700; cursor: pointer; color: #555; letter-spacing: 0.04em; }
+    .btn-reset:hover { background: #E0E1E4; }
+
+    /* Section */
+    .section { max-width: 1060px; margin: 0 auto 24px; }
+    .section-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .section-hdr h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #FF6F42; }
+    .section-hdr .section-count { font-size: 11px; color: #AAA; font-weight: 600; }
+    .section-hdr .screen-link { font-size: 10px; color: #FF6F42; text-decoration: none; background: rgba(255,111,66,0.1); padding: 2px 8px; border-radius: 4px; font-weight: 700; }
+    .section-hdr .screen-link:hover { background: rgba(255,111,66,0.2); }
+
+    /* Test table */
+    .test-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+    .test-table th { background: #F8F8FA; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: #666; padding: 8px 12px; text-align: left; border-bottom: 1px solid #EBEBED; }
+    .test-table td { padding: 10px 12px; border-bottom: 1px solid #F2F2F4; font-size: 12px; vertical-align: top; }
+    .test-table tr:last-child td { border-bottom: none; }
+    .test-table tr.result-pass td { background: rgba(52,199,89,0.05); }
+    .test-table tr.result-fail td { background: rgba(255,59,48,0.05); }
+
+    /* TC id */
+    .tc-id { font-size: 10px; font-weight: 800; color: #AAA; white-space: nowrap; }
+
+    /* Priority badges */
+    .pri { display: inline-block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; white-space: nowrap; }
+    .pri-crit  { background: #FF3B30; color: #fff; }
+    .pri-high  { background: #FF9500; color: #fff; }
+    .pri-med   { background: #007AFF; color: #fff; }
+    .pri-low   { background: #C7C7CC; color: #555; }
+
+    /* Steps */
+    .steps { color: #555; line-height: 1.6; }
+    .steps ol { padding-left: 16px; }
+    .expected { font-size: 11px; color: #34C759; font-weight: 600; margin-top: 4px; }
+    .expected::before { content: "✓ "; }
+
+    /* Pass/Fail controls */
+    .result-ctrl { display: flex; gap: 6px; white-space: nowrap; }
+    .btn-pass, .btn-fail, .btn-skip {
+      border: none; border-radius: 5px; padding: 5px 10px;
+      font-size: 10px; font-weight: 800; cursor: pointer; letter-spacing: 0.04em;
+      transition: opacity 0.15s;
+    }
+    .btn-pass { background: #E8F8ED; color: #34C759; }
+    .btn-fail { background: #FFF0EF; color: #FF3B30; }
+    .btn-skip { background: #FFF4E6; color: #FF9500; }
+    .btn-pass:hover { background: #34C759; color: #fff; }
+    .btn-fail:hover { background: #FF3B30; color: #fff; }
+    .btn-skip:hover { background: #FF9500; color: #fff; }
+    .result-badge { font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 4px; }
+    .rb-pass { background: #34C759; color: #fff; }
+    .rb-fail { background: #FF3B30; color: #fff; }
+    .rb-skip { background: #FF9500; color: #fff; }
+
+    /* Notes input */
+    .notes-input { font-size: 11px; border: 1px solid #E0E0E2; border-radius: 5px; padding: 4px 8px; width: 160px; color: #333; background: #FAFAFA; }
+    .notes-input:focus { outline: none; border-color: #FF6F42; }
+
+    /* Divider */
+    .divider { max-width: 1060px; margin: 8px auto; border: none; border-top: 1px solid #E4E5E8; }
+
+    /* Back link */
+    .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #888; text-decoration: none; margin-bottom: 28px; max-width: 1060px; display: block; }
+    .back-link:hover { color: #FF6F42; }
+
+    /* Footer */
+    .footer { max-width: 1060px; margin: 32px auto 0; font-size: 11px; color: #AAA; display: flex; justify-content: space-between; border-top: 1px solid #E4E5E8; padding-top: 12px; }
+  </style>
+</head>
+<body>
+
+<a href="screen-map.html" class="back-link">← Screen Map</a>
+
+<div class="page-hdr">
+  <div>
+    <h1>Escape Fantasy · QA</h1>
+    <h2>Test Plan — v1 Build</h2>
+    <p>189 test cases across 25 screens · mark pass/fail as you go · notes saved in session</p>
+  </div>
+  <div style="text-align:right;">
+    <div style="font-size:11px;color:#888;">Device</div>
+    <input id="device-input" placeholder="e.g. iPhone 15, iOS 18.2" style="margin-top:4px;font-size:12px;border:1px solid #DDD;border-radius:6px;padding:5px 10px;width:220px;color:#333;">
+    <div style="font-size:11px;color:#888;margin-top:8px;">Build</div>
+    <input id="build-input" placeholder="e.g. 1.0.0 (42)" style="margin-top:4px;font-size:12px;border:1px solid #DDD;border-radius:6px;padding:5px 10px;width:220px;color:#333;">
+  </div>
+</div>
+
+<!-- Score bar -->
+<div class="score-bar">
+  <div class="score-item"><div class="score-num s-pass" id="cnt-pass">0</div><div class="score-lbl">Pass</div></div>
+  <div class="score-item"><div class="score-num s-fail" id="cnt-fail">0</div><div class="score-lbl">Fail</div></div>
+  <div class="score-item"><div class="score-num s-skip" id="cnt-skip">0</div><div class="score-lbl">Skip</div></div>
+  <div class="score-item"><div class="score-num s-total" id="cnt-total">189</div><div class="score-lbl">Total</div></div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-lbl" id="progress-lbl">0 of 189 tested</div>
+  </div>
+  <button class="btn-reset" onclick="resetAll()">Reset All</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1. AUTHENTICATION -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>1 · Authentication</h3>
+    <span class="section-count">TC-001 – TC-008</span>
+    <a href="wireframe-21-login.html" class="screen-link" target="_blank">↗ Screen 21</a>
+  </div>
+  <table class="test-table">
+    <thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc001"><td class="tc-id">TC-001</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Valid email entry proceeds to OTP screen</td>
+        <td class="steps"><ol><li>Open app cold</li><li>Enter a valid Escape Collective account email</li><li>Tap Continue</li></ol><div class="expected">OTP code entry screen appears; confirmation email received</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc001"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc001"></td></tr>
+      <tr id="tr-tc002"><td class="tc-id">TC-002</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Correct 6-digit OTP logs in successfully</td>
+        <td class="steps"><ol><li>Complete TC-001</li><li>Enter the correct 6-digit code from email</li></ol><div class="expected">User lands on Home screen (first-time: onboarding flow)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc002"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc002"></td></tr>
+      <tr id="tr-tc003"><td class="tc-id">TC-003</td><td><span class="pri pri-high">High</span></td>
+        <td>Invalid email shows error state</td>
+        <td class="steps"><ol><li>Enter a malformed email (e.g. "notanemail")</li><li>Tap Continue</li></ol><div class="expected">Inline error shown; does not proceed</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc003"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc003"></td></tr>
+      <tr id="tr-tc004"><td class="tc-id">TC-004</td><td><span class="pri pri-high">High</span></td>
+        <td>Non-EC email shows appropriate error</td>
+        <td class="steps"><ol><li>Enter a valid but non-EC email (e.g. gmail.com)</li><li>Tap Continue</li></ol><div class="expected">Clear error: account not found or not an EC member</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc004"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc004"></td></tr>
+      <tr id="tr-tc005"><td class="tc-id">TC-005</td><td><span class="pri pri-high">High</span></td>
+        <td>Incorrect OTP code shows error</td>
+        <td class="steps"><ol><li>Complete TC-001</li><li>Enter wrong 6-digit code</li></ol><div class="expected">Error shown; user can retry; does not log in</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc005"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc005"></td></tr>
+      <tr id="tr-tc006"><td class="tc-id">TC-006</td><td><span class="pri pri-med">Med</span></td>
+        <td>Returning user with valid session skips login</td>
+        <td class="steps"><ol><li>Log in successfully</li><li>Close and reopen app</li></ol><div class="expected">App opens directly to Home; no login screen shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc006"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc006"></td></tr>
+      <tr id="tr-tc007"><td class="tc-id">TC-007</td><td><span class="pri pri-med">Med</span></td>
+        <td>"Having trouble?" link is present and actionable</td>
+        <td class="steps"><ol><li>View login screen</li><li>Locate help/fallback link</li></ol><div class="expected">Support contact option visible and tappable</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc007"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc007"></td></tr>
+      <tr id="tr-tc008"><td class="tc-id">TC-008</td><td><span class="pri pri-med">Med</span></td>
+        <td>Loading state shown during OTP request</td>
+        <td class="steps"><ol><li>Enter email and tap Continue</li><li>Observe UI during network request</li></ol><div class="expected">Progress indicator shown; button disabled; no silent freeze</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc008"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc008"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2. ONBOARDING -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>2 · Onboarding</h3>
+    <span class="section-count">TC-010 – TC-017</span>
+    <a href="wireframe-22-onboarding-1.html" class="screen-link" target="_blank">↗ Screens 22–24</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc010"><td class="tc-id">TC-010</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>First login triggers onboarding (screens 22→23→24)</td>
+        <td class="steps"><ol><li>Log in for the first time with a fresh account</li></ol><div class="expected">Onboarding screen 1 appears before Home</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc010"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc010"></td></tr>
+      <tr id="tr-tc011"><td class="tc-id">TC-011</td><td><span class="pri pri-high">High</span></td>
+        <td>Progress dots advance correctly (●○○ → ○●○ → ○○●)</td>
+        <td class="steps"><ol><li>Step through all 3 onboarding screens</li></ol><div class="expected">Dots update on each screen transition</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc011"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc011"></td></tr>
+      <tr id="tr-tc012"><td class="tc-id">TC-012</td><td><span class="pri pri-high">High</span></td>
+        <td>Skip button exits onboarding from any screen</td>
+        <td class="steps"><ol><li>Tap Skip on screen 1</li><li>Repeat test tapping Skip on screen 2</li></ol><div class="expected">App proceeds directly to Home; onboarding not shown again</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc012"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc012"></td></tr>
+      <tr id="tr-tc013"><td class="tc-id">TC-013</td><td><span class="pri pri-high">High</span></td>
+        <td>Screen 3 shows joinable competitions</td>
+        <td class="steps"><ol><li>Reach onboarding screen 3</li></ol><div class="expected">Current active/upcoming competitions shown with Join option</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc013"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc013"></td></tr>
+      <tr id="tr-tc014"><td class="tc-id">TC-014</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Second login does NOT show onboarding</td>
+        <td class="steps"><ol><li>Complete onboarding once</li><li>Log out</li><li>Log back in</li></ol><div class="expected">Lands directly on Home; onboarding never shown again</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc014"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc014"></td></tr>
+      <tr id="tr-tc015"><td class="tc-id">TC-015</td><td><span class="pri pri-med">Med</span></td>
+        <td>Joining competition from onboarding screen 3 works</td>
+        <td class="steps"><ol><li>Reach screen 3</li><li>Tap Join on a competition</li></ol><div class="expected">User enrolled; proceeds to Home with that competition card showing</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc015"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc015"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3. HOME SCREEN -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>3 · Home Screen</h3>
+    <span class="section-count">TC-020 – TC-033</span>
+    <a href="wireframe-01-home-v2.html" class="screen-link" target="_blank">↗ Screen 01</a>
+    <a href="wireframe-01b-home-empty-state.html" class="screen-link" target="_blank">↗ Screen 01b</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc020"><td class="tc-id">TC-020</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Active competition cards display for enrolled competitions</td>
+        <td class="steps"><ol><li>Log in with an account enrolled in at least one live competition</li></ol><div class="expected">One card per competition; name, format badge, stage, rank visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc020"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc020"></td></tr>
+      <tr id="tr-tc021"><td class="tc-id">TC-021</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Competition card shows rank as "Xth of Y players"</td>
+        <td class="steps"><ol><li>View active competition card</li></ol><div class="expected">Rank and total participant count both visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc021"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc021"></td></tr>
+      <tr id="tr-tc022"><td class="tc-id">TC-022</td><td><span class="pri pri-high">High</span></td>
+        <td>Pick deadline countdown shows when within 24 hours</td>
+        <td class="steps"><ol><li>View card for a stage with cut-off within 24 hrs</li></ol><div class="expected">Countdown timer visible on card</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc022"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc022"></td></tr>
+      <tr id="tr-tc023"><td class="tc-id">TC-023</td><td><span class="pri pri-high">High</span></td>
+        <td>Countdown turns red/prominent when under 2 hours</td>
+        <td class="steps"><ol><li>View card with cut-off under 2 hrs</li></ol><div class="expected">Timer shown in red or with urgent styling</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc023"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc023"></td></tr>
+      <tr id="tr-tc024"><td class="tc-id">TC-024</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>"Update Pick" CTA navigates to Rider Selection</td>
+        <td class="steps"><ol><li>Tap Update Pick on a Stage Race card</li></ol><div class="expected">Rider Selection screen opens for the current stage</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc024"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc024"></td></tr>
+      <tr id="tr-tc025"><td class="tc-id">TC-025</td><td><span class="pri pri-high">High</span></td>
+        <td>Fantasy Teams card CTA shows correct label</td>
+        <td class="steps"><ol><li>View a Fantasy Teams competition card</li></ol><div class="expected">"View Team →" or "Enter Team →" shown (not "Update Pick")</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc025"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc025"></td></tr>
+      <tr id="tr-tc026"><td class="tc-id">TC-026</td><td><span class="pri pri-high">High</span></td>
+        <td>Upcoming competitions section appears below active cards</td>
+        <td class="steps"><ol><li>Scroll below active competition cards</li></ol><div class="expected">Upcoming comps section visible with Join button per comp</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc026"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc026"></td></tr>
+      <tr id="tr-tc027"><td class="tc-id">TC-027</td><td><span class="pri pri-high">High</span></td>
+        <td>News feed loads and displays articles</td>
+        <td class="steps"><ol><li>Scroll to news feed section</li></ol><div class="expected">Articles shown with headline, thumbnail, tag, time</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc027"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc027"></td></tr>
+      <tr id="tr-tc028"><td class="tc-id">TC-028</td><td><span class="pri pri-med">Med</span></td>
+        <td>Tapping article opens in browser</td>
+        <td class="steps"><ol><li>Tap any news article on Home</li></ol><div class="expected">Opens in system browser (Safari/Chrome); app stays open</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc028"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc028"></td></tr>
+      <tr id="tr-tc029"><td class="tc-id">TC-029</td><td><span class="pri pri-high">High</span></td>
+        <td>Bell icon shows orange badge dot when unread notifications exist</td>
+        <td class="steps"><ol><li>Ensure there are unread notifications</li><li>View Home screen</li></ol><div class="expected">Orange dot visible on bell icon (top-right header)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc029"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc029"></td></tr>
+      <tr id="tr-tc030"><td class="tc-id">TC-030</td><td><span class="pri pri-high">High</span></td>
+        <td>Bell icon navigates to Notification Feed</td>
+        <td class="steps"><ol><li>Tap bell icon on Home</li></ol><div class="expected">Notification Feed screen opens; Home tab stays active in nav</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc030"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc030"></td></tr>
+      <tr id="tr-tc031"><td class="tc-id">TC-031</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Empty state shown when user has no competitions</td>
+        <td class="steps"><ol><li>Log in with an account with no competition enrollments</li></ol><div class="expected">Empty state UI shown with "Browse competitions" CTA; news feed still visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc031"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc031"></td></tr>
+      <tr id="tr-tc032"><td class="tc-id">TC-032</td><td><span class="pri pri-high">High</span></td>
+        <td>Nav badge dot appears on Home tab when unread notifications exist</td>
+        <td class="steps"><ol><li>Ensure unread notifications</li><li>Navigate away from Home and back</li></ol><div class="expected">Orange dot on Home tab icon in bottom nav</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc032"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc032"></td></tr>
+      <tr id="tr-tc033"><td class="tc-id">TC-033</td><td><span class="pri pri-high">High</span></td>
+        <td>Account tab NEVER shows a badge dot</td>
+        <td class="steps"><ol><li>Check bottom nav in all states (unread notifs, new content, etc.)</li></ol><div class="expected">Account tab icon has no badge dot under any circumstances</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc033"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc033"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4. COMPETITION BROWSER -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>4 · Competition Browser</h3>
+    <span class="section-count">TC-040 – TC-047</span>
+    <a href="wireframe-02-competition-browser.html" class="screen-link" target="_blank">↗ Screen 02</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc040"><td class="tc-id">TC-040</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>All competitions listed (active, upcoming, past)</td>
+        <td class="steps"><ol><li>Tap Compete tab</li></ol><div class="expected">All competitions from admin panel visible, correctly categorised</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc040"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc040"></td></tr>
+      <tr id="tr-tc041"><td class="tc-id">TC-041</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>"Joined" badge on competitions user is enrolled in</td>
+        <td class="steps"><ol><li>View Competition Browser when enrolled in at least one comp</li></ol><div class="expected">Enrolled competitions clearly marked; user never has to guess</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc041"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc041"></td></tr>
+      <tr id="tr-tc042"><td class="tc-id">TC-042</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Stage Race format → navigates to My Picks</td>
+        <td class="steps"><ol><li>Tap View/Enter on an individual-format competition</li></ol><div class="expected">My Picks screen opens (not Team Selection)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc042"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc042"></td></tr>
+      <tr id="tr-tc043"><td class="tc-id">TC-043</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Fantasy Teams format → navigates to Team Selection</td>
+        <td class="steps"><ol><li>Tap View/Enter on a teamstructured-format competition</li></ol><div class="expected">Team Selection screen opens (not My Picks)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc043"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc043"></td></tr>
+      <tr id="tr-tc044"><td class="tc-id">TC-044</td><td><span class="pri pri-high">High</span></td>
+        <td>Joining an upcoming competition works</td>
+        <td class="steps"><ol><li>Find an upcoming competition</li><li>Tap Join</li></ol><div class="expected">Enrolled; badge updates to Joined; confirmation shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc044"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc044"></td></tr>
+      <tr id="tr-tc045"><td class="tc-id">TC-045</td><td><span class="pri pri-med">Med</span></td>
+        <td>Finished competitions are visually distinct</td>
+        <td class="steps"><ol><li>View Competition Browser with past competitions present</li></ol><div class="expected">Finished comps greyed out or clearly marked Finished</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc045"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc045"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5. MY PICKS — STAGE RACE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>5 · My Picks — Stage Race</h3>
+    <span class="section-count">TC-050 – TC-062</span>
+    <a href="wireframe-03-my-picks.html" class="screen-link" target="_blank">↗ Screen 03</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc050"><td class="tc-id">TC-050</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>All stages listed in chronological order</td>
+        <td class="steps"><ol><li>Open My Picks for a Stage Race competition</li></ol><div class="expected">All stages shown Stage 1 → final; today's stage highlighted</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc050"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc050"></td></tr>
+      <tr id="tr-tc051"><td class="tc-id">TC-051</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Points earned shown for completed stages with colour coding</td>
+        <td class="steps"><ol><li>View completed stages</li></ol><div class="expected">Points visible; top 5 = green, top 10 = amber, lower = neutral</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc051"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc051"></td></tr>
+      <tr id="tr-tc052"><td class="tc-id">TC-052</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Used riders visually marked and non-selectable</td>
+        <td class="steps"><ol><li>Find a rider used in a past stage</li><li>Attempt to select same rider for a future stage</li></ol><div class="expected">Rider shown greyed at bottom of list; tap has no effect</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc052"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc052"></td></tr>
+      <tr id="tr-tc053"><td class="tc-id">TC-053</td><td><span class="pri pri-high">High</span></td>
+        <td>Default counter shown at top ("Defaults used: X / 5")</td>
+        <td class="steps"><ol><li>View My Picks when at least one default has been assigned</li></ol><div class="expected">Counter visible; turns red when 3 or more defaults used</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc053"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc053"></td></tr>
+      <tr id="tr-tc054"><td class="tc-id">TC-054</td><td><span class="pri pri-high">High</span></td>
+        <td>Default-selected picks marked with "D" badge</td>
+        <td class="steps"><ol><li>View a stage that was auto-defaulted</li></ol><div class="expected">"D" badge visible on that stage row</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc054"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc054"></td></tr>
+      <tr id="tr-tc055"><td class="tc-id">TC-055</td><td><span class="pri pri-high">High</span></td>
+        <td>Mulligan badge shown when re-pick is available</td>
+        <td class="steps"><ol><li>View My Picks when mulligan is unused</li></ol><div class="expected">"Re-pick available" badge visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc055"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc055"></td></tr>
+      <tr id="tr-tc056"><td class="tc-id">TC-056</td><td><span class="pri pri-high">High</span></td>
+        <td>Injury warning badge on affected stage</td>
+        <td class="steps"><ol><li>Have a picked rider flagged as injured</li></ol><div class="expected">Warning badge on that stage row; tapping goes to Rider Selection</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc056"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc056"></td></tr>
+      <tr id="tr-tc057"><td class="tc-id">TC-057</td><td><span class="pri pri-high">High</span></td>
+        <td>Auto-Pick button assigns a pick for unpicked stages</td>
+        <td class="steps"><ol><li>Leave a future stage unpicked</li><li>Tap Auto-Pick</li></ol><div class="expected">Rider assigned; stage row updates</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc057"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc057"></td></tr>
+      <tr id="tr-tc058"><td class="tc-id">TC-058</td><td><span class="pri pri-med">Med</span></td>
+        <td>Stage cut-off countdown shown in persistent header</td>
+        <td class="steps"><ol><li>View My Picks while a stage is open for picking</li></ol><div class="expected">Countdown timer visible in sticky header; red when under 1 hour</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc058"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc058"></td></tr>
+      <tr id="tr-tc059"><td class="tc-id">TC-059</td><td><span class="pri pri-med">Med</span></td>
+        <td>Tapping locked past stage does not open Rider Selection</td>
+        <td class="steps"><ol><li>Tap a locked (past) stage row</li></ol><div class="expected">No navigation; locked state is clear</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc059"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc059"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 6. RIDER SELECTION -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>6 · Rider Selection</h3>
+    <span class="section-count">TC-060 – TC-072</span>
+    <a href="wireframe-04-rider-selection.html" class="screen-link" target="_blank">↗ Screen 04</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc060"><td class="tc-id">TC-060</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Riders listed sorted by surname by default</td>
+        <td class="steps"><ol><li>Open Rider Selection for any stage</li></ol><div class="expected">List is alphabetical by surname (A–Z), not first name</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc060"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc060"></td></tr>
+      <tr id="tr-tc061"><td class="tc-id">TC-061</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Search by surname filters list in real time</td>
+        <td class="steps"><ol><li>Type a rider's surname in search bar</li></ol><div class="expected">List filters as you type; correct rider appears</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc061"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc061"></td></tr>
+      <tr id="tr-tc062"><td class="tc-id">TC-062</td><td><span class="pri pri-high">High</span></td>
+        <td>Search by team name filters correctly</td>
+        <td class="steps"><ol><li>Type a team name in search bar</li></ol><div class="expected">All riders from that team shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc062"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc062"></td></tr>
+      <tr id="tr-tc063"><td class="tc-id">TC-063</td><td><span class="pri pri-high">High</span></td>
+        <td>Filter chips work (Climbers / Sprinters / Puncheurs / GC / Rouleurs)</td>
+        <td class="steps"><ol><li>Tap each filter chip</li></ol><div class="expected">List filters to riders of that type only</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc063"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc063"></td></tr>
+      <tr id="tr-tc064"><td class="tc-id">TC-064</td><td><span class="pri pri-high">High</span></td>
+        <td>Recommended filter chip pre-selected based on stage type</td>
+        <td class="steps"><ol><li>Open Rider Selection for a mountain stage</li><li>Open Rider Selection for a sprint stage</li></ol><div class="expected">Climbers pre-selected for mountain; Sprinters for sprint, etc.</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc064"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc064"></td></tr>
+      <tr id="tr-tc065"><td class="tc-id">TC-065</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Used riders at bottom of list, greyed out, non-tappable</td>
+        <td class="steps"><ol><li>Open Rider Selection when multiple riders already used</li></ol><div class="expected">Used riders visually distinct at bottom; tapping does nothing</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc065"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc065"></td></tr>
+      <tr id="tr-tc066"><td class="tc-id">TC-066</td><td><span class="pri pri-high">High</span></td>
+        <td>Tapping a rider opens Rider Profile modal</td>
+        <td class="steps"><ol><li>Tap any available rider</li></ol><div class="expected">Rider Profile card appears as modal overlay</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc066"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc066"></td></tr>
+      <tr id="tr-tc067"><td class="tc-id">TC-067</td><td><span class="pri pri-high">High</span></td>
+        <td>AI Suggest button opens AI Suggestion overlay</td>
+        <td class="steps"><ol><li>Tap AI Suggest button</li></ol><div class="expected">AI overlay appears with a recommended rider and reasoning</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc067"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc067"></td></tr>
+      <tr id="tr-tc068"><td class="tc-id">TC-068</td><td><span class="pri pri-med">Med</span></td>
+        <td>Stage preview snippet visible and collapsible</td>
+        <td class="steps"><ol><li>Open Rider Selection for a stage with a preview article</li><li>Tap to expand/collapse</li></ol><div class="expected">Snippet collapses and expands; "Read full preview" link works</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc068"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc068"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 7. RIDER PROFILE MODAL -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>7 · Rider Profile Modal</h3>
+    <span class="section-count">TC-075 – TC-080</span>
+    <a href="wireframe-05-rider-profile.html" class="screen-link" target="_blank">↗ Screen 05</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc075"><td class="tc-id">TC-075</td><td><span class="pri pri-high">High</span></td>
+        <td>Profile shows name, team, nationality, rider type badge</td>
+        <td class="steps"><ol><li>Open any rider profile</li></ol><div class="expected">All key fields populated</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc075"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc075"></td></tr>
+      <tr id="tr-tc076"><td class="tc-id">TC-076</td><td><span class="pri pri-high">High</span></td>
+        <td>Recent results and form indicator shown</td>
+        <td class="steps"><ol><li>View rider profile</li></ol><div class="expected">Last 5 results visible; form indicator present</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc076"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc076"></td></tr>
+      <tr id="tr-tc077"><td class="tc-id">TC-077</td><td><span class="pri pri-high">High</span></td>
+        <td>Injury status prominently shown when rider is injured</td>
+        <td class="steps"><ol><li>Open profile for a rider flagged as injured</li></ol><div class="expected">Injury status clearly visible and prominent</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc077"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc077"></td></tr>
+      <tr id="tr-tc078"><td class="tc-id">TC-078</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>"Pick this rider" CTA confirms pick and returns to My Picks</td>
+        <td class="steps"><ol><li>Open rider profile from Rider Selection</li><li>Tap "Pick this rider"</li></ol><div class="expected">Pick confirmed; modal dismisses; navigates to My Picks with pick reflected</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc078"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc078"></td></tr>
+      <tr id="tr-tc079"><td class="tc-id">TC-079</td><td><span class="pri pri-med">Med</span></td>
+        <td>Profile in read-only mode when viewing via Leaderboard</td>
+        <td class="steps"><ol><li>Tap a user on the Leaderboard → view their picks → tap a rider</li></ol><div class="expected">Rider profile shows without "Pick this rider" CTA</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc079"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc079"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 8. PER-STAGE RESULTS + LEADERBOARD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>8 · Per-Stage Results &amp; Leaderboard</h3>
+    <span class="section-count">TC-085 – TC-098</span>
+    <a href="wireframe-07-per-stage-results.html" class="screen-link" target="_blank">↗ Screen 07</a>
+    <a href="wireframe-08-leaderboard.html" class="screen-link" target="_blank">↗ Screen 08</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc085"><td class="tc-id">TC-085</td><td><span class="pri pri-high">High</span></td>
+        <td>Per-Stage Results shows pick, finishing position, points earned</td>
+        <td class="steps"><ol><li>View a completed stage's results</li></ol><div class="expected">User's pick, that rider's result, points earned, and stage winner all shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc085"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc085"></td></tr>
+      <tr id="tr-tc086"><td class="tc-id">TC-086</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Spoiler protection hides results by default for new users</td>
+        <td class="steps"><ol><li>Log in as a fresh user</li><li>Navigate to a completed stage's results</li></ol><div class="expected">Results hidden by default; "Reveal results" option visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc086"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc086"></td></tr>
+      <tr id="tr-tc087"><td class="tc-id">TC-087</td><td><span class="pri pri-high">High</span></td>
+        <td>Notification deep-link → Per-Stage Results works</td>
+        <td class="steps"><ol><li>Tap a score-update push notification</li></ol><div class="expected">App opens directly to Per-Stage Results for that stage</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc087"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc087"></td></tr>
+      <tr id="tr-tc090"><td class="tc-id">TC-090</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Leaderboard is fully scrollable with no truncation</td>
+        <td class="steps"><ol><li>Open Overall Leaderboard</li><li>Scroll to bottom</li></ol><div class="expected">All participants shown; list does not cut off at 100</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc090"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc090"></td></tr>
+      <tr id="tr-tc091"><td class="tc-id">TC-091</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>User's own row always visible / pinned</td>
+        <td class="steps"><ol><li>View leaderboard as a user ranked outside top 10</li></ol><div class="expected">Own row highlighted and visible without scrolling to it</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc091"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc091"></td></tr>
+      <tr id="tr-tc092"><td class="tc-id">TC-092</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Total participant count shown ("X of Y players")</td>
+        <td class="steps"><ol><li>View leaderboard</li></ol><div class="expected">Total count visible at all times</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc092"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc092"></td></tr>
+      <tr id="tr-tc093"><td class="tc-id">TC-093</td><td><span class="pri pri-high">High</span></td>
+        <td>Tapping a user on leaderboard shows their picks (read-only)</td>
+        <td class="steps"><ol><li>Tap any row on the leaderboard</li></ol><div class="expected">That user's My Picks opens in read-only mode</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc093"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc093"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 9. FANTASY TEAMS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>9 · Fantasy Teams</h3>
+    <span class="section-count">TC-100 – TC-112</span>
+    <a href="wireframe-19-team-selection.html" class="screen-link" target="_blank">↗ Screen 19</a>
+    <a href="wireframe-20-team-overview.html" class="screen-link" target="_blank">↗ Screen 20</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc100"><td class="tc-id">TC-100</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Budget displays correctly and decrements as riders are added</td>
+        <td class="steps"><ol><li>Open Team Selection</li><li>Add several riders</li></ol><div class="expected">Budget bar and credit counter update with each selection</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc100"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc100"></td></tr>
+      <tr id="tr-tc101"><td class="tc-id">TC-101</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>All 9 squad slots shown (2×AR, 2×CL, 2×SP, 2×UC, 1×WC)</td>
+        <td class="steps"><ol><li>View Team Selection</li></ol><div class="expected">Exactly 9 slots in correct class breakdown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc101"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc101"></td></tr>
+      <tr id="tr-tc102"><td class="tc-id">TC-102</td><td><span class="pri pri-high">High</span></td>
+        <td>Over-budget state blocks confirmation</td>
+        <td class="steps"><ol><li>Build a team that exceeds the credit budget</li></ol><div class="expected">Over-budget state shown; Confirm button disabled</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc102"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc102"></td></tr>
+      <tr id="tr-tc103"><td class="tc-id">TC-103</td><td><span class="pri pri-high">High</span></td>
+        <td>Confirm disabled until all 9 slots filled</td>
+        <td class="steps"><ol><li>Fill 8 of 9 slots within budget</li><li>Try to confirm</li></ol><div class="expected">Confirm button remains disabled until slot 9 filled</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc103"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc103"></td></tr>
+      <tr id="tr-tc104"><td class="tc-id">TC-104</td><td><span class="pri pri-high">High</span></td>
+        <td>Wildcard slot accepts any rider class</td>
+        <td class="steps"><ol><li>Fill class slots, leaving only Wildcard empty</li><li>Try adding a Climber to Wildcard</li></ol><div class="expected">Wildcard accepts any class; confirmation dialog if class slots full</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc104"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc104"></td></tr>
+      <tr id="tr-tc105"><td class="tc-id">TC-105</td><td><span class="pri pri-high">High</span></td>
+        <td>DNF riders shown at reduced opacity with DNF badge</td>
+        <td class="steps"><ol><li>View Team Overview when a rider has DNF'd</li></ol><div class="expected">Rider at ~45% opacity with red DNF badge; points to date retained</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc105"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc105"></td></tr>
+      <tr id="tr-tc106"><td class="tc-id">TC-106</td><td><span class="pri pri-med">Med</span></td>
+        <td>Transfer window toggle appears when window is open</td>
+        <td class="steps"><ol><li>View Team Overview when director has opened a transfer window</li></ol><div class="expected">"Make Transfer" option or toggle visible</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc106"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc106"></td></tr>
+      <tr id="tr-tc107"><td class="tc-id">TC-107</td><td><span class="pri pri-med">Med</span></td>
+        <td>No automatic substitutions occur</td>
+        <td class="steps"><ol><li>Have a DNF rider; do NOT open transfer window</li></ol><div class="expected">DNF rider stays in team; no automatic replacement</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc107"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc107"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 10. LEAGUES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>10 · Leagues</h3>
+    <span class="section-count">TC-115 – TC-132</span>
+    <a href="wireframe-09-league-list.html" class="screen-link" target="_blank">↗ Screen 09</a>
+    <a href="wireframe-10-league-detail.html" class="screen-link" target="_blank">↗ Screen 10</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc115"><td class="tc-id">TC-115</td><td><span class="pri pri-high">High</span></td>
+        <td>League list shows all leagues with rank and director</td>
+        <td class="steps"><ol><li>Tap Leagues tab</li></ol><div class="expected">All user's leagues listed; rank, member count, director visible per league</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc115"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc115"></td></tr>
+      <tr id="tr-tc116"><td class="tc-id">TC-116</td><td><span class="pri pri-high">High</span></td>
+        <td>Unread chat badge shown on league with new messages</td>
+        <td class="steps"><ol><li>Have an unread message in a league</li></ol><div class="expected">Badge/indicator on that league row AND on Leagues tab nav</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc116"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc116"></td></tr>
+      <tr id="tr-tc117"><td class="tc-id">TC-117</td><td><span class="pri pri-high">High</span></td>
+        <td>League Detail — Standings tab shows all members ranked</td>
+        <td class="steps"><ol><li>Open a league; view Standings tab</li></ol><div class="expected">All members listed by rank; user's row highlighted</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc117"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc117"></td></tr>
+      <tr id="tr-tc118"><td class="tc-id">TC-118</td><td><span class="pri pri-high">High</span></td>
+        <td>League Chat — messages load in chronological order</td>
+        <td class="steps"><ol><li>Open a league; tap Chat tab</li></ol><div class="expected">Messages shown with avatars, timestamps, chronological order</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc118"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc118"></td></tr>
+      <tr id="tr-tc119"><td class="tc-id">TC-119</td><td><span class="pri pri-high">High</span></td>
+        <td>Pick-share cards visible in chat</td>
+        <td class="steps"><ol><li>View League Chat containing a pick-share</li></ol><div class="expected">Pick-share card rendered distinctly; tapping shows read-only Rider Profile</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc119"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc119"></td></tr>
+      <tr id="tr-tc120"><td class="tc-id">TC-120</td><td><span class="pri pri-med">Med</span></td>
+        <td>Emoji reactions work on messages</td>
+        <td class="steps"><ol><li>Long-press (or tap-hold) a message</li></ol><div class="expected">Reaction picker appears; selecting adds reaction to message</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc120"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc120"></td></tr>
+      <tr id="tr-tc121"><td class="tc-id">TC-121</td><td><span class="pri pri-high">High</span></td>
+        <td>Create League — form saves and league appears in list</td>
+        <td class="steps"><ol><li>Tap Create League</li><li>Fill in name, select competition, choose colour</li><li>Submit</li></ol><div class="expected">New league appears in League List</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc121"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc121"></td></tr>
+      <tr id="tr-tc122"><td class="tc-id">TC-122</td><td><span class="pri pri-high">High</span></td>
+        <td>Join by Code — 6-char code auto-triggers lookup</td>
+        <td class="steps"><ol><li>Tap Join by Code</li><li>Enter a valid 6-character league code</li></ol><div class="expected">Auto-lookup fires at 6 chars; league preview shown without tapping Search</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc122"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc122"></td></tr>
+      <tr id="tr-tc123"><td class="tc-id">TC-123</td><td><span class="pri pri-med">Med</span></td>
+        <td>Join by Code — invalid code shows clear error</td>
+        <td class="steps"><ol><li>Enter a non-existent 6-char code</li></ol><div class="expected">Error state shown; no crash</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc123"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc123"></td></tr>
+      <tr id="tr-tc124"><td class="tc-id">TC-124</td><td><span class="pri pri-med">Med</span></td>
+        <td>Enroll League Sheet appears after joining</td>
+        <td class="steps"><ol><li>Join a league via code</li></ol><div class="expected">Bottom sheet shows post-join checklist; director sees additional options</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc124"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc124"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 11. NEWS, ACCOUNT, NOTIFICATIONS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>11 · News / Account / Notifications</h3>
+    <span class="section-count">TC-135 – TC-158</span>
+    <a href="wireframe-15-news-feed.html" class="screen-link" target="_blank">↗ Screen 15</a>
+    <a href="wireframe-16-account-settings.html" class="screen-link" target="_blank">↗ Screen 16</a>
+    <a href="wireframe-18-notification-feed.html" class="screen-link" target="_blank">↗ Screen 18</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc135"><td class="tc-id">TC-135</td><td><span class="pri pri-high">High</span></td>
+        <td>News feed loads articles with correct metadata</td>
+        <td class="steps"><ol><li>Tap News tab</li></ol><div class="expected">Articles shown with headline, thumbnail, tag, relative time</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc135"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc135"></td></tr>
+      <tr id="tr-tc136"><td class="tc-id">TC-136</td><td><span class="pri pri-med">Med</span></td>
+        <td>News filter chips work (All / Stage Previews / Race Reports / News)</td>
+        <td class="steps"><ol><li>Tap each filter chip</li></ol><div class="expected">Feed filters correctly by content type</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc136"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc136"></td></tr>
+      <tr id="tr-tc137"><td class="tc-id">TC-137</td><td><span class="pri pri-med">Med</span></td>
+        <td>Today's Stage Preview pinned at top when available</td>
+        <td class="steps"><ol><li>View News feed on a day with a stage preview</li></ol><div class="expected">Stage preview card pinned at top above chronological feed</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc137"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc137"></td></tr>
+      <tr id="tr-tc140"><td class="tc-id">TC-140</td><td><span class="pri pri-high">High</span></td>
+        <td>Account screen shows profile info and all settings rows</td>
+        <td class="steps"><ol><li>Tap Account tab</li></ol><div class="expected">Username, theme, notifications, rules, logout all present</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc140"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc140"></td></tr>
+      <tr id="tr-tc141"><td class="tc-id">TC-141</td><td><span class="pri pri-high">High</span></td>
+        <td>Theme toggle switches light/dark mode immediately</td>
+        <td class="steps"><ol><li>Tap theme toggle</li></ol><div class="expected">App-wide theme changes instantly; persists on next open</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc141"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc141"></td></tr>
+      <tr id="tr-tc142"><td class="tc-id">TC-142</td><td><span class="pri pri-high">High</span></td>
+        <td>Spoiler protection toggle works and persists</td>
+        <td class="steps"><ol><li>Toggle spoiler protection ON</li><li>Navigate to a completed stage result</li></ol><div class="expected">Results hidden; toggle OFF reveals them; setting persists</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc142"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc142"></td></tr>
+      <tr id="tr-tc143"><td class="tc-id">TC-143</td><td><span class="pri pri-med">Med</span></td>
+        <td>Logout works and returns to login screen</td>
+        <td class="steps"><ol><li>Tap Logout</li></ol><div class="expected">Session cleared; Login screen shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc143"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc143"></td></tr>
+      <tr id="tr-tc150"><td class="tc-id">TC-150</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Pick reminder notification deep-links to Rider Selection</td>
+        <td class="steps"><ol><li>Receive a pick reminder push notification</li><li>Tap it</li></ol><div class="expected">App opens directly to Rider Selection for the relevant stage</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc150"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc150"></td></tr>
+      <tr id="tr-tc151"><td class="tc-id">TC-151</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>League activity notification deep-links to League Chat</td>
+        <td class="steps"><ol><li>Receive a league chat notification</li><li>Tap it</li></ol><div class="expected">App opens directly to that league's Chat tab</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc151"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc151"></td></tr>
+      <tr id="tr-tc152"><td class="tc-id">TC-152</td><td><span class="pri pri-high">High</span></td>
+        <td>Notification Feed — time-sensitive notifications float to top</td>
+        <td class="steps"><ol><li>Have a mix of regular and time-sensitive notifications</li><li>Open Notification Feed</li></ol><div class="expected">Picks-lock warnings at top regardless of chronological order</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc152"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc152"></td></tr>
+      <tr id="tr-tc153"><td class="tc-id">TC-153</td><td><span class="pri pri-high">High</span></td>
+        <td>⚙ icon in Notification Feed navigates to Notification Preferences</td>
+        <td class="steps"><ol><li>Open Notification Feed</li><li>Tap ⚙ in header</li></ol><div class="expected">Notification Preferences screen opens</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc153"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc153"></td></tr>
+      <tr id="tr-tc154"><td class="tc-id">TC-154</td><td><span class="pri pri-high">High</span></td>
+        <td>Mark all read clears notification badges</td>
+        <td class="steps"><ol><li>Tap "Mark all read"</li></ol><div class="expected">Bell badge and Home tab dot both clear</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc154"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc154"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 12. CROSS-SCREEN NAVIGATION FLOWS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-hdr">
+    <h3>12 · Cross-Screen Navigation Flows</h3>
+    <span class="section-count">TC-160 – TC-168</span>
+    <a href="screen-map.html" class="screen-link" target="_blank">↗ Screen Map</a>
+  </div>
+  <table class="test-table"><thead><tr><th style="width:70px">ID</th><th style="width:60px">Priority</th><th>Test case</th><th>Steps &amp; expected result</th><th style="width:80px">Result</th><th style="width:170px">Notes</th></tr></thead>
+    <tbody>
+      <tr id="tr-tc160"><td class="tc-id">TC-160</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Flow 1: Quick pick from Home → Rider Selection (bypasses My Picks)</td>
+        <td class="steps"><ol><li>Tap "Pick Stage N →" CTA on a Home competition card</li></ol><div class="expected">Goes directly to Rider Selection; My Picks screen NOT shown</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc160"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc160"></td></tr>
+      <tr id="tr-tc161"><td class="tc-id">TC-161</td><td><span class="pri pri-high">High</span></td>
+        <td>Flow 3: Stage preview article shows "Pick your rider" CTA</td>
+        <td class="steps"><ol><li>Open a stage preview article</li></ol><div class="expected">"Pick your rider" CTA pinned at bottom; tapping goes to Rider Selection</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc161"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc161"></td></tr>
+      <tr id="tr-tc162"><td class="tc-id">TC-162</td><td><span class="pri pri-high">High</span></td>
+        <td>Flow 4: Injury alert → Rider Selection for affected stage</td>
+        <td class="steps"><ol><li>Tap injury warning badge on My Picks</li></ol><div class="expected">Rider Selection opens for the affected stage specifically</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc162"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc162"></td></tr>
+      <tr id="tr-tc163"><td class="tc-id">TC-163</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Flow 5: Rider Profile "Pick this rider" → confirms pick → My Picks</td>
+        <td class="steps"><ol><li>Open Rider Selection → tap rider → tap "Pick this rider"</li></ol><div class="expected">Pick confirmed; navigates back to My Picks with new pick showing</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc163"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc163"></td></tr>
+      <tr id="tr-tc164"><td class="tc-id">TC-164</td><td><span class="pri pri-high">High</span></td>
+        <td>Flow 6: League chat pick-share → read-only Rider Profile</td>
+        <td class="steps"><ol><li>Tap a pick-share card in League Chat</li></ol><div class="expected">Rider Profile opens in read-only mode (no Pick CTA)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc164"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc164"></td></tr>
+      <tr id="tr-tc165"><td class="tc-id">TC-165</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Flow 7: Score update notification → Per-Stage Results</td>
+        <td class="steps"><ol><li>Tap a score-update push notification</li></ol><div class="expected">Per-Stage Results for that specific stage opens directly</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc165"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc165"></td></tr>
+      <tr id="tr-tc166"><td class="tc-id">TC-166</td><td><span class="pri pri-high">High</span></td>
+        <td>Flow 8: Leaderboard → opponent's read-only My Picks</td>
+        <td class="steps"><ol><li>Tap any user row on leaderboard</li></ol><div class="expected">Their picks open in read-only My Picks view</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc166"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc166"></td></tr>
+      <tr id="tr-tc167"><td class="tc-id">TC-167</td><td><span class="pri pri-crit">Critical</span></td>
+        <td>Flow 9: Team format join → Team Selection (not My Picks)</td>
+        <td class="steps"><ol><li>Tap Join / Enter on a Fantasy Teams competition</li></ol><div class="expected">Team Selection opens (not My Picks stage list)</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc167"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc167"></td></tr>
+      <tr id="tr-tc168"><td class="tc-id">TC-168</td><td><span class="pri pri-high">High</span></td>
+        <td>Back navigation works throughout all flows</td>
+        <td class="steps"><ol><li>Navigate 3+ levels deep in any flow</li><li>Use back button/gesture at each level</li></ol><div class="expected">Correct screen at each level; no unexpected jumps to root</div></td>
+        <td><div class="result-ctrl" id="ctrl-tc168"></div></td><td><input class="notes-input" placeholder="Notes…" id="notes-tc168"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- BUG REPORT TEMPLATE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section" style="margin-top:40px;">
+  <div class="section-hdr">
+    <h3>Bug Report Template</h3>
+    <span class="section-count">Copy for each issue found</span>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.07);font-family:monospace;font-size:12px;color:#333;line-height:2;white-space:pre-wrap;border-left:4px solid #FF6F42;">
+**BUG-###** · [Screen name]
+──────────────────────────────────────────────────
+**Severity:**      [ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+Critical = blocks core flow / data loss
+High     = significant feature broken, workaround unclear
+Medium   = feature broken but workaround exists
+Low      = cosmetic / minor UX issue
+
+**Summary:**       One-line description of the problem
+
+**Device:**        e.g. iPhone 15 Pro, iOS 18.2
+**Build:**         e.g. 1.0.0 (42)
+**Test case:**     e.g. TC-065
+
+**Steps to reproduce:**
+1.
+2.
+3.
+
+**Expected:**      What should happen (per wireframe/PRD)
+**Actual:**        What actually happens
+
+**Screenshot:**    [attach]
+**Notes:**         Any additional context, frequency, related issues
+  </div>
+</div>
+
+<div class="footer">
+  <div>Escape Fantasy QA Test Plan · v1 Build · April 2026</div>
+  <div id="footer-stats">0 / 189 tested</div>
+</div>
+
+<script>
+  // State
+  const results = JSON.parse(localStorage.getItem('ef-qa-results') || '{}');
+  const notes   = JSON.parse(localStorage.getItem('ef-qa-notes')   || '{}');
+  const TOTAL   = 189;
+
+  const tcs = [
+    'tc001','tc002','tc003','tc004','tc005','tc006','tc007','tc008',
+    'tc010','tc011','tc012','tc013','tc014','tc015',
+    'tc020','tc021','tc022','tc023','tc024','tc025','tc026','tc027','tc028','tc029','tc030','tc031','tc032','tc033',
+    'tc040','tc041','tc042','tc043','tc044','tc045',
+    'tc050','tc051','tc052','tc053','tc054','tc055','tc056','tc057','tc058','tc059',
+    'tc060','tc061','tc062','tc063','tc064','tc065','tc066','tc067','tc068',
+    'tc075','tc076','tc077','tc078','tc079',
+    'tc085','tc086','tc087','tc090','tc091','tc092','tc093',
+    'tc100','tc101','tc102','tc103','tc104','tc105','tc106','tc107',
+    'tc115','tc116','tc117','tc118','tc119','tc120','tc121','tc122','tc123','tc124',
+    'tc135','tc136','tc137','tc140','tc141','tc142','tc143',
+    'tc150','tc151','tc152','tc153','tc154',
+    'tc160','tc161','tc162','tc163','tc164','tc165','tc166','tc167','tc168'
+  ];
+
+  function renderAll() {
+    tcs.forEach(id => {
+      const ctrl = document.getElementById('ctrl-' + id);
+      if (!ctrl) return;
+      const r = results[id];
+      if (r) {
+        ctrl.innerHTML = `<span class="result-badge rb-${r}">${r.toUpperCase()}</span>
+          <button style="font-size:9px;background:none;border:none;color:#AAA;cursor:pointer;padding:0 4px;" onclick="clearResult('${id}')">✕</button>`;
+        const row = document.getElementById('tr-' + id);
+        if (row) { row.className = 'result-' + r; }
+      } else {
+        ctrl.innerHTML = `<button class="btn-pass" onclick="setResult('${id}','pass')">Pass</button>
+          <button class="btn-fail" onclick="setResult('${id}','fail')">Fail</button>
+          <button class="btn-skip" onclick="setResult('${id}','skip')">Skip</button>`;
+        const row = document.getElementById('tr-' + id);
+        if (row) row.className = '';
+      }
+      // Restore notes
+      const ni = document.getElementById('notes-' + id);
+      if (ni && notes[id]) ni.value = notes[id];
+    });
+    updateScore();
+  }
+
+  function setResult(id, val) {
+    results[id] = val;
+    localStorage.setItem('ef-qa-results', JSON.stringify(results));
+    renderAll();
+  }
+
+  function clearResult(id) {
+    delete results[id];
+    localStorage.setItem('ef-qa-results', JSON.stringify(results));
+    renderAll();
+  }
+
+  function updateScore() {
+    const pass = Object.values(results).filter(v => v === 'pass').length;
+    const fail = Object.values(results).filter(v => v === 'fail').length;
+    const skip = Object.values(results).filter(v => v === 'skip').length;
+    const done = pass + fail + skip;
+    document.getElementById('cnt-pass').textContent = pass;
+    document.getElementById('cnt-fail').textContent = fail;
+    document.getElementById('cnt-skip').textContent = skip;
+    document.getElementById('cnt-total').textContent = TOTAL;
+    document.getElementById('progress-fill').style.width = (pass / TOTAL * 100) + '%';
+    document.getElementById('progress-lbl').textContent = `${done} of ${TOTAL} tested · ${pass} passed · ${fail} failed`;
+    document.getElementById('footer-stats').textContent = `${done} / ${TOTAL} tested`;
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all results? This cannot be undone.')) return;
+    Object.keys(results).forEach(k => delete results[k]);
+    localStorage.setItem('ef-qa-results', JSON.stringify({}));
+    renderAll();
+  }
+
+  // Save notes on change
+  document.addEventListener('input', e => {
+    if (e.target.classList.contains('notes-input')) {
+      const id = e.target.id.replace('notes-', '');
+      notes[id] = e.target.value;
+      localStorage.setItem('ef-qa-notes', JSON.stringify(notes));
+    }
+  });
+
+  renderAll();
+</script>
+</body>
+</html>
