@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 26 — Update Profile | Escape Fantasy</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a1a; color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex; flex-wrap: wrap;
+    justify-content: center; padding: 40px 24px; gap: 40px;
+    --accent:        #FF6F42;
+    --bg-screen:     #121212;
+    --bg-card:       #1e1e1e;
+    --bg-card2:      #252525;
+    --border-subtle: rgba(255,255,255,0.08);
+    --text-primary:  #f0f0f0;
+    --text-muted:    #888;
+    --text-dim:      #555;
+    --toggle-off:    #3a3a3a;
+    --toggle-on:     #34C759;
+    --danger:        #FF4444;
+  }
+  body.light-mode {
+    background: #e8e8e8; color: #111;
+    --bg-screen:     #f2f2f7;
+    --bg-card:       #ffffff;
+    --bg-card2:      #f0f0f5;
+    --border-subtle: rgba(0,0,0,0.08);
+    --text-primary:  #111;
+    --text-muted:    #777;
+    --text-dim:      #bbb;
+    --toggle-off:    #ccc;
+  }
+
+  /* ── FIXED CONTROLS ── */
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  body.light-mode .mode-toggle { background: #222; }
+  .back-to-map-wrap { position: fixed; top: 16px; left: 20px; z-index: 100; }
+  .back-to-map { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-block; letter-spacing: 0.02em; }
+  body.light-mode .back-to-map { background: #222; }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px; height: 812px;
+    background: var(--bg-screen);
+    border-radius: 44px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+  }
+  body.light-mode .phone { box-shadow: 0 32px 80px rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.1); }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
+
+  /* ── APP HEADER ── */
+  .app-header {
+    flex-shrink: 0; height: 52px;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+  }
+  .app-header-back {
+    font-size: 22px; color: var(--text-primary);
+    font-weight: 300; cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+    text-decoration: none; color: var(--text-primary);
+  }
+  .app-header-back-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .app-header-title {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font-size: 17px; font-weight: 800; color: var(--text-primary);
+  }
+
+  /* ── SCROLL ── */
+  .scroll-content {
+    flex: 1; overflow-y: auto; padding: 16px 16px 8px;
+    scrollbar-width: none;
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted);
+    margin-bottom: 8px; padding-left: 4px;
+  }
+  .settings-section { margin-bottom: 20px; }
+
+  /* ── FORM FIELDS ── */
+  .form-group {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .form-field {
+    display: flex; flex-direction: column;
+    padding: 10px 14px 11px;
+    position: relative;
+  }
+  .form-field + .form-field {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .field-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .field-value {
+    font-size: 15px; font-weight: 500; color: var(--text-primary);
+  }
+  .field-value.muted { color: var(--text-muted); font-style: italic; }
+  .field-value.readonly { color: var(--text-muted); }
+  .field-hint {
+    font-size: 10px; color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .field-chevron {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim);
+  }
+
+  /* ── TOGGLE ROWS ── */
+  .toggle-group {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .toggle-row {
+    display: flex; align-items: center;
+    padding: 13px 14px; gap: 12px;
+  }
+  .toggle-row + .toggle-row {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .toggle-row-info { flex: 1; }
+  .toggle-row-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .toggle {
+    width: 44px; height: 26px; border-radius: 13px;
+    background: var(--toggle-off);
+    position: relative; flex-shrink: 0; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--toggle-on); }
+  .toggle::after {
+    content: ''; position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ── SUBMIT BUTTON ── */
+  .submit-btn {
+    width: 100%; padding: 15px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    letter-spacing: -0.2px;
+    margin-bottom: 20px;
+  }
+
+  /* ── DANGER ZONE ── */
+  .danger-zone {
+    border: 1px solid rgba(255,68,68,0.25);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 24px;
+  }
+  .danger-header {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 8px;
+  }
+  .danger-title {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--danger);
+  }
+  .danger-body {
+    font-size: 12px; color: var(--text-muted);
+    line-height: 1.5; margin-bottom: 12px;
+  }
+  .delete-btn {
+    width: 100%; padding: 12px;
+    background: transparent; color: var(--danger);
+    border: 1px solid rgba(255,68,68,0.4); border-radius: 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    flex-shrink: 0; height: 80px;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-screen);
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); cursor: pointer; min-width: 44px; }
+  .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .nav-item.is-active { color: var(--accent); }
+  .nav-item.is-active .nav-label { color: var(--accent); }
+
+  /* ── ANNOTATIONS ── */
+  .annotations { width: 320px; flex-shrink: 0; }
+  .ann-screen-label { font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; display: block; }
+  .ann-card { background: #222; border: 1px solid #333; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  body.light-mode .ann-card { background: #f5f5f5; border-color: #ddd; }
+  .ann-card-title { font-size: 12px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  body.light-mode .ann-card-title { color: #555; }
+  .ann-card-body { font-size: 12px; color: #777; line-height: 1.55; }
+  body.light-mode .ann-card-body { color: #555; }
+  .ann-card-body strong { color: #bbb; font-weight: 700; }
+  body.light-mode .ann-card-body strong { color: #222; }
+  .cn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,111,66,0.18); color: #FF6F42; font-size: 9px; font-weight: 900; margin-left: 2px; vertical-align: middle; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="mode-toggle-wrap">
+  <button class="mode-toggle" onclick="toggleMode()">☀ Light</button>
+</div>
+<div class="back-to-map-wrap">
+  <a class="back-to-map" href="screen-map.html">← Screen Map</a>
+</div>
+
+<!-- ═══ PHONE ═══ -->
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4C3.8 1.3 12.2 1.3 15 4"/><path d="M3.5 6.5C5.5 4.5 10.5 4.5 12.5 6.5"/><path d="M6 9C7 8 9 8 10 9"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="currentColor" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- App Header -->
+  <div class="app-header">
+    <a class="app-header-back" href="wireframe-16-account-settings.html">
+      <svg width="10" height="18" viewBox="0 0 10 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1L1 9l8 8"/></svg>
+      <span class="app-header-back-label">Account</span>
+    </a>
+    <span class="app-header-title">Update Profile</span>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="scroll-content">
+
+    <!-- Personal Details -->
+    <div class="settings-section">
+      <div class="section-label">Personal Details<span class="cn">①</span></div>
+      <div class="form-group">
+        <div class="form-field">
+          <span class="field-label">First Name</span>
+          <span class="field-value">Jason</span>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Last Name</span>
+          <span class="field-value muted">—</span>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Email Address<span class="cn">②</span></span>
+          <span class="field-value readonly">jase@escapecollective.com</span>
+          <span class="field-hint">Linked to your Escape Collective membership</span>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Display Name<span class="cn">③</span></span>
+          <span class="field-value">Jason de Puit</span>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Country</span>
+          <span class="field-value">Australia</span>
+          <svg class="field-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="settings-section">
+      <div class="section-label">Preferences</div>
+      <div class="toggle-group">
+        <div class="toggle-row">
+          <div class="toggle-row-info">
+            <div class="toggle-row-label">Picks Reminder Email<span class="cn">④</span></div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row-info">
+            <div class="toggle-row-label">Fantasy Updates Email<span class="cn">⑤</span></div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row-info">
+            <div class="toggle-row-label">Auto Create Leagues<span class="cn">⑥</span></div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="submit-btn">Save Changes</button>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+      <div class="danger-header">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#FF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1L1 13h12L7 1z"/><path d="M7 6v3"/><circle cx="7" cy="11" r="0.5" fill="#FF4444"/></svg>
+        <span class="danger-title">Danger Zone</span>
+      </div>
+      <p class="danger-body">You are about to delete your profile and all data associated with it. This cannot be undone.<span class="cn">⑦</span></p>
+      <button class="delete-btn">Delete Profile</button>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M8 20v-8h6v8"/></svg>
+      </div>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M11 7v4l3 3"/></svg>
+      </div>
+      <span class="nav-label">Compete</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="11" cy="7" r="4"/></svg>
+      </div>
+      <span class="nav-label">Leagues</span>
+    </div>
+    <div class="nav-item is-active">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <span class="nav-label">Account</span>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ═══ ANNOTATIONS ═══ -->
+<div class="annotations">
+  <span class="ann-screen-label">Screen 26 — Update Profile</span>
+
+  <div class="ann-card">
+    <div class="ann-card-title">① Personal Details</div>
+    <div class="ann-card-body">All fields are editable inline. Tapping a field opens the native keyboard (or a picker for Country). Fields should pre-populate from the user's existing profile data.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">② Email Address — read-only</div>
+    <div class="ann-card-body">Email is sourced from the user's Ghost/EC membership and <strong>cannot be changed here</strong>. The field is displayed as read-only with a hint explaining why. Changing email requires going through account management on escapecollective.com.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">③ Display Name</div>
+    <div class="ann-card-body">The name shown to other users in leagues and on leaderboards. Distinct from First/Last Name. Defaults to First Name on account creation.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">④ Picks Reminder Email</div>
+    <div class="ann-card-body">Sends a reminder email before the pick cut-off for each stage. Default off. Frequency matches stage cadence for active competitions the user is enrolled in.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">⑤ Fantasy Updates Email</div>
+    <div class="ann-card-body">General product and competition news emails. Default off.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">⑥ Auto Create Leagues</div>
+    <div class="ann-card-body">When enabled, the system automatically creates a personal league for the user when a new competition opens. Default off. Useful for users who mostly play solo or invite friends each race.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">⑦ Delete Profile — Danger Zone</div>
+    <div class="ann-card-body">Permanently deletes the user's Fantasy profile and all associated data (picks, leagues, results). <strong>Does not cancel their EC membership</strong> — that is managed separately on escapecollective.com. A confirmation dialog should be shown before executing the delete.</div>
+  </div>
+</div>
+
+<script>
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
+  }
+</script>
+
+</body>
+</html>
