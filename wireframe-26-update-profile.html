@@ -271,26 +271,13 @@
       <div class="section-label">Personal Details<span class="cn">①</span></div>
       <div class="form-group">
         <div class="form-field">
-          <span class="field-label">First Name</span>
-          <span class="field-value">Jason</span>
-        </div>
-        <div class="form-field">
-          <span class="field-label">Last Name</span>
-          <span class="field-value muted">—</span>
-        </div>
-        <div class="form-field">
-          <span class="field-label">Email Address<span class="cn">②</span></span>
-          <span class="field-value readonly">jase@escapecollective.com</span>
-          <span class="field-hint">Linked to your Escape Collective membership</span>
-        </div>
-        <div class="form-field">
-          <span class="field-label">Display Name<span class="cn">③</span></span>
+          <span class="field-label">Display Name<span class="cn">②</span></span>
           <span class="field-value">Jason de Puit</span>
         </div>
         <div class="form-field">
-          <span class="field-label">Country</span>
-          <span class="field-value">Australia</span>
-          <svg class="field-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
+          <span class="field-label">Email Address<span class="cn">③</span></span>
+          <span class="field-value readonly">jase@escapecollective.com</span>
+          <span class="field-hint">Linked to your Escape Collective membership</span>
         </div>
       </div>
     </div>
@@ -367,17 +354,17 @@
 
   <div class="ann-card">
     <div class="ann-card-title">① Personal Details</div>
-    <div class="ann-card-body">All fields are editable inline. Tapping a field opens the native keyboard (or a picker for Country). Fields should pre-populate from the user's existing profile data.</div>
+    <div class="ann-card-body">Ghost only stores two fields for Fantasy users: Display Name and Email Address. First Name and Last Name are not stored and should not be collected. Both fields pre-populate from Ghost on load.</div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">② Email Address — read-only</div>
-    <div class="ann-card-body">Email is sourced from the user's Ghost/EC membership and <strong>cannot be changed here</strong>. The field is displayed as read-only with a hint explaining why. Changing email requires going through account management on escapecollective.com.</div>
+    <div class="ann-card-title">② Display Name</div>
+    <div class="ann-card-body">The name shown to other users in leagues and on leaderboards. Sourced from and written back to Ghost. Must stay in sync with the Ghost record — the app should not maintain a separate local copy.</div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">③ Display Name</div>
-    <div class="ann-card-body">The name shown to other users in leagues and on leaderboards. Distinct from First/Last Name. Defaults to First Name on account creation.</div>
+    <div class="ann-card-title">③ Email Address — read-only</div>
+    <div class="ann-card-body">Email is sourced from the user's Ghost/EC membership and <strong>cannot be changed here</strong>. Displayed read-only with a hint explaining why. Changing email requires going through account management on escapecollective.com.</div>
   </div>
 
   <div class="ann-card">
