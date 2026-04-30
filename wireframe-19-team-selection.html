@@ -263,7 +263,7 @@
   .pill-sp { background: var(--col-sp); }
   .pill-uc { background: var(--col-uc); }
 
-  .rider-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+  .rider-right { display: flex; flex-direction: row; align-items: center; gap: 8px; flex-shrink: 0; }
   .rider-price { font-size: 13px; font-weight: 800; color: var(--text-primary); }
   .rider-price.selected-price { color: var(--accent); }
   .rider-price.over { color: #F56A6A; }
@@ -497,12 +497,10 @@
       <div class="rider-num">1</div>
       <div class="rider-info">
         <div class="rider-name">Tadej Pogačar</div>
-        <div class="rider-meta">
-          <span class="rider-team">UAE Team Emirates</span>
-          <span class="rider-class-pill pill-ar">All-Rounder</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">UAE Team Emirates</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-ar">AR</span>
         <span class="rider-price selected-price">24.5</span>
         <div class="add-btn remove">✓</div>
       </div>
@@ -513,12 +511,10 @@
       <div class="rider-num">2</div>
       <div class="rider-info">
         <div class="rider-name">Jonas Vingegaard</div>
-        <div class="rider-meta">
-          <span class="rider-team">Visma–Lease a Bike</span>
-          <span class="rider-class-pill pill-ar">All-Rounder</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-ar">AR</span>
         <span class="rider-price selected-price">22.0</span>
         <div class="add-btn remove">✓</div>
       </div>
@@ -529,12 +525,10 @@
       <div class="rider-num">3</div>
       <div class="rider-info">
         <div class="rider-name">Remco Evenepoel</div>
-        <div class="rider-meta">
-          <span class="rider-team">Soudal – Quick-Step</span>
-          <span class="rider-class-pill pill-ar">All-Rounder</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-ar">AR</span>
         <span class="rider-price">20.5</span>
         <div class="add-btn add">+</div>
       </div>
@@ -545,12 +539,10 @@
       <div class="rider-num">4</div>
       <div class="rider-info">
         <div class="rider-name">Egan Bernal</div>
-        <div class="rider-meta">
-          <span class="rider-team">INEOS Grenadiers</span>
-          <span class="rider-class-pill pill-cl">Climber</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">INEOS Grenadiers</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-cl">CL</span>
         <span class="rider-price selected-price">15.5</span>
         <div class="add-btn remove">✓</div>
       </div>
@@ -561,12 +553,10 @@
       <div class="rider-num">5</div>
       <div class="rider-info">
         <div class="rider-name">Giulio Ciccone</div>
-        <div class="rider-meta">
-          <span class="rider-team">Lidl–Trek</span>
-          <span class="rider-class-pill pill-cl">Climber</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Lidl–Trek</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-cl">CL</span>
         <span class="rider-price">14.0</span>
         <div class="add-btn add">+</div>
       </div>
@@ -577,12 +567,10 @@
       <div class="rider-num">6</div>
       <div class="rider-info">
         <div class="rider-name">Jasper Philipsen</div>
-        <div class="rider-meta">
-          <span class="rider-team">Alpecin–Deceuninck</span>
-          <span class="rider-class-pill pill-sp">Sprinter</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Alpecin–Deceuninck</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-sp">SP</span>
         <span class="rider-price selected-price">13.0</span>
         <div class="add-btn remove">✓</div>
       </div>
@@ -593,12 +581,10 @@
       <div class="rider-num">7</div>
       <div class="rider-info">
         <div class="rider-name">Wout van Aert</div>
-        <div class="rider-meta">
-          <span class="rider-team">Visma–Lease a Bike</span>
-          <span class="rider-class-pill pill-sp">Sprinter</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-sp">SP</span>
         <span class="rider-price">11.5</span>
         <div class="add-btn add">+</div>
       </div>
@@ -609,12 +595,10 @@
       <div class="rider-num">8</div>
       <div class="rider-info">
         <div class="rider-name">Christophe Laporte</div>
-        <div class="rider-meta">
-          <span class="rider-team">Visma–Lease a Bike</span>
-          <span class="rider-class-pill pill-uc">Unclassed</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-uc">UC</span>
         <span class="rider-price">8.5</span>
         <div class="add-btn add">+</div>
       </div>
@@ -625,12 +609,10 @@
       <div class="rider-num">9</div>
       <div class="rider-info">
         <div class="rider-name">Carlos Rodríguez <span class="cn">⑧</span></div>
-        <div class="rider-meta">
-          <span class="rider-team">INEOS Grenadiers</span>
-          <span class="rider-class-pill pill-ar">All-Rounder</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">INEOS Grenadiers</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-ar">AR</span>
         <span class="rider-price over">36.0</span>
         <div class="add-btn blocked">+</div>
       </div>
@@ -641,12 +623,10 @@
       <div class="rider-num">10</div>
       <div class="rider-info">
         <div class="rider-name">Kasper Asgreen</div>
-        <div class="rider-meta">
-          <span class="rider-team">Soudal – Quick-Step</span>
-          <span class="rider-class-pill pill-uc">Unclassed</span>
-        </div>
+        <div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span></div>
       </div>
       <div class="rider-right">
+        <span class="rider-class-pill pill-uc">UC</span>
         <span class="rider-price">7.0</span>
         <div class="add-btn add">+</div>
       </div>
@@ -755,15 +735,15 @@
       <span class="pool-count">124 riders available</span>
       <span class="sort-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>Price ▾</span>
     </div>
-    <div class="rider-row ar selected"><div class="rider-num">1</div><div class="rider-info"><div class="rider-name">Tadej Pogačar</div><div class="rider-meta"><span class="rider-team">UAE Team Emirates</span><span class="rider-class-pill pill-ar">All-Rounder</span></div></div><div class="rider-right"><span class="rider-price selected-price">24.5</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row ar selected"><div class="rider-num">2</div><div class="rider-info"><div class="rider-name">Jonas Vingegaard</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span><span class="rider-class-pill pill-ar">All-Rounder</span></div></div><div class="rider-right"><span class="rider-price selected-price">22.0</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row ar over-budget"><div class="rider-num">3</div><div class="rider-info"><div class="rider-name">Remco Evenepoel</div><div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span><span class="rider-class-pill pill-ar">All-Rounder</span></div></div><div class="rider-right"><span class="rider-price over">20.5</span><div class="add-btn blocked">+</div></div></div>
-    <div class="rider-row cl selected"><div class="rider-num">4</div><div class="rider-info"><div class="rider-name">Egan Bernal</div><div class="rider-meta"><span class="rider-team">INEOS Grenadiers</span><span class="rider-class-pill pill-cl">Climber</span></div></div><div class="rider-right"><span class="rider-price selected-price">15.5</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row cl selected"><div class="rider-num">5</div><div class="rider-info"><div class="rider-name">Giulio Ciccone</div><div class="rider-meta"><span class="rider-team">Lidl–Trek</span><span class="rider-class-pill pill-cl">Climber</span></div></div><div class="rider-right"><span class="rider-price selected-price">14.0</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row sp selected"><div class="rider-num">6</div><div class="rider-info"><div class="rider-name">Jasper Philipsen</div><div class="rider-meta"><span class="rider-team">Alpecin–Deceuninck</span><span class="rider-class-pill pill-sp">Sprinter</span></div></div><div class="rider-right"><span class="rider-price selected-price">13.0</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row sp selected"><div class="rider-num">7</div><div class="rider-info"><div class="rider-name">Wout van Aert</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span><span class="rider-class-pill pill-sp">Sprinter</span></div></div><div class="rider-right"><span class="rider-price selected-price">11.5</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row uc selected"><div class="rider-num">8</div><div class="rider-info"><div class="rider-name">Christophe Laporte</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span><span class="rider-class-pill pill-uc">Unclassed</span></div></div><div class="rider-right"><span class="rider-price selected-price">8.5</span><div class="add-btn remove">✓</div></div></div>
-    <div class="rider-row uc selected"><div class="rider-num">9</div><div class="rider-info"><div class="rider-name">Kasper Asgreen</div><div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span><span class="rider-class-pill pill-uc">Unclassed</span></div></div><div class="rider-right"><span class="rider-price selected-price">7.0</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row ar selected"><div class="rider-num">1</div><div class="rider-info"><div class="rider-name">Tadej Pogačar</div><div class="rider-meta"><span class="rider-team">UAE Team Emirates</span></div></div><div class="rider-right"><span class="rider-class-pill pill-ar">AR</span><span class="rider-price selected-price">24.5</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row ar selected"><div class="rider-num">2</div><div class="rider-info"><div class="rider-name">Jonas Vingegaard</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div></div><div class="rider-right"><span class="rider-class-pill pill-ar">AR</span><span class="rider-price selected-price">22.0</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row ar over-budget"><div class="rider-num">3</div><div class="rider-info"><div class="rider-name">Remco Evenepoel</div><div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span></div></div><div class="rider-right"><span class="rider-class-pill pill-ar">AR</span><span class="rider-price over">20.5</span><div class="add-btn blocked">+</div></div></div>
+    <div class="rider-row cl selected"><div class="rider-num">4</div><div class="rider-info"><div class="rider-name">Egan Bernal</div><div class="rider-meta"><span class="rider-team">INEOS Grenadiers</span></div></div><div class="rider-right"><span class="rider-class-pill pill-cl">CL</span><span class="rider-price selected-price">15.5</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row cl selected"><div class="rider-num">5</div><div class="rider-info"><div class="rider-name">Giulio Ciccone</div><div class="rider-meta"><span class="rider-team">Lidl–Trek</span></div></div><div class="rider-right"><span class="rider-class-pill pill-cl">CL</span><span class="rider-price selected-price">14.0</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row sp selected"><div class="rider-num">6</div><div class="rider-info"><div class="rider-name">Jasper Philipsen</div><div class="rider-meta"><span class="rider-team">Alpecin–Deceuninck</span></div></div><div class="rider-right"><span class="rider-class-pill pill-sp">SP</span><span class="rider-price selected-price">13.0</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row sp selected"><div class="rider-num">7</div><div class="rider-info"><div class="rider-name">Wout van Aert</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div></div><div class="rider-right"><span class="rider-class-pill pill-sp">SP</span><span class="rider-price selected-price">11.5</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row uc selected"><div class="rider-num">8</div><div class="rider-info"><div class="rider-name">Christophe Laporte</div><div class="rider-meta"><span class="rider-team">Visma–Lease a Bike</span></div></div><div class="rider-right"><span class="rider-class-pill pill-uc">UC</span><span class="rider-price selected-price">8.5</span><div class="add-btn remove">✓</div></div></div>
+    <div class="rider-row uc selected"><div class="rider-num">9</div><div class="rider-info"><div class="rider-name">Kasper Asgreen</div><div class="rider-meta"><span class="rider-team">Soudal – Quick-Step</span></div></div><div class="rider-right"><span class="rider-class-pill pill-uc">UC</span><span class="rider-price selected-price">7.0</span><div class="add-btn remove">✓</div></div></div>
   </div>
 
   <!-- Confirm Bar — appears once team is complete -->
