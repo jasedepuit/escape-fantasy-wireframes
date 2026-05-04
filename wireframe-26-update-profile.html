@@ -279,6 +279,11 @@
           <span class="field-value readonly">jase@escapecollective.com</span>
           <span class="field-hint">Linked to your Escape Collective membership</span>
         </div>
+        <div class="form-field">
+          <span class="field-label">Country<span class="cn">④</span></span>
+          <span class="field-value">Australia</span>
+          <svg class="field-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
+        </div>
       </div>
     </div>
 
@@ -288,19 +293,19 @@
       <div class="toggle-group">
         <div class="toggle-row">
           <div class="toggle-row-info">
-            <div class="toggle-row-label">Picks Reminder Email<span class="cn">④</span></div>
+            <div class="toggle-row-label">Picks Reminder Email<span class="cn">⑤</span></div>
           </div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-row-info">
-            <div class="toggle-row-label">Fantasy Updates Email<span class="cn">⑤</span></div>
+            <div class="toggle-row-label">Fantasy Updates Email<span class="cn">⑥</span></div>
           </div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-row-info">
-            <div class="toggle-row-label">Auto Create Leagues<span class="cn">⑥</span></div>
+            <div class="toggle-row-label">Auto Create Leagues<span class="cn">⑦</span></div>
           </div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
@@ -316,7 +321,7 @@
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#FF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1L1 13h12L7 1z"/><path d="M7 6v3"/><circle cx="7" cy="11" r="0.5" fill="#FF4444"/></svg>
         <span class="danger-title">Danger Zone</span>
       </div>
-      <p class="danger-body">You are about to delete your profile and all data associated with it. This cannot be undone.<span class="cn">⑦</span></p>
+      <p class="danger-body">You are about to delete your profile and all data associated with it. This cannot be undone.<span class="cn">⑧</span></p>
       <button class="delete-btn">Delete Profile</button>
     </div>
 
@@ -368,22 +373,27 @@
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">④ Picks Reminder Email</div>
+    <div class="ann-card-title">④ Country</div>
+    <div class="ann-card-body">Dropdown/picker for the user's country. Used for leaderboard display and any future region-specific features. Tapping opens the native picker.</div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title">⑤ Picks Reminder Email</div>
     <div class="ann-card-body">Sends a reminder email before the pick cut-off for each stage. Default off. Frequency matches stage cadence for active competitions the user is enrolled in.</div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">⑤ Fantasy Updates Email</div>
+    <div class="ann-card-title">⑥ Fantasy Updates Email</div>
     <div class="ann-card-body">General product and competition news emails. Default off.</div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">⑥ Auto Create Leagues</div>
+    <div class="ann-card-title">⑦ Auto Create Leagues</div>
     <div class="ann-card-body">When enabled, the system automatically creates a personal league for the user when a new competition opens. Default off. Useful for users who mostly play solo or invite friends each race.</div>
   </div>
 
   <div class="ann-card">
-    <div class="ann-card-title">⑦ Delete Profile — Danger Zone</div>
+    <div class="ann-card-title">⑧ Delete Profile — Danger Zone</div>
     <div class="ann-card-body">Permanently deletes the user's Fantasy profile and all associated data (picks, leagues, results). <strong>Does not cancel their EC membership</strong> — that is managed separately on escapecollective.com. A confirmation dialog should be shown before executing the delete.</div>
   </div>
 </div>
