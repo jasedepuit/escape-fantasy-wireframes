@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 310" width="750" height="310">
+  <defs>
+
+    <!-- Background: very dark navy — the glow does the heavy lifting -->
+    <linearGradient id="tdf-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#050910"/>
+      <stop offset="35%"  stop-color="#0C1828"/>
+      <stop offset="70%"  stop-color="#152440"/>
+      <stop offset="100%" stop-color="#1C2E50"/>
+    </linearGradient>
+
+    <!-- Top vignette -->
+    <linearGradient id="tdf-ovr-t" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.45"/>
+      <stop offset="38%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Left vignette -->
+    <linearGradient id="tdf-ovr-l" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"  stop-color="#000000" stop-opacity="0.58"/>
+      <stop offset="42%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Yellow glow fade on mountains -->
+    <linearGradient id="tdf-mtn-glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFD700" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Near mountain gradient — fades in from top to avoid hard edge -->
+    <linearGradient id="tdf-mtn-near" x1="0" y1="0.55" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#04070F" stop-opacity="0"/>
+      <stop offset="40%"  stop-color="#04070F" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#04070F" stop-opacity="0.90"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- ① Base background -->
+  <rect width="750" height="310" fill="url(#tdf-bg)"/>
+
+  <!-- ② Maillot jaune atmospheric glow — upper sky, centre-right -->
+  <ellipse cx="490" cy="55" rx="310" ry="145" fill="#FFD700" fill-opacity="0.15"/>
+  <ellipse cx="490" cy="55" rx="180" ry="85"  fill="#FFB300" fill-opacity="0.12"/>
+  <ellipse cx="490" cy="55" rx="80"  ry="42"  fill="#FFCA28" fill-opacity="0.10"/>
+
+  <!-- ③ Far mountain range — classic Alpine profile -->
+  <path d="M 0,235 L 62,198 L 118,172 L 175,192 L 232,144 L 288,168 L 335,110 L 388,138 L 442,102 L 498,130 L 552,152 L 608,126 L 664,160 L 720,142 L 750,168 L 750,310 L 0,310 Z"
+        fill="rgba(8,20,45,0.72)"/>
+
+  <!-- ④ Yellow rim-light on mountain tops (sun-kissed peaks) -->
+  <rect x="0" y="0" width="750" height="310" fill="url(#tdf-mtn-glow)"/>
+
+  <!-- ⑤ Near mountain range -->
+  <path d="M 0,286 L 48,258 L 96,240 L 152,264 L 208,220 L 256,240 L 310,196 L 362,218 L 416,180 L 470,204 L 524,220 L 580,200 L 630,230 L 682,220 L 726,248 L 750,260 L 750,310 L 0,310 Z"
+        fill="url(#tdf-mtn-near)"/>
+
+  <!-- ⑥ Peak highlight — the highest summit -->
+  <ellipse cx="442" cy="102" rx="30" ry="13" fill="rgba(255,215,0,0.18)"/>
+
+  <!-- ⑦ Diagonal texture lines -->
+  <line x1="505" y1="0"  x2="750" y2="162" stroke="rgba(255,215,0,0.04)" stroke-width="22"/>
+  <line x1="572" y1="0"  x2="750" y2="112" stroke="rgba(255,215,0,0.03)" stroke-width="13"/>
+  <line x1="635" y1="0"  x2="750" y2="65"  stroke="rgba(255,215,0,0.02)" stroke-width="8"/>
+
+  <!-- ⑨ Top vignette -->
+  <rect width="750" height="310" fill="url(#tdf-ovr-t)"/>
+
+  <!-- ⑩ Left vignette -->
+  <rect width="750" height="310" fill="url(#tdf-ovr-l)"/>
+
+  <!-- ⑫ Race name -->
+  <circle cx="710" cy="258" r="5" fill="#FFD700" fill-opacity="0.80"/>
+  <circle cx="724" cy="258" r="3" fill="#FFD700" fill-opacity="0.48"/>
+  <circle cx="734" cy="258" r="2" fill="#FFD700" fill-opacity="0.28"/>
+
+</svg>

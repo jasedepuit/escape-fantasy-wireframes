@@ -264,28 +264,19 @@
       align-items: flex-end;
     }
 
-    /* Simulated race photography with gradient */
+    /* Race banner images — clean SVGs, no text */
     .race-img-tdf {
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.9) 100%),
-        linear-gradient(135deg,
-          #1a2a4a 0%, #2d4a6e 30%, #4a7da8 50%,
-          #8fa8bf 65%, #c5d4df 75%, #7a9aad 85%, #3a5878 100%
-        );
+      background: url('banner-tdf-2026-clean.svg') top/cover no-repeat;
     }
     .race-img-team {
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.92) 100%),
-        linear-gradient(135deg,
-          #1a1a3a 0%, #2d2d6e 25%, #4a3a8a 45%,
-          #7a5ab8 60%, #b88adf 75%, #8855c8 85%, #3a1a6a 100%
-        );
+      background: url('banner-giro-2026-clean.svg') top/cover no-repeat;
     }
 
     .race-img-overlay {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      inset: 0;
       padding: 12px 14px 10px;
+      display: flex; flex-direction: column; justify-content: flex-end;
     }
     .race-name {
       font-size: 16px;

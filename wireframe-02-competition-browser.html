@@ -256,12 +256,13 @@
     }
     .card-header-overlay {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      inset: 0;
       padding: 12px 14px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       width: 100%;
+      background: linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.65) 100%);
     }
     .card-header-name {
       font-size: 14px;
@@ -699,7 +700,7 @@
 
             <!-- Card 1: TDF 2026 - Active & Joined -->
             <div class="comp-card">
-              <div class="card-header" style="background: linear-gradient(to right, #1a2a4a, #4a7da8, #8fa8bf);">
+              <div class="card-header" style="background: url('banner-tdf-2026-clean.svg') top/cover no-repeat;">
                 <div class="card-header-overlay">
                   <div class="card-header-name">Tour de France 2026</div>
                   <div class="card-header-badge">
@@ -745,7 +746,7 @@
 
             <!-- Card 2: Grand Tour Season - Active & Joined Team -->
             <div class="comp-card">
-              <div class="card-header" style="background: linear-gradient(to right, #1a1a3a, #4a3a8a, #7a5ab8);">
+              <div class="card-header" style="background: url('banner-giro-2026-clean.svg') top/cover no-repeat;">
                 <div class="card-header-overlay">
                   <div class="card-header-name">2026 Grand Tour Season</div>
                   <div class="card-header-badge">
@@ -821,7 +822,7 @@
 
             <!-- Card 4: La Vuelta - Upcoming & NOT Joined -->
             <div class="comp-card">
-              <div class="card-header-56" style="background: linear-gradient(to right, #1a0a0a, #4a1a1a, #7a2a2a);">
+              <div class="card-header-56" style="background: url('banner-vuelta-2026-clean.svg') top/cover no-repeat;">
                 UPCOMING
               </div>
               <div class="upcoming-body">
@@ -841,7 +842,7 @@
 
             <!-- Card 5: Giro Teams - Upcoming & Joined -->
             <div class="comp-card">
-              <div class="card-header-56 card-header-56-purple" style="background: linear-gradient(to right, #1a0a1a, #4a1a4a, #7a2a7a);">
+              <div class="card-header-56 card-header-56-purple" style="background: url('banner-giro-women-2026-clean.svg') top/cover no-repeat;">
                 UPCOMING
               </div>
               <div class="upcoming-body">
