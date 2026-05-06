@@ -381,6 +381,23 @@
       text-align: center;
     }
 
+    /* Urgent pick countdown — shown only when cut-off < 2 hours away */
+    .cutoff-urgent {
+      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 8px;
+    }
+    .cutoff-urgent-icon { font-size: 11px; flex-shrink: 0; }
+    .cutoff-urgent-text {
+      flex: 1;
+      font-size: 11px; font-weight: 700;
+      color: #FF6F42;
+    }
+    .cutoff-urgent-time {
+      font-size: 11px; font-weight: 800;
+      color: #FF6F42;
+      flex-shrink: 0;
+    }
+
     /* Scroll indicator dots */
     .carousel-dots {
       display: flex;
@@ -3313,6 +3330,12 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
                     </div>
                     <div class="result-pts">+90 pts <span class="cn">3</span></div>
                   </div>
+                  <!-- Urgent countdown — visible only when < 2 hours to pick deadline -->
+                  <div class="cutoff-urgent">
+                    <span class="cutoff-urgent-icon">⏱</span>
+                    <span class="cutoff-urgent-text">Stage 15 pick closes in <span class="cn">7</span></span>
+                    <span class="cutoff-urgent-time">1h 44m</span>
+                  </div>
                   <div class="cta-btn">Pick Stage 15 → <span class="cn">4</span></div>
                   <div class="cta-btn-ghost">Leaderboard ›</div>
                 </div>
@@ -3522,6 +3545,14 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
         <div class="ann-content">
           <div class="ann-title">News feed — editorial pull</div>
           <div class="ann-desc">Stage Preview articles for the user's active competitions are prioritised at the top of the feed. All other content in reverse-chronological order below. Tapping any row opens the in-app article reader (no browser redirect — resolves the key survey complaint). The feed shows content tagged to competitions the user is enrolled in, plus general race news.</div>
+        </div>
+      </div>
+
+      <div class="ann-item">
+        <div class="ann-num">7</div>
+        <div class="ann-content">
+          <div class="ann-title">Urgent pick countdown — conditional, < 2 hours only</div>
+          <div class="ann-desc">A red countdown strip appears above the Pick CTA <strong>only when the stage cut-off is less than 2 hours away</strong>. It is hidden at all other times to avoid cluttering the card. At under 2 hours the strip shows the stage number and a live countdown (e.g. "Stage 15 closes in 1h 44m"). At under 30 minutes the countdown should pulse or otherwise increase urgency. This resolves the tension between surfacing time-critical information and keeping the home card clean day-to-day.</div>
         </div>
       </div>
 
