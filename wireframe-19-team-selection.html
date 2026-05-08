@@ -202,24 +202,38 @@
   .chip-uc  { background: var(--col-uc); }
   .chip-wc  { background: var(--col-wc); }
 
-  /* ── FILTER TABS ── */
+  /* ── FILTER PILLS ── */
   .filter-tabs-bar {
     flex-shrink: 0;
-    display: flex;
-    background: var(--bg-card);
+    display: flex; gap: 6px;
+    background: var(--bg-screen);
     border-bottom: 1px solid var(--border-subtle);
+    padding: 7px 14px;
     overflow-x: auto;
   }
   .filter-tabs-bar::-webkit-scrollbar { display: none; }
   .ftab {
     flex-shrink: 0;
-    padding: 9px 12px 8px;
-    font-size: 11px; font-weight: 700;
-    color: var(--text-muted); cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap; transition: color 0.15s;
+    padding: 4px 11px;
+    border-radius: 14px;
+    font-size: 10px; font-weight: 700;
+    white-space: nowrap; cursor: pointer;
+    border: 1.5px solid;
+    background: transparent;
+    transition: background 0.15s, color 0.15s;
   }
-  .ftab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  /* All tab */
+  .ftab-all { color: var(--text-muted); border-color: rgba(255,255,255,0.15); }
+  .ftab-all.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  /* Coloured class pills */
+  .ftab-ar { color: var(--col-ar); border-color: var(--col-ar); }
+  .ftab-ar.active { background: var(--col-ar); color: #fff; }
+  .ftab-cl { color: var(--col-cl); border-color: var(--col-cl); }
+  .ftab-cl.active { background: var(--col-cl); color: #fff; }
+  .ftab-sp { color: var(--col-sp); border-color: var(--col-sp); }
+  .ftab-sp.active { background: var(--col-sp); color: #fff; }
+  .ftab-uc { color: var(--col-uc); border-color: var(--col-uc); }
+  .ftab-uc.active { background: var(--col-uc); color: #fff; }
 
   /* ── SCROLL CONTENT ── */
   .scroll-content {
@@ -485,11 +499,11 @@
 
   <!-- Filter Tabs -->
   <div class="filter-tabs-bar">
-    <div class="ftab active" onclick="setTab(this)">All <span class="cn">⑥</span></div>
-    <div class="ftab" onclick="setTab(this)" style="color:#5B8BF5;">All-Rounder</div>
-    <div class="ftab" onclick="setTab(this)" style="color:#34C759;">Climber</div>
-    <div class="ftab" onclick="setTab(this)" style="color:#FF9500;">Sprinter</div>
-    <div class="ftab" onclick="setTab(this)" style="color:#AF52DE;">Unclassed</div>
+    <div class="ftab ftab-all active" onclick="setTab(this)">All <span class="cn">⑥</span></div>
+    <div class="ftab ftab-ar" onclick="setTab(this)">All-Rounder</div>
+    <div class="ftab ftab-cl" onclick="setTab(this)">Climber</div>
+    <div class="ftab ftab-sp" onclick="setTab(this)">Sprinter</div>
+    <div class="ftab ftab-uc" onclick="setTab(this)">Unclassed</div>
   </div>
 
   <!-- Rider Pool -->
