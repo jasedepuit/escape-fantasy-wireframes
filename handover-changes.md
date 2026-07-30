@@ -48,8 +48,16 @@ All wireframes reference fonts from this URL — no local font files are needed 
 - **Home "Latest News" heading:** wireframe uses the correct grey all-caps style;
   the live app doesn't match it. No wireframe change — fix in app.
 
-## 5. Pending / to do
+## 5. Page-title headings removed
 
-- Remove redundant page-title headings app-wide (redundant with nav bar).
+Top-level tab screens no longer repeat the tab name as a heading — nav bar already provides orientation.
+
+- **wireframe-02 (Competition Browser):** removed entire app header bar (back-chevron + "Competitions" title — back button is incorrect on a top-level tab screen).
+- **wireframe-09 (Leagues):** removed "Leagues" heading; kept search icon in header.
+- **wireframe-15 (News Feed):** removed "News" heading; kept EC logo + filter icon in header.
+- **wireframe-16 (Account):** removed entire "Account" heading bar.
+
+## 6. Pending / to do
+
 - Roll full type conventions (orange UPPERCASE categories, UPPERCASE grey bylines) across remaining screens.
 - Competition banner images (AI-looking) → replace server-side (Luke), not a wireframe change.
