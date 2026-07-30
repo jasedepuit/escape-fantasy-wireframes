@@ -4,9 +4,10 @@ A running, dev-facing list of every brand-alignment change in the wireframes, pl
 items where the **wireframe is already correct and the app implementation must be
 updated to match**. Hand this to Luke alongside the wireframes.
 
-Font files live in `/Fonts` (ABC Social + MaxFett). **Licensing note:** these are
-commercial fonts — the app must use properly-licensed webfonts; don't ship the raw
-files publicly.
+Fonts are served from `https://escapecollective.com/assets/fonts/` (the live EC website).
+All wireframes reference fonts from this URL — no local font files are needed to view them.
+`/Fonts` is in `.gitignore` and is not part of the repo.
+**Licensing note:** the app must use properly-licensed webfonts; don't ship raw font files.
 
 ---
 
@@ -49,7 +50,6 @@ files publicly.
 
 ## 5. Pending / to do
 
-- News tab (wireframe-15) tile redesign — squarer images, excerpt-first then meta below.
-- Roll fonts + type system across the remaining screens.
-- Remove redundant page-title headings (redundant with nav bar).
+- Remove redundant page-title headings app-wide (redundant with nav bar).
+- Roll full type conventions (orange UPPERCASE categories, UPPERCASE grey bylines) across remaining screens.
 - Competition banner images (AI-looking) → replace server-side (Luke), not a wireframe change.
