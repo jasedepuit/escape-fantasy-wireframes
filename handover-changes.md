@@ -26,15 +26,19 @@ All wireframes reference fonts from this URL — no local font files are needed 
 
 ## 3. Per-screen changes made
 
+### All 30 wireframes — font rollout ✅ done
+- `@font-face` declarations for ABC Social + MaxFett added to every wireframe.
+- Fonts load from `https://escapecollective.com/assets/fonts/` — no local files needed.
+- `body { font-family: 'ABC Social', ... }` applied to all screens (cascades to all UI text).
+
 ### Home — `wireframe-01-home-v2.html` ✅ done
-- Body/UI font → ABC Social (cascades from `body`).
 - Rank stat (`.rank-big`, `.rank-sup`) → MaxFett Black.
 - News headline (`.news-headline`) → Bold 700.
 - News date (`.news-time`) → UPPERCASE + letter-spacing.
 - (Category `.news-tag` was already orange uppercase — no change.)
+- **Competition banners:** real photography replacing SVG placeholders (see section 6).
 
 ### News feed — `wireframe-15-news-feed.html` ✅ done
-- Fonts wired in (ABC Social body + MaxFett available).
 - **Card layout flipped:** was image → meta(category+date) → headline → excerpt → author.
   Now **image → headline → excerpt → meta**, with meta = category · author · date on one row.
 - **Taller images** (110px → 190px) so more of the image shows / less awkward crop.
@@ -42,6 +46,9 @@ All wireframes reference fonts from this URL — no local font files are needed 
 - **Author + date** now UPPERCASE, letter-spaced, grey, `·`-separated — matches site byline style.
 - **Headline** → ABC Social Bold (700), 15px.
 - Dev note: real images should use `object-fit: cover` on `.article-img` (190px tall).
+
+### Competition Browser — `wireframe-02-competition-browser.html` ✅ done
+- **Competition banners:** real photography replacing SVG placeholders (see section 6).
 
 ## 4. App-side items (wireframe already correct — update the APP to match)
 
@@ -57,7 +64,19 @@ Top-level tab screens no longer repeat the tab name as a heading — nav bar alr
 - **wireframe-15 (News Feed):** removed "News" heading; kept EC logo + filter icon in header.
 - **wireframe-16 (Account):** removed entire "Account" heading bar.
 
-## 6. Pending / to do
+## 6. Competition banner images
+
+Real photography now used for two competitions:
+
+- **Tour de France 2026 / Stage Race** → `banner-tdf-photo.jpg` (peloton through sunflower field).
+  CSS position: `center 95%/cover` on Home (155px card); `center 50%/cover` on Competition Browser (72px card).
+- **2026 Grand Tour Season / Teams** → `banner-teams-photo.jpg` (stage win celebration).
+  CSS position: `center 0%/cover` on both screens.
+- **Note:** percentage-based `background-position-y` shifts relative to card height — different values
+  needed per context. Convert to pixel offsets (`center -Xpx/cover`) for a single value that works everywhere.
+- Vuelta, Giro Donne, and other competition SVG banners still placeholder — replace server-side (Luke).
+
+## 7. Pending / to do
 
 - Roll full type conventions (orange UPPERCASE categories, UPPERCASE grey bylines) across remaining screens.
-- Competition banner images (AI-looking) → replace server-side (Luke), not a wireframe change.
+- Convert banner `background-position-y` from `%` to `px` for consistent cross-context positioning.
