@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EC Font Load Test</title>
+<style>
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Regular.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Regular.woff') format('woff'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Medium.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Medium.woff') format('woff'); font-weight: 500; font-display: swap; }
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Bold.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Bold.woff') format('woff'); font-weight: 700; font-display: swap; }
+  @font-face { font-family: 'MaxFett'; src: url('Fonts/MaxFett-Black.woff') format('woff'), url('Fonts/maxfett-black.otf') format('opentype'); font-weight: 900; font-display: swap; }
+
+  body { background:#0A0A0A; color:#fff; margin:0; padding:40px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  .row { margin:0 0 34px; }
+  .lbl { font-family:-apple-system,sans-serif; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#FF6F42; margin-bottom:8px; }
+  .abc { font-family:'ABC Social',sans-serif; }
+  .abc-m { font-family:'ABC Social'; font-weight:500; }
+  .abc-b { font-family:'ABC Social'; font-weight:700; }
+  .max { font-family:'MaxFett',sans-serif; font-weight:900; }
+  .sys { font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif; color:#888; }
+  .big { font-size:38px; line-height:1.15; }
+  .huge { font-size:56px; line-height:1.05; }
+  #status { position:sticky; top:0; background:#141414; border:1px solid #FF6F42; border-radius:10px; padding:14px 18px; margin-bottom:34px; font-family:-apple-system,sans-serif; font-size:15px; }
+  #status b{ font-size:17px; }
+  .ok{ color:#5DD162; } .bad{ color:#ff5a5a; }
+</style>
+</head>
+<body>
+  <div id="status">Checking fonts…</div>
+
+  <div class="row">
+    <div class="lbl">MaxFett Black — display</div>
+    <div class="max huge">Tour de France Femmes</div>
+    <div class="sys big">Tour de France Femmes <span style="font-size:13px">(system font, for contrast)</span></div>
+  </div>
+
+  <div class="row">
+    <div class="lbl">ABC Social — Regular / Medium / Bold</div>
+    <div class="abc big">Escape Fantasy 0123456789</div>
+    <div class="abc-m big">Escape Fantasy 0123456789</div>
+    <div class="abc-b big">Escape Fantasy 0123456789</div>
+    <div class="sys big">Escape Fantasy 0123456789 <span style="font-size:13px">(system font)</span></div>
+  </div>
+
+<script>
+  document.fonts.ready.then(function(){
+    var abc = document.fonts.check('16px "ABC Social"');
+    var max = document.fonts.check('900 16px "MaxFett"');
+    var el = document.getElementById('status');
+    el.innerHTML =
+      '<b>Font load check</b><br>' +
+      'ABC Social: <span class="'+(abc?'ok':'bad')+'">'+(abc?'LOADED ✓':'NOT loaded ✗')+'</span> &nbsp;·&nbsp; ' +
+      'MaxFett: <span class="'+(max?'ok':'bad')+'">'+(max?'LOADED ✓':'NOT loaded ✗')+'</span>' +
+      (abc&&max ? '' : '<br><span style="font-size:13px;color:#aaa">If either says NOT loaded here, the font files aren\'t being served/read from the Fonts/ folder.</span>');
+  });
+</script>
+</body>
+</html>

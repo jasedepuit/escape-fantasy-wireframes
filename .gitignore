@@ -1,0 +1,7 @@
+# Commercial fonts — kept out of version control pending licensing decision.
+# Files remain on disk so wireframes render locally; not published to the public repo.
+Fonts/
+
+# macOS cruft
+.DS_Store
+**/.DS_Store

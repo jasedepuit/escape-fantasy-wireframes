@@ -5,12 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Screen 15 – News Feed</title>
 <style>
+  /* --- Escape brand fonts: ABC Social = UI/body, MaxFett Black = display stats --- */
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Regular.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Regular.woff') format('woff'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Medium.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Medium.woff') format('woff'); font-weight: 500; font-display: swap; }
+  @font-face { font-family: 'ABC Social'; src: url('Fonts/ABCSocial/ABCSocial-Bold.woff2') format('woff2'), url('Fonts/ABCSocial/ABCSocial-Bold.woff') format('woff'); font-weight: 700; font-display: swap; }
+  @font-face { font-family: 'MaxFett'; src: url('Fonts/MaxFett-Black.woff') format('woff'), url('Fonts/maxfett-black.otf') format('opentype'); font-weight: 900; font-display: swap; }
+
   /* ── RESET & BASE ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: #1a1a1a;
     color: #e0e0e0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'ABC Social', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: row;
@@ -114,7 +120,7 @@
 
   /* Image placeholder */
   .article-img {
-    width: 100%; height: 110px;
+    width: 100%; height: 190px;
     background: var(--bg-img);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -142,22 +148,19 @@
   .article-body { padding: 10px 12px 12px; }
 
   .article-meta {
-    display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 10px;
   }
+  .article-meta > span + span::before { content: '·'; margin-right: 6px; color: var(--text-dim); }
   .article-pill {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.07em;
-    text-transform: uppercase; padding: 2px 7px; border-radius: 20px;
-    color: #fff; flex-shrink: 0;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent); flex-shrink: 0;
   }
-  .pill-report  { background: var(--pill-report); }
-  .pill-preview { background: var(--pill-preview); }
-  .pill-feature { background: var(--pill-feature); }
-  .pill-news    { background: var(--pill-news); }
+  .pill-report, .pill-preview, .pill-feature, .pill-news { background: none; color: var(--accent); }
 
-  .article-time { font-size: 10px; color: var(--text-dim); margin-left: auto; }
+  .article-time { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
 
   .article-headline {
-    font-size: 14px; font-weight: 800; color: var(--text-primary);
+    font-size: 15px; font-weight: 700; color: var(--text-primary);
     line-height: 1.3; margin-bottom: 5px;
   }
   .article-excerpt {
@@ -167,7 +170,7 @@
     overflow: hidden;
   }
   .article-author {
-    font-size: 10px; font-weight: 600; color: var(--text-dim); margin-top: 6px;
+    font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
   }
 
   /* Compact card (no image) */
@@ -288,26 +291,26 @@
         <span class="article-img-label">Article image</span>
       </div>
       <div class="article-body">
-        <div class="article-meta">
-          <span class="article-pill pill-report">Race Report<span class="cn">②</span></span>
-          <span class="article-time">2h ago</span>
-        </div>
         <div class="article-headline">Pogačar Surges on Laruns Climb to Extend GC Lead<span class="cn">⑤</span></div>
         <div class="article-excerpt">The Slovenian champion put time into all rivals on the final ascent, with Vingegaard and Evenepoel unable to match his pace in the final 3km.</div>
-        <div class="article-author">Caley Fretz<span class="cn">⑥</span></div>
+        <div class="article-meta">
+          <span class="article-pill pill-report">Race Report<span class="cn">②</span></span>
+          <span class="article-author">Caley Fretz<span class="cn">⑥</span></span>
+          <span class="article-time">2h ago</span>
+        </div>
       </div>
     </div>
 
     <!-- Article 2: Stage preview (compact) -->
     <div class="article-card compact">
       <div class="article-body">
-        <div class="article-meta">
-          <span class="article-pill pill-preview">Stage Preview</span>
-          <span class="article-time">4h ago</span>
-        </div>
         <div class="article-headline">Stage 9 Preview: Everything You Need to Know Before Cauterets</div>
         <div class="article-excerpt">The queen stage of this year's Tour arrives earlier than expected. Here's the route, the climbs, and who we think wins.</div>
-        <div class="article-author">Dane Cash</div>
+        <div class="article-meta">
+          <span class="article-pill pill-preview">Stage Preview</span>
+          <span class="article-author">Dane Cash</span>
+          <span class="article-time">4h ago</span>
+        </div>
       </div>
     </div>
 
@@ -317,26 +320,26 @@
         <span class="article-img-label">Article image</span>
       </div>
       <div class="article-body">
-        <div class="article-meta">
-          <span class="article-pill pill-feature">Feature<span class="cn">③</span></span>
-          <span class="article-time">Yesterday</span>
-        </div>
         <div class="article-headline">The Numbers Behind Van der Poel's Roubaix Dominance</div>
         <div class="article-excerpt">Four wins in five years. We look at the data to understand why the cobblestones suit him like no other rider in history.</div>
-        <div class="article-author">Ronan Mc Laughlin</div>
+        <div class="article-meta">
+          <span class="article-pill pill-feature">Feature<span class="cn">③</span></span>
+          <span class="article-author">Ronan Mc Laughlin</span>
+          <span class="article-time">Yesterday</span>
+        </div>
       </div>
     </div>
 
     <!-- Article 4: News (compact) -->
     <div class="article-card compact">
       <div class="article-body">
-        <div class="article-meta">
-          <span class="article-pill pill-news">News</span>
-          <span class="article-time">Yesterday</span>
-        </div>
         <div class="article-headline">Vingegaard Confirms He Will Start Stage 9 Despite Crash</div>
         <div class="article-excerpt">The Dane suffered a minor shoulder injury on the descent into Pau but his team confirmed he will race tomorrow.</div>
-        <div class="article-author">Escape Collective</div>
+        <div class="article-meta">
+          <span class="article-pill pill-news">News</span>
+          <span class="article-author">Escape Collective</span>
+          <span class="article-time">Yesterday</span>
+        </div>
       </div>
     </div>
 
