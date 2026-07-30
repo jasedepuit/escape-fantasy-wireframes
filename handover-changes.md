@@ -15,8 +15,8 @@ All wireframes reference fonts from this URL — no local font files are needed 
 
 - **ABC Social** = all UI / body text. Weights used: Regular 400, Medium 500,
   Bold 700 (+ italics available). Replaces the old system font stack.
-- **MaxFett (Black)** = large **display numbers / stats only** — rank, points,
-  leaderboard position, team budget/credits, countdown timers. Never headlines or body.
+- **MaxFett (Black)** = large display moments — rank, points, leaderboard position,
+  team budget/credits, countdown timers, and **onboarding screen headings**. Never body text.
 
 ## 2. Type conventions (from escapecollective.com article style)
 
@@ -76,7 +76,12 @@ Real photography now used for two competitions:
   needed per context. Convert to pixel offsets (`center -Xpx/cover`) for a single value that works everywhere.
 - Vuelta, Giro Donne, and other competition SVG banners still placeholder — replace server-side (Luke).
 
-## 7. Pending / to do
+## 7. Onboarding headings — `wireframe-22/23/24` ✅ done
+
+- `.ob-heading` → MaxFett Black on all three onboarding screens.
+- Headings: "Welcome to Escape Fantasy", "Two ways to play", "Pick your first competition".
+
+## 8. Pending / to do
 
 - Roll full type conventions (orange UPPERCASE categories, UPPERCASE grey bylines) across remaining screens.
 - Convert banner `background-position-y` from `%` to `px` for consistent cross-context positioning.
