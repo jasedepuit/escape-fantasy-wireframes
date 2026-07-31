@@ -172,7 +172,7 @@ Real photography in repo root: `banner-tdf-photo.jpg`, `banner-teams-photo.jpg`
 
 | Competition | Image file | Home card (155px tall) | Browser card (72px tall) |
 |---|---|---|---|
-| Tour de France 2026 / Stage Race | `banner-tdf-photo.jpg` | `center 95%/cover` | `center 50%/cover` |
+| Tour de France 2026 / Stage Race | `banner-tdf-photo.jpg` | `center 20%/cover` | `center 20%/cover` |
 | 2026 Grand Tour Season / Teams | `banner-teams-photo.jpg` | `center 0%/cover` | `center 0%/cover` |
 
 **Dev implementation note:** The wireframes use CSS `background-position` with percentage values. In the app, implement competition card images as `<img>` tags with `object-fit: cover` and `object-position` — this gives much more reliable and consistent cropping across different card heights without needing separate values per context. Vuelta, Giro Donne, and all other competition banners are still SVG placeholders — replace with photography server-side.
