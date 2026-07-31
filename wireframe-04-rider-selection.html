@@ -46,7 +46,9 @@
       --page-bg: #D8D9DC;
     }
 
-    .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
+  
+  .hide-ann .cn { display: none !important; }
+  .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
     .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
     body.light-mode .mode-toggle { background: #222; }
 
@@ -468,6 +470,9 @@
     <a class="back-to-map" href="screen-map.html">← Screen Map</a>
   </div>
 
+  <div class="ann-toggle-wrap" style="position:fixed;top:16px;right:160px;z-index:100;">
+    <button class="mode-toggle" onclick="toggleAnn()" id="annBtn">⓪ Hide numbers</button>
+  </div>
   <div class="mode-toggle-wrap">
     <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">☀ Light mode</button>
   </div>
@@ -847,6 +852,16 @@
     document.getElementById('modeBtn').textContent = isLight ? '🌙 Dark mode' : '☀ Light mode';
     sessionStorage.setItem('mode', isLight ? 'light' : 'dark');
   }
+  function toggleAnn() {
+    var body = document.body;
+    var btn = document.getElementById('annBtn');
+    if (body.classList.toggle('hide-ann')) {
+      btn.textContent = '⓪ Show numbers';
+    } else {
+      btn.textContent = '⓪ Hide numbers';
+    }
+  }
+
   if (sessionStorage.getItem('mode') === 'light') {
     document.body.classList.add('light-mode');
     document.getElementById('modeBtn').textContent = '🌙 Dark mode';

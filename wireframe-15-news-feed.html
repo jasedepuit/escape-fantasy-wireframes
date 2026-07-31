@@ -222,6 +222,8 @@
 
 
   /* ── FIXED CONTROLS ── */
+
+  .hide-ann .cn { display: none !important; }
   .mode-toggle-wrap { position: fixed; top: 16px; right: 20px; z-index: 100; }
   .mode-toggle { background: #333; color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
   body.light-mode .mode-toggle { background: #222; }
@@ -408,6 +410,16 @@
     document.querySelector('.mode-toggle').textContent = isLight ? '🌙 Dark' : '☀ Light';
     sessionStorage.setItem('theme', isLight ? 'light' : 'dark');
   }
+  function toggleAnn() {
+    var body = document.body;
+    var btn = document.getElementById('annBtn');
+    if (body.classList.toggle('hide-ann')) {
+      btn.textContent = '⓪ Show numbers';
+    } else {
+      btn.textContent = '⓪ Hide numbers';
+    }
+  }
+
   if (sessionStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
     document.querySelector('.mode-toggle').textContent = '🌙 Dark';
