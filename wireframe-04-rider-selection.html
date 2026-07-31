@@ -471,7 +471,7 @@
   </div>
 
   <div class="ann-toggle-wrap" style="position:fixed;top:16px;right:160px;z-index:100;">
-    <button class="mode-toggle" onclick="toggleAnn()" id="annBtn">⓪ Hide numbers</button>
+    <button class="mode-toggle" onclick="toggleAnn()" id="annBtn">⓪ Hide annotations</button>
   </div>
   <div class="mode-toggle-wrap">
     <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">☀ Light mode</button>
@@ -856,9 +856,9 @@
     var body = document.body;
     var btn = document.getElementById('annBtn');
     if (body.classList.toggle('hide-ann')) {
-      btn.textContent = '⓪ Show numbers';
+      btn.textContent = '⓪ Show annotations';
     } else {
-      btn.textContent = '⓪ Hide numbers';
+      btn.textContent = '⓪ Hide annotations';
     }
   }
 
