@@ -18,7 +18,7 @@ Dev-facing record of every brand-alignment change made to the wireframes. Items 
 
 ## 2. Global typography system
 
-These changes apply across all wireframes and are the new app-wide type spec. All class names reference the existing CSS in the wireframes.
+These changes apply across all wireframes and are the new app-wide type spec.
 
 ### Section / category labels (`.section-lbl`)
 - Font size: **9px** (was 10px)
@@ -26,12 +26,22 @@ These changes apply across all wireframes and are the new app-wide type spec. Al
 - Letter-spacing: **0.1em** (was 0.12em)
 - Uppercase, weight 800 — unchanged
 
-### Status / type badges (`.badge`, `.b-live`, `.b-stage` etc.)
-- Border-radius: **20px** — pill shape (was 4px)
-- Padding: **3px 10px** (was 3px 7px)
+### All status / type / classification badges and pills
+All pill-shaped label elements are now `border-radius: 20px` (was 4px), `padding: 3px 10px` (was 3px 7px). This applies to every badge-like class across all screens:
+
+| Class | Where used |
+|---|---|
+| `.badge`, `.b-live`, `.b-stage`, `.b-team` | Home, competition cards |
+| `.b-joined` | Competition browser — "✓ Joined" |
+| `.finished-header-badge` | Competition browser — "Finished" status |
+| `.suggested-badge` | AI suggestion screen |
+| `.director-tag`, `.director-badge` | Leagues screens |
+| `.comp-badge` | Onboarding screen 3 |
+| `.type-pill` | Home alternate |
+| `.class-pill`, `.rider-class-pill`, `.slot-chip-class` | Rider selection, team screens |
 
 ### Competition / race card title (`.race-name`)
-- Font family: **MaxFett** (was ABC Social — ABC Social caps at 700 so 900 had no effect)
+- Font family: **MaxFett** (was ABC Social — ABC caps at 700, so 900 had no visual effect)
 - Font size: **17px** (was 16px)
 - Letter-spacing: **0.5px** (was −0.3px — positive tracking suits MaxFett)
 - Colour always white over photo gradient — unchanged
@@ -55,15 +65,21 @@ These changes apply across all wireframes and are the new app-wide type spec. Al
 - Font weight: **500** (was 700)
 - Primary filled button (`.cta-btn`) stays at 800 — unchanged
 
-### News / article category tag (`.news-tag`)
-- Font size: **8px** (was 9px)
-- Letter-spacing: **0.14em** (was 0.08em)
+### News / article category tag (`.news-tag`, `.article-pill`)
+- Font size: **8px** (was 9–10px)
+- Letter-spacing: **0.14em** (was 0.06–0.08em)
 - EC Orange, uppercase, weight 800 — unchanged
 
-### News / article headline (`.news-headline`)
-- Font size: **14px** (was 12px)
+### News / article headline (`.news-headline`, `.article-headline`)
+- Font size: **14px** (was 12–15px)
 - Font weight: **800** (was 700)
-- Line-height: **1.25** (was 1.35)
+- Line-height: **1.25** (was 1.3–1.35)
+
+### News / article timestamp (`.news-time`, `.article-time`)
+- Font size: **9px**
+- Colour: **`#888`**
+- Text-transform: **uppercase**
+- Letter-spacing: **0.06em**
 
 ---
 
@@ -77,21 +93,28 @@ These changes apply across all wireframes and are the new app-wide type spec. Al
 
 ### Home — `wireframe-01-home-v2.html` ✅
 - **Upcoming section removed** — not being used; section and annotation callout deleted, remaining annotations renumbered
-- All global typography changes applied (section labels, badges, rank numbers, result text, news)
+- All global typography changes applied
 - Competition banner photography added (see section 5)
 
 ### Home alternate — `wireframe-01-home.html` ✅
-- Global typography changes applied (news-tag, news-headline)
+- Global typography changes applied (news-tag, news-headline, news-time)
+
+### Home empty state — `wireframe-01b-home-empty-state.html` ✅
+- Global typography changes applied (news-headline, news-time)
 
 ### Competition browser — `wireframe-02-competition-browser.html` ✅
 - Page header (back-chevron + "Competitions" title) **removed** — incorrect on a top-level tab; nav provides orientation
 - Competition banner photography added (see section 5)
+- All pills rounded (badge, b-joined, finished-header-badge)
 - Global typography changes applied (section-lbl, badges)
 
 ### Leagues — `wireframe-09-league-list.html` ✅
 - "Leagues" heading **removed** from app header — redundant with active nav tab
 - Search icon kept
-- Global typography changes applied (section-lbl)
+- Global typography changes applied (section-lbl, director-tag)
+
+### League settings — `wireframe-12-league-settings.html` ✅
+- director-badge pill rounded
 
 ### News feed — `wireframe-15-news-feed.html` ✅
 - "News" heading **removed** from app header — redundant with active nav tab
@@ -101,34 +124,44 @@ These changes apply across all wireframes and are the new app-wide type spec. Al
   - Was: image → category/date → headline → excerpt → author
   - Now: image → headline → excerpt → category · author · date (single meta row)
 - Image height: 110px → **190px**; use `object-fit: cover` on `.article-img`
-- Category label: EC Orange `#FF6F42`, UPPERCASE, no pill background (was coloured filled pills)
-- Byline: author + date UPPERCASE, grey, `·`-separated
-- Headline: ABC Social, 14px, weight 800 (updated per global type spec)
+- Category label (`.article-pill`): EC Orange, UPPERCASE, no pill background, 8px, 0.14em tracking
+- Byline (`.article-author`, `.article-time`): UPPERCASE, grey (`--text-dim`), `·`-separated
+- Headline (`.article-headline`): 14px, weight 800, line-height 1.25
 
 ### Account — `wireframe-16-account-settings.html` ✅
 - "Account" heading bar **removed** — redundant with active nav tab
+
+### AI suggestion — `wireframe-06-ai-suggestion.html` ✅
+- suggested-badge pill rounded
+
+### Rider selection — `wireframe-04-rider-selection.html` ✅
+- class-pill rounded
+
+### Team selection / overview — `wireframe-19`, `wireframe-20` ✅
+- rider-class-pill, slot-chip-class, dnf-badge all rounded
 
 ### Onboarding — `wireframe-22`, `wireframe-23`, `wireframe-24` ✅
 - `.ob-heading` → **MaxFett Black** on all three screens
 - Headings: "Welcome to Escape Fantasy" / "Two ways to play" / "Pick your first competition"
 - wireframe-23: heading condensed to a **single line**
 - wireframe-24: heading and subtext **centred**
+- wireframe-24: comp-badge pill rounded
 
 ---
 
 ## 4. App-side items (wireframes correct — update app to match)
 
-All global typography changes in section 2 need to be implemented in the app. Specific callouts:
-
+- **Fonts:** ABC Social everywhere; MaxFett for all display numbers and competition titles
 - **Section labels:** 9px, `#888`, tracking 0.1em
-- **Badges/pills:** border-radius 20px, padding 3px 10px
-- **Race/competition titles:** Switch to MaxFett Black, 17px, tracking 0.5px
+- **All badges/pills:** border-radius 20px, padding 3px 10px (see full class list in section 2)
+- **Race/competition titles:** MaxFett Black, 17px, tracking 0.5px
 - **Rank numbers:** MaxFett, 30px, letter-spacing 1px
 - **"of x players":** 10px, `#888`, weight 700
 - **Result text:** weight 700 for rider/stage line; 800 for coloured result label
 - **Ghost buttons:** weight 500
-- **News category tags:** 8px, tracking 0.14em
-- **News headlines:** 14px, weight 800, line-height 1.25
+- **News/article category tags:** 8px, tracking 0.14em, EC Orange
+- **News/article headlines:** 14px, weight 800, line-height 1.25
+- **News timestamps:** 9px, `#888`, uppercase, tracking 0.06em
 - **Home "Latest News" heading:** app doesn't match wireframe's grey all-caps style — fix in app
 
 ---
@@ -142,12 +175,10 @@ Real photography in repo root: `banner-tdf-photo.jpg`, `banner-teams-photo.jpg`
 | Tour de France 2026 / Stage Race | `banner-tdf-photo.jpg` | `center 95%/cover` | `center 50%/cover` |
 | 2026 Grand Tour Season / Teams | `banner-teams-photo.jpg` | `center 0%/cover` | `center 0%/cover` |
 
-**Dev note:** `background-position-y` percentage behaves differently at different element heights. Converting to pixel offsets (`center -Xpx/cover`) would give a single consistent value per image. Vuelta, Giro Donne, and other competition banners remain SVG placeholders — replace server-side.
+**Dev implementation note:** The wireframes use CSS `background-position` with percentage values. In the app, implement competition card images as `<img>` tags with `object-fit: cover` and `object-position` — this gives much more reliable and consistent cropping across different card heights without needing separate values per context. Vuelta, Giro Donne, and all other competition banners are still SVG placeholders — replace with photography server-side.
 
 ---
 
-## 6. Pending
+## 6. Pending (awaiting assets)
 
-- Roll type conventions (orange UPPERCASE categories, UPPERCASE grey bylines) across screens not yet updated
-- Convert banner `background-position-y` from `%` to `px`
-- Replace remaining SVG competition banners with photography
+- Replace remaining SVG competition banners (Vuelta, Giro Donne, etc.) with photography — source images needed
