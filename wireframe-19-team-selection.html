@@ -60,6 +60,7 @@
     display: flex; flex-direction: column;
     box-shadow: 0 32px 80px rgba(0,0,0,0.6);
     border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+    position: relative;
   }
 
   /* ── STATUS BAR ── */
@@ -92,6 +93,72 @@
     font-size: 10px; font-weight: 800; letter-spacing: 0.02em; flex-shrink: 0;
   }
   body.light-mode .deadline-badge { background: rgba(255,149,0,0.1); }
+  .deadline-badge { cursor: pointer; }
+  .deadline-badge:active { opacity: 0.8; }
+
+  /* Window-closed badge variant — neutral, informational */
+  .deadline-badge-closed {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.06); color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px; padding: 4px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0;
+    cursor: pointer;
+  }
+  body.light-mode .deadline-badge-closed { background: rgba(0,0,0,0.04); }
+
+  /* ── BOTTOM SHEET (inside phone, slides up from bottom) ── */
+  .sheet-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .sheet-overlay.open { opacity: 1; pointer-events: auto; }
+  .bottom-sheet {
+    background: var(--bg-card);
+    border-radius: 16px 16px 0 0;
+    padding: 0 0 28px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  }
+  .sheet-overlay.open .bottom-sheet { transform: translateY(0); }
+  .sheet-handle {
+    width: 36px; height: 4px; background: rgba(255,255,255,0.18);
+    border-radius: 2px; margin: 10px auto 0;
+  }
+  .sheet-title {
+    font-size: 14px; font-weight: 800; color: var(--text-primary);
+    padding: 14px 18px 10px; border-bottom: 1px solid var(--border-subtle);
+  }
+  .window-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .window-row:last-of-type { border-bottom: none; }
+  .window-num {
+    width: 26px; height: 26px; border-radius: 13px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; margin-top: 1px;
+  }
+  .wn-past { background: rgba(255,255,255,0.07); color: var(--text-dim); }
+  .wn-open { background: rgba(255,149,0,0.18); color: #FF9500; }
+  .wn-future { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+  .window-info { flex: 1; min-width: 0; }
+  .wi-label { font-size: 12px; font-weight: 800; color: var(--text-primary); }
+  .wi-dates { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+  .wi-changes { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+  .wi-status { font-size: 9px; font-weight: 700; margin-top: 3px; }
+  .wi-open { color: #34C759; }
+  .wi-past { color: var(--text-dim); }
+  .wi-upcoming { color: var(--text-muted); }
+  .sheet-tz {
+    font-size: 9px; color: var(--text-dim); text-align: center;
+    padding: 10px 18px 0; margin-top: 4px;
+    border-top: 1px solid var(--border-subtle);
+  }
 
   /* ── TEAM NAME FIELD ── */
   .team-name-bar {
@@ -409,9 +476,9 @@
         <div class="header-sub">Tour de France 2026</div>
       </div>
     </div>
-    <div class="deadline-badge">
+    <div class="deadline-badge" onclick="openWindowSheet()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
-      3d 14h <span class="cn">②</span>
+      Window 2 of 3 · closes in 3d 14h <span class="cn">②</span>
     </div>
   </div>
 
@@ -691,6 +758,50 @@
     </div>
   </div>
 
+
+  <!-- ── TRANSFER WINDOW SCHEDULE SHEET (tapped from badge ②) ── -->
+  <div class="sheet-overlay" id="windowSheet" onclick="if(event.target===this)closeWindowSheet()">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Transfer Windows — Tour de France 2026</div>
+
+      <!-- Window 1 — past -->
+      <div class="window-row">
+        <div class="window-num wn-past">1</div>
+        <div class="window-info">
+          <div class="wi-label">Window 1 · Pre-race</div>
+          <div class="wi-dates">24 Jun – 4 Jul, 10:00am</div>
+          <div class="wi-changes">Up to 3 rider changes</div>
+          <div class="wi-status wi-past">Closed</div>
+        </div>
+      </div>
+
+      <!-- Window 2 — current (open) -->
+      <div class="window-row">
+        <div class="window-num wn-open">2</div>
+        <div class="window-info">
+          <div class="wi-label">Window 2 · Rest Day 1</div>
+          <div class="wi-dates">14 Jul – 15 Jul, 10:00am</div>
+          <div class="wi-changes">Up to 3 rider changes</div>
+          <div class="wi-status wi-open">● Open now · closes in 3d 14h</div>
+        </div>
+      </div>
+
+      <!-- Window 3 — upcoming -->
+      <div class="window-row">
+        <div class="window-num wn-future">3</div>
+        <div class="window-info">
+          <div class="wi-label">Window 3 · Rest Day 2</div>
+          <div class="wi-dates">21 Jul – 22 Jul, 10:00am</div>
+          <div class="wi-changes">Up to 3 rider changes</div>
+          <div class="wi-status wi-upcoming">Opens in 10 days</div>
+        </div>
+      </div>
+
+      <div class="sheet-tz">All times shown in your local timezone (AEST · UTC+10)</div>
+    </div>
+  </div>
+
 </div><!-- /phone 1 -->
 
 <!-- ═══ PHONE 2 — COMPLETE STATE ═══ -->
@@ -713,9 +824,9 @@
         <div class="header-sub">Tour de France 2026</div>
       </div>
     </div>
-    <div class="deadline-badge">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
-      3d 14h
+    <div class="deadline-badge-closed">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
+      Window 3 of 3 · opens in 18d
     </div>
   </div>
 
@@ -809,7 +920,10 @@
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">②</span> Entry Deadline</div>
     <div class="ann-card-body">
-      Countdown to team lock (entry deadline). Once expired the screen becomes <strong>read-only</strong> and the Confirm button is replaced with a locked state. Per the rules: unlimited changes are allowed up until this deadline. During a transfer window, this shows the window close time instead.
+      Two badge states depending on context — both are <strong>tappable</strong> to open the full window schedule sheet:<br><br>
+      <strong style="color:#FF9500">Window open</strong> (orange badge, Phone 1) — "Window X of Y · closes in..." — user can make up to 3 rider changes before the timer expires. The Confirm button is active.<br><br>
+      <strong>Window closed</strong> (grey badge, Phone 2) — shown when viewing a locked team between windows. Shows when the next window opens: "Window X of Y · opens in...". Screen is read-only; Confirm button is hidden.<br><br>
+      Tapping either badge opens a bottom sheet listing all windows with dates, times, and changes allowed per window. Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/145">#145</a> (no window time shown) and <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a> (no full schedule visible).
     </div>
   </div>
 
@@ -875,6 +989,12 @@
   function setTab(el) {
     document.querySelectorAll('.ftab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
+  }
+  function openWindowSheet() {
+    document.getElementById('windowSheet').classList.add('open');
+  }
+  function closeWindowSheet() {
+    document.getElementById('windowSheet').classList.remove('open');
   }
 </script>
 

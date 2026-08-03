@@ -182,3 +182,50 @@ Real photography in repo root: `banner-tdf-photo.jpg`, `banner-teams-photo.jpg`
 ## 6. Pending (awaiting assets)
 
 - Replace remaining SVG competition banners (Vuelta, Giro Donne, etc.) with photography — source images needed
+
+---
+
+## 7. Transfer window UX — wireframe additions (issues #145 and #150)
+
+These changes are not brand-alignment items — they are new UX patterns for surfacing transfer window schedule information. See the updated wireframes: `wireframe-01-home-v2.html` and `wireframe-19-team-selection.html`.
+
+### 7a. Home competition card — `wireframe-01-home-v2.html`
+
+A transfer window strip is now **always present** on the team competition card (as long as there are future or active windows). Two states:
+
+**Window open (`.tw-strip-open` — green border):**
+- "Window X of Y open · closes in [countdown]"
+- Sub-label: "Up to 3 rider changes · tap for full schedule"
+- CTA button changes to **"Make Transfer →"**
+
+**Window closed (`.tw-strip-closed` — grey/subtle border):**
+- "Window X of Y opens in [countdown]"
+- Sub-label: "Up to 3 rider changes · tap for full schedule"
+- CTA button stays **"View Team →"**
+
+Strip is hidden entirely once the final window has passed.
+
+Both strip states are shown in the wireframe for reference. Both are **tappable** → should navigate to Team Selection screen (WF19) or open the schedule sheet.
+
+→ Implement in app: replace the old conditional dashed-orange alert with this persistent two-state strip.
+
+### 7b. Team selection screen — `wireframe-19-team-selection.html`
+
+The header deadline badge (callout ②) now has two states and is **tappable** → opens a bottom sheet.
+
+**Window open (orange badge):** `"Window X of Y · closes in [countdown]"`
+
+**Window closed (grey badge):** `"Window X of Y · opens in [countdown]"` — shown in read-only mode between windows.
+
+**Bottom sheet (tapped from either badge state):** Full schedule listing all windows with:
+- Window number + label (e.g. "Rest Day 1")
+- Open/close dates and times
+- Changes allowed per window ("Up to 3 rider changes")
+- Status: "Closed" / "● Open now · closes in..." / "Opens in X days"
+- Footer: "All times shown in your local timezone ([TZ])"
+
+→ Implement in app: update badge text to include window context; add tappable behaviour; build the bottom sheet with live data from the competition schedule.
+
+**Default: 3 rider changes per window.** This is configurable per competition (set by admin when creating the competition). DNF replacements are excluded from the change count (per issue #157).
+
+**Addresses:** [#145](https://github.com/Escape-Collective/escape-collective-app/issues/145) (no window time shown on Team Selection) and [#150](https://github.com/Escape-Collective/escape-collective-app/issues/150) (no transfer window schedule visible anywhere in app).

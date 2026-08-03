@@ -369,6 +369,27 @@
     .no-result-text { font-size: 11px; color: var(--text-muted); }
     .no-result-deadline { font-size: 11px; font-weight: 700; color: #FF6F42; }
 
+    /* Transfer window strip — always present on team competition card */
+    .tw-strip {
+      display: flex; align-items: center; gap: 8px;
+      border-radius: 8px; padding: 8px 10px;
+      margin-bottom: 10px; cursor: pointer;
+    }
+    .tw-strip-open {
+      background: rgba(52,199,89,0.07);
+      border: 1px solid rgba(52,199,89,0.22);
+    }
+    .tw-strip-closed {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-subtle);
+    }
+    .tw-icon { font-size: 13px; flex-shrink: 0; }
+    .tw-body { flex: 1; min-width: 0; }
+    .tw-label-open { font-size: 11px; font-weight: 700; color: #34C759; }
+    .tw-label-closed { font-size: 11px; font-weight: 700; color: var(--text-primary); }
+    .tw-sub { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+    .tw-chevron { font-size: 14px; color: var(--text-dim); flex-shrink: 0; }
+
     /* CTA button */
     .cta-btn {
       width: 100%;
@@ -3386,14 +3407,25 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
                     </div>
                     <div class="result-pts">+340 pts <span class="cn">B</span></div>
                   </div>
-                  <!-- Transfer window alert -->
-                  <div class="no-result-strip" style="margin-bottom:10px;">
-                    <div style="flex:1;">
-                      <div class="no-result-deadline">⇄ Transfer window open <span class="cn">C</span></div>
-                      <div class="no-result-text">Closes before Tour de Suisse</div>
+                  <!-- Transfer window strip — window open state -->
+                  <div class="tw-strip tw-strip-open">
+                    <span class="tw-icon">⇄</span>
+                    <div class="tw-body">
+                      <div class="tw-label-open">Window 2 of 3 open · closes in 14h <span class="cn">C</span></div>
+                      <div class="tw-sub">Up to 3 rider changes · tap for full schedule</div>
                     </div>
+                    <span class="tw-chevron">›</span>
                   </div>
-                  <div class="cta-btn">View Team → <span class="cn">D</span></div>
+                  <!-- Transfer window strip — window closed state (shown between windows) -->
+                  <div class="tw-strip tw-strip-closed" style="margin-bottom:10px;">
+                    <span class="tw-icon" style="color:var(--text-dim)">⇄</span>
+                    <div class="tw-body">
+                      <div class="tw-label-closed">Window 3 of 3 opens in 8d 6h</div>
+                      <div class="tw-sub">Up to 3 rider changes · tap for full schedule</div>
+                    </div>
+                    <span class="tw-chevron">›</span>
+                  </div>
+                  <div class="cta-btn">Make Transfer → <span class="cn">D</span></div>
                   <div class="cta-btn-ghost">Leaderboard ›</div>
                 </div>
               </div>
@@ -3576,8 +3608,11 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
         <div class="ann-item">
           <div class="ann-num" style="background:#9B59F5;">C</div>
           <div class="ann-content">
-            <div class="ann-title">Transfer window alert — conditional element</div>
-            <div class="ann-desc">Only shown when a transfer window is currently open (per admin configuration — <strong>Open Question #1</strong>). The alert shows the window closing deadline. If no transfer window is configured, this strip is hidden entirely and the card is taller — just rank + result + CTA. The ⇄ icon and orange border make it urgent and actionable.</div>
+            <div class="ann-title">Transfer window strip — always present on team competition card</div>
+            <div class="ann-desc">Two visual states depending on window status — both are <strong>tappable</strong> (opens a schedule sheet showing all windows, dates, and changes allowed):<br><br>
+            <strong style="color:#34C759">Window open</strong> — green border, shows "Window X of Y open · closes in..." with countdown and changes-per-window info. CTA button changes to "Make Transfer →".<br><br>
+            <strong>Window closed</strong> — subtle grey border, shows "Window X of Y opens in..." so users always know when they can next adjust their team. CTA remains "View Team →". If there are no further windows (final window passed), this strip is hidden.<br><br>
+            Both strip states shown above for visual reference. Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a> (transfer window schedule not visible to users).</div>
           </div>
         </div>
 
