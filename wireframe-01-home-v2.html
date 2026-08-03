@@ -3407,20 +3407,11 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
                     </div>
                     <div class="result-pts">+340 pts <span class="cn">B</span></div>
                   </div>
-                  <!-- Transfer window strip — window open state -->
-                  <div class="tw-strip tw-strip-open">
+                  <!-- Transfer window strip — state 4: window open (see annotation C for all 4 states) -->
+                  <div class="tw-strip tw-strip-open" style="margin-bottom:10px;">
                     <span class="tw-icon">⇄</span>
                     <div class="tw-body">
-                      <div class="tw-label-open">Window 2 of 3 open · closes in 14h <span class="cn">C</span></div>
-                      <div class="tw-sub">Up to 3 rider changes · tap for full schedule</div>
-                    </div>
-                    <span class="tw-chevron">›</span>
-                  </div>
-                  <!-- Transfer window strip — window closed state (shown between windows) -->
-                  <div class="tw-strip tw-strip-closed" style="margin-bottom:10px;">
-                    <span class="tw-icon" style="color:var(--text-dim)">⇄</span>
-                    <div class="tw-body">
-                      <div class="tw-label-closed">Window 3 of 3 opens in 8d 6h</div>
+                      <div class="tw-label-open">Transfer window 1 of 2 · closes in 14h <span class="cn">C</span></div>
                       <div class="tw-sub">Up to 3 rider changes · tap for full schedule</div>
                     </div>
                     <span class="tw-chevron">›</span>
@@ -3608,11 +3599,13 @@ cgjvgZCG+Gjlfgqu4DwBFgAAAAAAAADAjdRaY60V5fPVKmfP3Vp79d63QxTgbwRYAAAAAAAAAHCN
         <div class="ann-item">
           <div class="ann-num" style="background:#9B59F5;">C</div>
           <div class="ann-content">
-            <div class="ann-title">Transfer window strip — always present on team competition card</div>
-            <div class="ann-desc">Two visual states depending on window status — both are <strong>tappable</strong> (opens a schedule sheet showing all windows, dates, and changes allowed):<br><br>
-            <strong style="color:#34C759">Window open</strong> — green border, shows "Window X of Y open · closes in..." with countdown and changes-per-window info. CTA button changes to "Make Transfer →".<br><br>
-            <strong>Window closed</strong> — subtle grey border, shows "Window X of Y opens in..." so users always know when they can next adjust their team. CTA remains "View Team →". If there are no further windows (final window passed), this strip is hidden.<br><br>
-            Both strip states shown above for visual reference. Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a> (transfer window schedule not visible to users).</div>
+            <div class="ann-title">Transfer window strip — four card states</div>
+            <div class="ann-desc">The card has four states. <strong>Pre-race selection is not numbered as a window</strong> — transfer windows are numbered independently (1 of 2, not 2 of 3). Strip is tappable in all states → opens the team schedule sheet (entry deadline + both transfer windows).<br><br>
+            <strong>State 1 — not entered:</strong> "Enter Competition →" CTA only. No window strip.<br><br>
+            <strong>State 2 — entered, pre-start:</strong> "Pick Team" CTA + entry deadline line ("Picks lock: 4 Jul · 10am") + strip in grey: "Transfer window 1 of 2 opens in 12d".<br><br>
+            <strong>State 3 — race started, before first window:</strong> "View Team" + Leaderboard. Strip in grey: "Transfer window 1 of 2 opens in 3d 14h".<br><br>
+            <strong>State 4 — transfer window open (shown here):</strong> Strip in green: "Transfer window 1 of 2 · closes in 14h". CTA: "Make Transfer →". Leaderboard. Strip hidden once the final window closes.<br><br>
+            Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a>.</div>
           </div>
         </div>
 

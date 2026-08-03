@@ -107,6 +107,17 @@
   }
   body.light-mode .deadline-badge-closed { background: rgba(0,0,0,0.04); }
 
+  /* Pre-race entry deadline badge — not a transfer window */
+  .entry-badge {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.07); color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px; padding: 4px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0;
+    cursor: pointer;
+  }
+  body.light-mode .entry-badge { background: rgba(0,0,0,0.04); color: var(--text-primary); }
+
   /* ── BOTTOM SHEET (inside phone, slides up from bottom) ── */
   .sheet-overlay {
     position: absolute; inset: 0;
@@ -476,9 +487,9 @@
         <div class="header-sub">Tour de France 2026</div>
       </div>
     </div>
-    <div class="deadline-badge" onclick="openWindowSheet()">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
-      Window 2 of 3 · closes in 3d 14h <span class="cn">②</span>
+    <div class="entry-badge" onclick="openWindowSheet()">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Picks lock in 3d 14h <span class="cn">②</span>
     </div>
   </div>
 
@@ -765,36 +776,37 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title">Transfer Windows — Tour de France 2026</div>
 
-      <!-- Window 1 — past -->
+      <!-- Entry deadline row -->
       <div class="window-row">
-        <div class="window-num wn-past">1</div>
+        <div class="window-num" style="background:rgba(255,255,255,0.07);color:var(--text-muted);">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <div class="window-info">
-          <div class="wi-label">Window 1 · Pre-race</div>
-          <div class="wi-dates">24 Jun – 4 Jul, 10:00am</div>
-          <div class="wi-changes">Up to 3 rider changes</div>
-          <div class="wi-status wi-past">Closed</div>
+          <div class="wi-label">Entry deadline</div>
+          <div class="wi-dates">Picks lock: 4 Jul · 10:00am</div>
+          <div class="wi-status" style="font-size:9px;color:#FF9500;font-weight:700;margin-top:3px;">Locks in 3d 14h</div>
         </div>
       </div>
 
-      <!-- Window 2 — current (open) -->
+      <!-- Transfer window 1 -->
       <div class="window-row">
-        <div class="window-num wn-open">2</div>
+        <div class="window-num wn-future">1</div>
         <div class="window-info">
-          <div class="wi-label">Window 2 · Rest Day 1</div>
-          <div class="wi-dates">14 Jul – 15 Jul, 10:00am</div>
-          <div class="wi-changes">Up to 3 rider changes</div>
-          <div class="wi-status wi-open">● Open now · closes in 3d 14h</div>
-        </div>
-      </div>
-
-      <!-- Window 3 — upcoming -->
-      <div class="window-row">
-        <div class="window-num wn-future">3</div>
-        <div class="window-info">
-          <div class="wi-label">Window 3 · Rest Day 2</div>
-          <div class="wi-dates">21 Jul – 22 Jul, 10:00am</div>
+          <div class="wi-label">Transfer window 1 of 2 · Rest Day 1</div>
+          <div class="wi-dates">Opens: 14 Jul · Closes: 15 Jul, 10:00am</div>
           <div class="wi-changes">Up to 3 rider changes</div>
           <div class="wi-status wi-upcoming">Opens in 10 days</div>
+        </div>
+      </div>
+
+      <!-- Transfer window 2 -->
+      <div class="window-row">
+        <div class="window-num wn-future">2</div>
+        <div class="window-info">
+          <div class="wi-label">Transfer window 2 of 2 · Rest Day 2</div>
+          <div class="wi-dates">Opens: 21 Jul · Closes: 22 Jul, 10:00am</div>
+          <div class="wi-changes">Up to 3 rider changes</div>
+          <div class="wi-status wi-upcoming">Opens in 17 days</div>
         </div>
       </div>
 
@@ -824,9 +836,9 @@
         <div class="header-sub">Tour de France 2026</div>
       </div>
     </div>
-    <div class="deadline-badge-closed">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
-      Window 3 of 3 · opens in 18d
+    <div class="deadline-badge" style="cursor:default;">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
+      Window 1 of 2 · closes in 14h
     </div>
   </div>
 
@@ -892,7 +904,7 @@
 
   <!-- Confirm Bar — appears once team is complete -->
   <div class="confirm-bar">
-    <button class="confirm-btn-active">Confirm Team — Chaingang Heroes →</button>
+    <button class="confirm-btn-active">Save Changes — Chaingang Heroes →</button>
   </div>
 
   <!-- Bottom Nav -->
@@ -920,10 +932,10 @@
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">②</span> Entry Deadline</div>
     <div class="ann-card-body">
-      Two badge states depending on context — both are <strong>tappable</strong> to open the full window schedule sheet:<br><br>
-      <strong style="color:#FF9500">Window open</strong> (orange badge, Phone 1) — "Window X of Y · closes in..." — user can make up to 3 rider changes before the timer expires. The Confirm button is active.<br><br>
-      <strong>Window closed</strong> (grey badge, Phone 2) — shown when viewing a locked team between windows. Shows when the next window opens: "Window X of Y · opens in...". Screen is read-only; Confirm button is hidden.<br><br>
-      Tapping either badge opens a bottom sheet listing all windows with dates, times, and changes allowed per window. Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/145">#145</a> (no window time shown) and <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a> (no full schedule visible).
+      Two contexts, two badge styles — <strong>pre-race selection is not numbered as a transfer window</strong>:<br><br>
+      <strong>Pre-race (Phone 1, neutral badge)</strong> — "Picks lock in Xd Yh". Lock icon (not clock). Tappable → opens schedule sheet showing the entry deadline + all transfer windows. Confirm button label: "Confirm Team →".<br><br>
+      <strong>Transfer window open (Phone 2, orange badge)</strong> — "Window 1 of 2 · closes in Yh". Clock icon. Tapping badge opens same schedule sheet but with Window 1 shown as active. Confirm button label: "Save Changes →". A "changes used" counter (e.g. "1 of 3 changes used") should appear in the squad strip header.<br><br>
+      Addresses <a href="https://github.com/Escape-Collective/escape-collective-app/issues/145">#145</a> (no window time shown on Team Selection) and <a href="https://github.com/Escape-Collective/escape-collective-app/issues/150">#150</a> (no full schedule visible).
     </div>
   </div>
 
