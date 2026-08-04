@@ -177,6 +177,20 @@
   /* Compact card (no image) */
   .article-card.compact .article-body { padding: 10px 12px 11px; }
 
+  /* Daily News card — left accent bar treatment */
+  .article-card.daily-news {
+    border-left: 4px solid var(--accent);
+    background: rgba(255, 90, 0, 0.04);
+  }
+  body.light-mode .article-card.daily-news { background: rgba(255, 90, 0, 0.03); }
+  .article-pill.pill-daily-news {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 7px;
+    letter-spacing: 0.12em;
+  }
+
   /* ── BOTTOM NAV ── */
   .bottom-nav {
     flex-shrink: 0;
@@ -293,15 +307,14 @@
       </div>
     </div>
 
-    <!-- Article 2: Stage preview (compact) -->
-    <div class="article-card compact">
+    <!-- Article 2: Daily News brief -->
+    <div class="article-card compact daily-news">
       <div class="article-body">
-        <div class="article-headline">Stage 9 Preview: Everything You Need to Know Before Cauterets</div>
-        <div class="article-excerpt">The queen stage of this year's Tour arrives earlier than expected. Here's the route, the climbs, and who we think wins.</div>
+        <div class="article-headline">Stage 8: Pidcock goes solo, Vingegaard loses 12 seconds to mechanical</div>
+        <div class="article-excerpt">Pidcock's attack at the base of the final climb stuck for 22km. Pogačar didn't chase — he didn't need to. Full stage recap plus tomorrow's preview.</div>
         <div class="article-meta">
-          <span class="article-pill pill-preview">Stage Preview</span>
-          <span class="article-author">Dane Cash</span>
-          <span class="article-time">4h ago</span>
+          <span class="article-pill pill-daily-news">Daily News<span class="cn">④</span></span>
+          <span class="article-time">3h ago</span>
         </div>
       </div>
     </div>
@@ -322,14 +335,13 @@
       </div>
     </div>
 
-    <!-- Article 4: News (compact) -->
-    <div class="article-card compact">
+    <!-- Article 4: Daily News brief -->
+    <div class="article-card compact daily-news">
       <div class="article-body">
-        <div class="article-headline">Vingegaard Confirms He Will Start Stage 9 Despite Crash</div>
-        <div class="article-excerpt">The Dane suffered a minor shoulder injury on the descent into Pau but his team confirmed he will race tomorrow.</div>
+        <div class="article-headline">Rest day round-up: Team news, press conference highlights, and Vuelta updates</div>
+        <div class="article-excerpt">Van der Poel confirms he'll leave after Stage 10. Evenepoel's team dismisses injury rumours. Plus full Giro Donne standings and what's racing today.</div>
         <div class="article-meta">
-          <span class="article-pill pill-news">News</span>
-          <span class="article-author">Escape Collective</span>
+          <span class="article-pill pill-daily-news">Daily News</span>
           <span class="article-time">Yesterday</span>
         </div>
       </div>
@@ -377,7 +389,7 @@
   <div class="ann-card">
     <div class="ann-card-title"><span class="cn">②</span> Article Type Pills</div>
     <div class="ann-card-body">
-      Category tag pulled from the RSS item's category or tag field. Examples shown: <strong>Race Report</strong> (purple), <strong>Stage Preview</strong> (blue), <strong>Feature</strong> (green), <strong>News</strong> (grey). Colour-coded for fast scanning. Mapping from EC's taxonomy to these pill labels to be defined at implementation.
+      Category tag pulled from the RSS item's category or tag field. Examples shown: <strong>Race Report</strong>, <strong>Feature</strong> (EC Orange text, no background). <strong>Daily News</strong> items use a filled orange pill (see annotation ④) to distinguish them as a product rather than a content category. Mapping from EC's taxonomy to pill labels to be defined at implementation.
     </div>
   </div>
 
@@ -385,6 +397,15 @@
     <div class="ann-card-title"><span class="cn">③</span> Image vs Compact Cards</div>
     <div class="ann-card-body">
       Cards with an <strong>article image</strong> (from RSS <code>&lt;media:content&gt;</code> or <code>&lt;enclosure&gt;</code>) display the image at the top. Articles without images fall back to a compact text-only layout. The feed naturally mixes both — no enforced uniformity needed.
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card-title"><span class="cn">④</span> Daily News Treatment</div>
+    <div class="ann-card-body">
+      EC's <strong>Daily News</strong> items never carry a feature image — they previously blended indistinguishably with other compact cards.<br><br>
+      Treatment: <strong>left EC Orange accent bar</strong> (4px, <code>border-left: 4px solid var(--accent)</code>) + subtle orange tint on the card background. The category pill uses a filled orange chip rather than the standard text-only label, reinforcing Daily News as a product name rather than a content category. No author line — Daily News is an EC publication, not a bylined article.<br><br>
+      <strong>Implementation:</strong> Detect items tagged as Daily News in the RSS feed and apply the <code>daily-news</code> card class. No other layout changes needed.
     </div>
   </div>
 
